@@ -1,0 +1,58 @@
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  configuration: release
+  targetFramework: netcoreapp3.1
+  projectFile: aiof.auth.core/aiof.auth.core.csproj
+  projectFileTest: aiof.auth.tests/aiof.auth.tests.csproj
+  tag: $(Build.BuildId)
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: restore
+      inputs:
+        command: restore
+        projects: $(projectFile)
+
+    - task: DotNetCoreCLI@2
+      displayName: build
+      inputs:
+        command: build
+        projects: $(projectFile)
+        arguments: -c $(configuration) -f $(targetFramework)
+
+    - task: DotNetCoreCLI@2
+      displayName: test
+      inputs:
+        command: test
+        projects: $(projectFileTest)
+        publishTestResults: false
+
+    - task: DotNetCoreCLI@2
+      displayName: publish
+      inputs:
+        command: publish
+        arguments: -c $(configuration) -o app/publish -f $(targetFramework)
+        zipAfterPublish: false
+
+    - task: Docker@2
+      displayName: docker build and push
+      inputs:
+        containerRegistry: gkama-docker-cr
+        repository: gkama/aiof-auth
+        command: buildAndPush
+        Dockerfile: $(Build.SourcesDirectory)/Dockerfile
+        tags: |
+          latest
