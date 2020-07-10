@@ -32,8 +32,9 @@ namespace aiof.auth.core
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
+            services.AddSingleton<FakeDataManager>();
 
             services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration["ConnectionString"]));
 
@@ -49,11 +50,14 @@ namespace aiof.auth.core
                 });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IServiceProvider services)
         {
-            if (env.IsDevelopment())
+            if (_env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                services.GetRequiredService<FakeDataManager>()
+                    .UseFakeContext();
             }
 
             app.UseHealthChecks("/health");
