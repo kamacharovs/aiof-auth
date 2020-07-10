@@ -21,7 +21,7 @@ namespace aiof.auth.services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateJwtToken(IUser user)
         {
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
