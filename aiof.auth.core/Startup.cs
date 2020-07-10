@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using aiof.auth.services;
+
 namespace aiof.auth.core
 {
     public class Startup
@@ -27,6 +29,11 @@ namespace aiof.auth.core
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IAuthRepository, AuthRepository>();
+
+            services.AddLogging();
+            services.AddHealthChecks();
+
             services.AddControllers();
         }
 
@@ -36,6 +43,8 @@ namespace aiof.auth.core
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHealthChecks("/health");
 
             app.UseHttpsRedirection();
 
