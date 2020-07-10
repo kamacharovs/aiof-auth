@@ -34,9 +34,12 @@ namespace aiof.auth.core
         {
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
-            services.AddSingleton<FakeDataManager>();
+            services.AddScoped<FakeDataManager>();
 
-            services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration["ConnectionString"]));
+            if (_env.IsDevelopment())
+                services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
+            else
+                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration["ConnectionString"]));
 
             services.AddLogging();
             services.AddHealthChecks();
