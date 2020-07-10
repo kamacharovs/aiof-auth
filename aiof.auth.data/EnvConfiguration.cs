@@ -14,5 +14,6 @@ namespace aiof.auth.data
         }
 
         public int TokenTtl => int.Parse(_config[$"{Keys.Token}:{Keys.Ttl}"]);
+        public string TokenSecret => _config[$"{Keys.Token}:{Keys.Secret}"];
     }
 }

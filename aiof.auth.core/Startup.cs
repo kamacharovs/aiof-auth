@@ -32,6 +32,7 @@ namespace aiof.auth.core
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
             services.AddScoped<IAuthRepository, AuthRepository>();
 
             services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration["ConnectionString"]));
