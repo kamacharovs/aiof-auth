@@ -54,7 +54,7 @@ namespace aiof.auth.services
                 Expires = DateTime.UtcNow.AddMinutes(_envConfig.TokenTtl),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha512Signature)
+                    SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
