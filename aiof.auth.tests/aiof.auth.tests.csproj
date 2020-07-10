@@ -13,4 +13,9 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\aiof.auth.data\aiof.auth.data.csproj" />
+    <ProjectReference Include="..\aiof.auth.services\aiof.auth.services.csproj" />
+  </ItemGroup>
+
 </Project>
