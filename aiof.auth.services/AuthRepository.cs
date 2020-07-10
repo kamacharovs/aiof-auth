@@ -4,7 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,11 +18,24 @@ namespace aiof.auth.services
     {
         private readonly ILogger<AuthRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
+        private readonly AuthContext _context;
 
-        public AuthRepository(ILogger<AuthRepository> logger, IEnvConfiguration envConfig)
+        public AuthRepository(
+            ILogger<AuthRepository> logger,
+            IEnvConfiguration envConfig,
+            AuthContext context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        public async Task<string> GetUserTokenAsync(int id)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return GenerateJwtToken(user);
         }
 
         private string GenerateJwtToken(IUser user)

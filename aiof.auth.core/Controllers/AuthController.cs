@@ -6,20 +6,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+using aiof.auth.services;
+
 namespace aiof.auth.core.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("auth")]
     public class AuthController : ControllerBase
     {
-        public AuthController()
+        private readonly IAuthRepository _repo;
+
+        public AuthController(IAuthRepository repo)
         {
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
 
         [HttpGet]
-        public IActionResult Get()
+        [Route("user/{id}")]
+        public async Task<IActionResult> GetTokenAsync([FromRoute]int id)
         {
-            return Ok("");
+            return Ok(await _repo.GetUserTokenAsync(id));
         }
     }
 }
