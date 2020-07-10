@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,7 +12,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
+using aiof.auth.data;
 using aiof.auth.services;
 
 namespace aiof.auth.core
@@ -31,10 +34,18 @@ namespace aiof.auth.core
         {
             services.AddScoped<IAuthRepository, AuthRepository>();
 
+            services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration["ConnectionString"]));
+
             services.AddLogging();
             services.AddHealthChecks();
 
             services.AddControllers();
+            services.AddMvcCore()
+                .AddJsonOptions(o =>
+                {
+                    o.JsonSerializerOptions.WriteIndented = true;
+                    o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
