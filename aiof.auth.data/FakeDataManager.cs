@@ -29,10 +29,20 @@ namespace aiof.auth.data
                     Id = 1,
                     FirstName = "Georgi",
                     LastName = "Kamacharov",
-                    Email = "test@test.com",
+                    Email = "gkama@test.com",
                     Username = "gkama",
                     ApiKey = "api-key",
                     Password = "pass1234"
+                },
+                new User
+                {
+                    Id = 2,
+                    FirstName = "Jessie",
+                    LastName = "Brown",
+                    Email = "jessie@test.com",
+                    Username = "jbro",
+                    ApiKey = "api-key-jbro",
+                    Password = "notpass"
                 }
             };
         }
