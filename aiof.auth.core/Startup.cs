@@ -33,8 +33,8 @@ namespace aiof.auth.core
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
             services.AddScoped<FakeDataManager>();
+            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
