@@ -40,6 +40,9 @@ namespace aiof.auth.services
 
         private string GenerateJwtToken(IUser user)
         {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+                
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_envConfig.TokenSecret);
