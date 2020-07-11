@@ -37,6 +37,7 @@ namespace aiof.auth.tests
             {
                 IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
                 configurationBuilder.AddInMemoryCollection(ConfigurationDict);
+                configurationBuilder.AddEnvironmentVariables();
                 return configurationBuilder.Build();
             });
 
