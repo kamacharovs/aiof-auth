@@ -30,6 +30,12 @@ namespace aiof.auth.services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        public async Task<IUser> GetUserAsync(int id)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<string> GetUserTokenAsync(int id)
         {
             var user = await _context.Users
@@ -42,7 +48,7 @@ namespace aiof.auth.services
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
-                
+
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_envConfig.TokenSecret);
