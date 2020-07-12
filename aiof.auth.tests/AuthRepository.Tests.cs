@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using Xunit;
 
@@ -15,10 +16,14 @@ namespace aiof.auth.tests
             _repo = Helper.GetRequiredService<IAuthRepository>() ?? throw new ArgumentNullException(nameof(IAuthRepository));
         }
 
-        [Fact]
-        public void Test1()
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        public async Task GetUserTokenAsync_Valid(int id)
         {
+            var userToken = await _repo.GetUserTokenAsync(id);
 
+            Assert.NotNull(userToken);
         }
     }
 }
