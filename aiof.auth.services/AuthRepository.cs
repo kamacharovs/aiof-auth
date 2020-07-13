@@ -47,7 +47,7 @@ namespace aiof.auth.services
         public async Task<IUser> GetUserAsync(string apiKey)
         {
             return await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.ApiKey == apiKey)
+                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey)
                 ?? throw new AuthNotFoundException();
         }
 

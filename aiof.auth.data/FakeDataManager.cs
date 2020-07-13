@@ -31,7 +31,8 @@ namespace aiof.auth.data
                     LastName = "Kamacharov",
                     Email = "gkama@test.com",
                     Username = "gkama",
-                    ApiKey = "api-key",
+                    PrimaryApiKey = "api-key",
+                    SecondaryApiKey = "api-key-2",
                     Password = "pass1234"
                 },
                 new User
@@ -41,7 +42,8 @@ namespace aiof.auth.data
                     LastName = "Brown",
                     Email = "jessie@test.com",
                     Username = "jbro",
-                    ApiKey = "api-key-jbro",
+                    PrimaryApiKey = "api-key-jbro",
+                    SecondaryApiKey = "api-key-jbro-2",
                     Password = "notpass"
                 }
             };
