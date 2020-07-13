@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -82,6 +83,14 @@ namespace aiof.auth.services
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public string GenerateApiKey()
+        {
+            var key = new byte[32];
+            using (var generator = RandomNumberGenerator.Create())
+                generator.GetBytes(key);
+            return Convert.ToBase64String(key);
         }
     }
 }
