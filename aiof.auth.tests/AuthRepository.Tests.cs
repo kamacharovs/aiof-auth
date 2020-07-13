@@ -25,5 +25,16 @@ namespace aiof.auth.tests
 
             Assert.NotNull(userToken);
         }
+
+        [Theory]
+        [InlineData("api-key")]
+        [InlineData("api-key-jbro")]
+        public async Task GetUserAsync_By_ApiKey(string apiKey)
+        {
+            var user = await _repo.GetUserAsync(apiKey);
+
+            Assert.NotNull(user);
+            Assert.NotNull(user.FirstName);
+        }
     }
 }
