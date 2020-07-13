@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
+using aiof.auth.data;
 using aiof.auth.services;
 
 namespace aiof.auth.tests
@@ -44,6 +45,27 @@ namespace aiof.auth.tests
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
+        }
+
+        [Fact]
+        public async Task AddUserAsync_Valid()
+        {
+            var userDto = new UserDto
+            {
+                FirstName = "Test",
+                LastName = "McTest",
+                Email = "notanemail@email.com",
+                Username = "test.mctest",
+                Password = "123456"
+            };
+
+            var user = await _repo.AddUserAsync(userDto);
+
+            Assert.NotNull(user);
+            Assert.NotNull(user.FirstName);
+            Assert.NotNull(user.LastName);
+            Assert.NotNull(user.PrimaryApiKey);
+            Assert.NotNull(user.SecondaryApiKey);
         }
     }
 }

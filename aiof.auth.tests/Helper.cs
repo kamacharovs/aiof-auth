@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using AutoMapper;
+
 using aiof.auth.data;
 using aiof.auth.services;
 
@@ -44,6 +46,8 @@ namespace aiof.auth.tests
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<FakeDataManager>();
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
+
+            services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
 
             services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
