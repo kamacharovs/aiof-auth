@@ -14,6 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
+using AutoMapper;
+
 using aiof.auth.data;
 using aiof.auth.services;
 
@@ -35,6 +37,8 @@ namespace aiof.auth.core
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<FakeDataManager>();
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
+            
+            services.AddAutoMapper(typeof(Startup));
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));

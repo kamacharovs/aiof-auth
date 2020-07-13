@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
+using AutoMapper;
+
 using aiof.auth.data;
 
 namespace aiof.auth.services
@@ -19,15 +21,18 @@ namespace aiof.auth.services
     {
         private readonly ILogger<AuthRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
+        private readonly IMapper _mapper;
         private readonly AuthContext _context;
 
         public AuthRepository(
             ILogger<AuthRepository> logger,
             IEnvConfiguration envConfig,
+            IMapper mapper,
             AuthContext context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
@@ -57,6 +62,22 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return GenerateJwtToken(user);
+        }
+
+        public async Task<IUser> AddUserAsync(UserDto userDto)
+        {
+            //TODO: add checks if user exists
+            var user = _mapper.Map<User>(userDto);
+
+            user.PrimaryApiKey = GenerateApiKey();
+            user.SecondaryApiKey = GenerateApiKey();
+
+            await _context.Users
+                .AddAsync(user);
+
+            await _context.SaveChangesAsync();
+
+            return user;
         }
 
         private string GenerateJwtToken(IUser user)
