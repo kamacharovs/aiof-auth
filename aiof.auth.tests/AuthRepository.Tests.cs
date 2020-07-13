@@ -16,6 +16,15 @@ namespace aiof.auth.tests
             _repo = Helper.GetRequiredService<IAuthRepository>() ?? throw new ArgumentNullException(nameof(IAuthRepository));
         }
 
+        [Fact]
+        public void GenerateApiKey()
+        {
+            var apiKey = _repo.GenerateApiKey();
+
+            Assert.NotNull(apiKey);
+            Assert.True(apiKey.Length > 30);
+        }
+
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
