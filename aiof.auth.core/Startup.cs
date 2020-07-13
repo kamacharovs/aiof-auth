@@ -63,6 +63,7 @@ namespace aiof.auth.core
                     .UseFakeContext();
             }
 
+            app.UseAuthExceptionMiddleware();
             app.UseHealthChecks("/health");
 
             app.UseHttpsRedirection();
