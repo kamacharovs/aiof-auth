@@ -30,15 +30,29 @@ namespace aiof.auth.services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        private IQueryable<User> GetUsersQuery()
+        {
+            return _context.Users
+                .AsNoTracking()
+                .AsQueryable();
+        }
+
         public async Task<IUser> GetUserAsync(int id)
         {
-            return await _context.Users
-                .FirstOrDefaultAsync(x => x.Id == id);
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException();
+        }
+        public async Task<IUser> GetUserAsync(string apiKey)
+        {
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.ApiKey == apiKey)
+                ?? throw new AuthNotFoundException();
         }
 
         public async Task<string> GetUserTokenAsync(int id)
         {
-            var user = await _context.Users
+            var user = await GetUsersQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return GenerateJwtToken(user);
