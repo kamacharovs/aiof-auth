@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -100,7 +102,10 @@ namespace aiof.auth.services
 
         public async Task<IUser> AddUserAsync(UserDto userDto)
         {
-            //TODO: add checks if user exists
+            if (userDto == null)
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"User DTO can't be NULL");
+
             var user = _mapper.Map<User>(userDto);
 
             user.PublicKey = Guid.NewGuid();
@@ -111,6 +116,8 @@ namespace aiof.auth.services
                 .AddAsync(user);
 
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Created User with Id='{user.Id}' and PublicKey='{user.PublicKey}'");
 
             return user;
         }
