@@ -81,7 +81,7 @@ namespace aiof.auth.data
                 {
                     Id = 4,
                     PublicKey = Guid.NewGuid(),
-                    Name = AiofClaims.Name
+                    Name = AiofClaims.Email
                 }
             };
         }
