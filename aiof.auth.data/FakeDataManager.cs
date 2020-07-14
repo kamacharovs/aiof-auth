@@ -18,6 +18,9 @@ namespace aiof.auth.data
             _context.Users
                 .AddRange(GetFakeUsers());
 
+            _context.Claims
+                .AddRange(GetFakeClaims());
+
             _context.SaveChanges();
         }
 
@@ -52,6 +55,37 @@ namespace aiof.auth.data
             };
         }
 
+        public IEnumerable<AiofClaim> GetFakeClaims()
+        {
+            return new List<AiofClaim>
+            {
+                new AiofClaim
+                {
+                    Id = 1,
+                    PublicKey = Guid.NewGuid(),
+                    Name = "first_name"
+                },
+                new AiofClaim
+                {
+                    Id = 2,
+                    PublicKey = Guid.NewGuid(),
+                    Name = "last_name"
+                },
+                new AiofClaim
+                {
+                    Id = 3,
+                    PublicKey = Guid.NewGuid(),
+                    Name = "full_name"
+                },
+                new AiofClaim
+                {
+                    Id = 4,
+                    PublicKey = Guid.NewGuid(),
+                    Name = "email"
+                }
+            };
+        }
+
         public IEnumerable<object[]> GetFakeUsersData(
             bool id = false,
             bool apiKey = false
@@ -80,6 +114,19 @@ namespace aiof.auth.data
                 }; 
             else
                 return null;
+        }
+
+        public IEnumerable<object[]> GetFakeClaimsData()
+        {
+            var fakeClaims = GetFakeClaims()
+                .ToArray();
+
+            return new List<object[]>
+            {
+                new object[] { fakeClaims[0].Id, fakeClaims[0].PublicKey, fakeClaims[0].Name },
+                new object[] { fakeClaims[1].Id, fakeClaims[1].PublicKey, fakeClaims[1].Name },
+                new object[] { fakeClaims[2].Id, fakeClaims[2].PublicKey, fakeClaims[2].Name }
+            };
         }
     }
 }
