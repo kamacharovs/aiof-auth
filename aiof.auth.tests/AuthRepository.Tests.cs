@@ -99,7 +99,7 @@ namespace aiof.auth.tests
             var token = _repo.GenerateJwtToken(user);
 
             Assert.NotNull(token);
-            Assert.True(token.Length > 10);
+            Assert.True(token.AccessToken.Length > 10);
         }
 
 

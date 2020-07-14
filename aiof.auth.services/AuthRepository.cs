@@ -91,7 +91,7 @@ namespace aiof.auth.services
                 ?? throw new AuthNotFoundException();
         }
 
-        public async Task<string> GetUserTokenAsync(int id)
+        public async Task<ITokenResponse> GetUserTokenAsync(int id)
         {
             var user = await GetUsersQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -116,7 +116,7 @@ namespace aiof.auth.services
             return user;
         }
 
-        public string GenerateJwtToken(IUser user)
+        public ITokenResponse GenerateJwtToken(IUser user)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -141,7 +141,11 @@ namespace aiof.auth.services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return tokenHandler.WriteToken(token);
+            return new TokenResponse
+            {
+                ExpiresIn = _envConfig.JwtExpires,
+                AccessToken = tokenHandler.WriteToken(token)
+            };
         }
 
         public string GenerateApiKey()
