@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using AutoMapper;
+using FluentValidation;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -50,6 +51,8 @@ namespace aiof.auth.tests
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
 
             services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
+
+            services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
 
             services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
