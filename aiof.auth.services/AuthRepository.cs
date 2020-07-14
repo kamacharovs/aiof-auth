@@ -110,7 +110,7 @@ namespace aiof.auth.services
 
             if (!validation.IsValid)
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"User was invalid. Errors='{string.Join(" | ", validation.Errors)}'");
+                    validation.Errors);
 
             var user = _mapper.Map<User>(userDto);
 

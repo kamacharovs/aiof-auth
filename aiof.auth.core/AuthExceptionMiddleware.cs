@@ -72,7 +72,12 @@ namespace aiof.auth.core
             };
 
             if (e is AuthException ae)
+            {
                 problem.Status = ae.StatusCode;
+                problem.Title = ae.Failures != null
+                    ? string.Join("\n", ae.Failures)
+                    : problem.Title;
+            }
             else
                 problem.Status = StatusCodes.Status500InternalServerError;
 
