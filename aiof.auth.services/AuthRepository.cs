@@ -85,18 +85,19 @@ namespace aiof.auth.services
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_envConfig.TokenSecret);
+            var key = Encoding.ASCII.GetBytes(_envConfig.JwtSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[] 
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.UserData, user.Username)
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(_envConfig.TokenTtl),
+                Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtExpires),
+                Issuer = _envConfig.JwtIssuer,
+                Audience = _envConfig.JwtAudience,
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature)

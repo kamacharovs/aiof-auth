@@ -4,7 +4,9 @@ namespace aiof.auth.data
 {
     public interface IEnvConfiguration
     {
-        int TokenTtl { get; }
-        string TokenSecret { get; }
+        int JwtExpires { get; }
+        string JwtIssuer { get; }
+        string JwtAudience { get; }
+        string JwtSecret { get; }
     }
 }

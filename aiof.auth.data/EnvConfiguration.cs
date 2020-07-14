@@ -13,7 +13,9 @@ namespace aiof.auth.data
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
-        public int TokenTtl => int.Parse(_config[$"{Keys.Token}:{Keys.Ttl}"]);
-        public string TokenSecret => _config[$"{Keys.Token}:{Keys.Secret}"];
+        public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"]);
+        public string JwtIssuer => _config[$"{Keys.Jwt}:{Keys.Issuer}"];
+        public string JwtAudience => _config[$"{Keys.Jwt}:{Keys.Audience}"];
+        public string JwtSecret => _config[$"{Keys.Jwt}:{Keys.Secret}"];
     }
 }
