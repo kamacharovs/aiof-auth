@@ -38,7 +38,7 @@ namespace aiof.auth.core
             services.AddScoped<FakeDataManager>();
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
             
-            services.AddAutoMapper(Assembly.GetAssembly(GetType()));
+            services.AddAutoMapper(typeof(AutoMappingProfile).Assembly);
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
