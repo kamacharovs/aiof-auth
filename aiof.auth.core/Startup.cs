@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
 using AutoMapper;
+using FluentValidation;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -39,6 +40,8 @@ namespace aiof.auth.core
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
             
             services.AddAutoMapper(typeof(AutoMappingProfile).Assembly);
+            
+            services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));

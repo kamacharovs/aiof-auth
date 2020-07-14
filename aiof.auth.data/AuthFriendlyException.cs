@@ -7,6 +7,7 @@ namespace aiof.auth.data
 {
     public class AuthFriendlyException : AuthException
     {
+        //TODO: add FluentValidation errors []
         public AuthFriendlyException()
         { }
 

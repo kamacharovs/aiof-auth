@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 using AutoMapper;
+using FluentValidation;
 
 using aiof.auth.data;
 
@@ -25,17 +26,20 @@ namespace aiof.auth.services
         private readonly IEnvConfiguration _envConfig;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
+        private readonly AbstractValidator<UserDto> _userDtoValidator;
 
         public AuthRepository(
             ILogger<AuthRepository> logger,
             IEnvConfiguration envConfig,
             IMapper mapper,
-            AuthContext context)
+            AuthContext context,
+            AbstractValidator<UserDto> userDtoValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _userDtoValidator = userDtoValidator ?? throw new ArgumentNullException(nameof(userDtoValidator));
         }
 
         private IQueryable<User> GetUsersQuery()
@@ -102,9 +106,11 @@ namespace aiof.auth.services
 
         public async Task<IUser> AddUserAsync(UserDto userDto)
         {
-            if (userDto == null)
+            var validation = _userDtoValidator.Validate(userDto);
+
+            if (!validation.IsValid)
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"User DTO can't be NULL");
+                    $"User was invalid. Errors='{string.Join(" | ", validation.Errors)}'");
 
             var user = _mapper.Map<User>(userDto);
 

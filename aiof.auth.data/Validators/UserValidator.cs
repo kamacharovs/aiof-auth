@@ -11,14 +11,23 @@ namespace aiof.auth.data
             ValidatorOptions.Global.CascadeMode = CascadeMode.StopOnFirstFailure;
 
             RuleFor(x => x.FirstName)
+                .NotNull()
                 .NotEmpty();
+
             RuleFor(x => x.LastName)
+                .NotNull()
                 .NotEmpty();
+
             RuleFor(x => x.Email)
+                .NotNull()
                 .NotEmpty();
+
             RuleFor(x => x.Username)
+                .NotNull()
                 .NotEmpty();
+
             RuleFor(x => x.Password)
+                .NotNull()
                 .NotEmpty();
         }
     }
