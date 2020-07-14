@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Xunit;
@@ -18,8 +19,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
+        [MemberData(nameof(UsersId))]
         public async Task GetUserTokenAsync_Valid(int id)
         {
             var userToken = await _repo.GetUserTokenAsync(id);
@@ -28,14 +28,36 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData("api-key")]
-        [InlineData("api-key-jbro")]
+        [MemberData(nameof(UsersIdApiKey))]
+        public async Task GetUserAsync_By_Id_ApiKey(int id, string apiKey)
+        {
+            var user = await _repo.GetUserAsync(id, apiKey);
+
+            Assert.NotNull(user);
+            Assert.NotNull(user.FirstName);
+            Assert.NotNull(user.LastName);
+            Assert.NotNull(user.PrimaryApiKey);
+            Assert.NotNull(user.SecondaryApiKey);
+        }
+
+        [Theory]
+        [MemberData(nameof(UsersApiKey))]
         public async Task GetUserAsync_By_ApiKey(string apiKey)
         {
             var user = await _repo.GetUserAsync(apiKey);
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
+        }
+
+        [Theory]
+        [MemberData(nameof(UsersApiKey))]
+        public async Task GetUserAsPublicKeyId_By_ApiKey(string apiKey)
+        {
+            var user = await _repo.GetUserAsPublicKeyId(apiKey);
+
+            Assert.NotEqual(0, user.Id);
+            Assert.NotEqual(Guid.Empty, user.PublicKey);
         }
 
         [Fact]
@@ -69,8 +91,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
+        [MemberData(nameof(UsersId))]
         public async Task GenerateToken_With_Valid_User(int id)
         {
             var user = await _repo.GetUserAsync(id);
@@ -79,6 +100,38 @@ namespace aiof.auth.tests
 
             Assert.NotNull(token);
             Assert.True(token.Length > 10);
+        }
+
+
+
+        public static IEnumerable<object[]> UsersId()
+        {
+            var _fake = Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
+
+            return _fake.GetFakeUsersData(
+                id: true,
+                apiKey: false
+            );
+        }
+
+        public static IEnumerable<object[]> UsersApiKey()
+        {
+            var _fake = Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
+
+            return _fake.GetFakeUsersData(
+                id: false,
+                apiKey: true
+            );
+        }
+
+        public static IEnumerable<object[]> UsersIdApiKey()
+        {
+            var _fake = Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
+
+            return _fake.GetFakeUsersData(
+                id: true,
+                apiKey: true
+            );
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace aiof.auth.data
@@ -49,6 +50,36 @@ namespace aiof.auth.data
                     Password = "notpass"
                 }
             };
+        }
+
+        public IEnumerable<object[]> GetFakeUsersData(
+            bool id = true,
+            bool apiKey = true
+        )
+        {
+            var fakeUsers = GetFakeUsers()
+                .ToArray();
+
+            if (id && !apiKey)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].Id },
+                    new object[] { fakeUsers[1].Id }
+                };
+            else if (!id && apiKey)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].PrimaryApiKey },
+                    new object[] { fakeUsers[1].PrimaryApiKey }
+                };
+            else if (id && apiKey)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].Id, fakeUsers[0].PrimaryApiKey },
+                    new object[] { fakeUsers[1].Id, fakeUsers[1].PrimaryApiKey }
+                };
+            else
+                return null;
         }
     }
 }
