@@ -88,7 +88,7 @@ namespace aiof.auth.services
             return user;
         }
 
-        private string GenerateJwtToken(IUser user)
+        public string GenerateJwtToken(IUser user)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));

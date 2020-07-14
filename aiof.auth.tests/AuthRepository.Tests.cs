@@ -17,15 +17,6 @@ namespace aiof.auth.tests
             _repo = Helper.GetRequiredService<IAuthRepository>() ?? throw new ArgumentNullException(nameof(IAuthRepository));
         }
 
-        [Fact]
-        public void GenerateApiKey()
-        {
-            var apiKey = _repo.GenerateApiKey();
-
-            Assert.NotNull(apiKey);
-            Assert.True(apiKey.Length > 30);
-        }
-
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
@@ -66,6 +57,28 @@ namespace aiof.auth.tests
             Assert.NotNull(user.LastName);
             Assert.NotNull(user.PrimaryApiKey);
             Assert.NotNull(user.SecondaryApiKey);
+        }
+
+        [Fact]
+        public void GenerateApiKey()
+        {
+            var apiKey = _repo.GenerateApiKey();
+
+            Assert.NotNull(apiKey);
+            Assert.True(apiKey.Length > 30);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        public async Task GenerateToken_With_Valid_User(int id)
+        {
+            var user = await _repo.GetUserAsync(id);
+
+            var token = _repo.GenerateJwtToken(user);
+
+            Assert.NotNull(token);
+            Assert.True(token.Length > 10);
         }
     }
 }

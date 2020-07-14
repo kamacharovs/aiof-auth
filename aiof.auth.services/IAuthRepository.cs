@@ -12,6 +12,7 @@ namespace aiof.auth.services
         Task<IUser> GetUserAsync(int id, string apiKey);
         Task<string> GetUserTokenAsync(int id);
         Task<IUser> AddUserAsync(UserDto userDto);
+        string GenerateJwtToken(IUser user);
         string GenerateApiKey();
     }
 }
