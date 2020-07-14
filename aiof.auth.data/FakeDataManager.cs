@@ -121,12 +121,17 @@ namespace aiof.auth.data
             var fakeClaims = GetFakeClaims()
                 .ToArray();
 
-            return new List<object[]>
-            {
-                new object[] { fakeClaims[0].Id, fakeClaims[0].PublicKey, fakeClaims[0].Name },
-                new object[] { fakeClaims[1].Id, fakeClaims[1].PublicKey, fakeClaims[1].Name },
-                new object[] { fakeClaims[2].Id, fakeClaims[2].PublicKey, fakeClaims[2].Name }
-            };
+            var claims = new List<object[]>();
+
+            for (int i = 0; i < fakeClaims.Count(); i++)
+                claims.Add(new object[]
+                    { 
+                        fakeClaims[i].Id,
+                        fakeClaims[i].PublicKey, 
+                        fakeClaims[i].Name 
+                    });
+            
+            return claims;
         }
     }
 }
