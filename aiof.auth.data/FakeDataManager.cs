@@ -53,31 +53,31 @@ namespace aiof.auth.data
         }
 
         public IEnumerable<object[]> GetFakeUsersData(
-            bool id = true,
-            bool apiKey = true
+            bool id = false,
+            bool apiKey = false
         )
         {
             var fakeUsers = GetFakeUsers()
                 .ToArray();
 
-            if (id && !apiKey)
-                return new List<object[]>
-                {
-                    new object[] { fakeUsers[0].Id },
-                    new object[] { fakeUsers[1].Id }
-                };
-            else if (!id && apiKey)
-                return new List<object[]>
-                {
-                    new object[] { fakeUsers[0].PrimaryApiKey },
-                    new object[] { fakeUsers[1].PrimaryApiKey }
-                };
-            else if (id && apiKey)
+            if (id && apiKey)
                 return new List<object[]>
                 {
                     new object[] { fakeUsers[0].Id, fakeUsers[0].PrimaryApiKey },
                     new object[] { fakeUsers[1].Id, fakeUsers[1].PrimaryApiKey }
                 };
+            else if (id)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].Id },
+                    new object[] { fakeUsers[1].Id }
+                };
+            else if (apiKey)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].PrimaryApiKey },
+                    new object[] { fakeUsers[1].PrimaryApiKey }
+                }; 
             else
                 return null;
         }

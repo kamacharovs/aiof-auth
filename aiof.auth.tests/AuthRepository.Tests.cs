@@ -103,32 +103,26 @@ namespace aiof.auth.tests
         }
 
 
+        static FakeDataManager _Fake
+            => Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
 
         public static IEnumerable<object[]> UsersId()
         {
-            var _fake = Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
-
-            return _fake.GetFakeUsersData(
-                id: true,
-                apiKey: false
+            return _Fake.GetFakeUsersData(
+                id: true
             );
         }
 
         public static IEnumerable<object[]> UsersApiKey()
         {
-            var _fake = Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
-
-            return _fake.GetFakeUsersData(
-                id: false,
+            return _Fake.GetFakeUsersData(
                 apiKey: true
             );
         }
 
         public static IEnumerable<object[]> UsersIdApiKey()
         {
-            var _fake = Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
-
-            return _fake.GetFakeUsersData(
+            return _Fake.GetFakeUsersData(
                 id: true,
                 apiKey: true
             );
