@@ -63,25 +63,25 @@ namespace aiof.auth.data
                 {
                     Id = 1,
                     PublicKey = Guid.NewGuid(),
-                    Name = "first_name"
+                    Name = AiofClaims.GivenName
                 },
                 new AiofClaim
                 {
                     Id = 2,
                     PublicKey = Guid.NewGuid(),
-                    Name = "last_name"
+                    Name = AiofClaims.FamilyName
                 },
                 new AiofClaim
                 {
                     Id = 3,
                     PublicKey = Guid.NewGuid(),
-                    Name = "full_name"
+                    Name = AiofClaims.Name
                 },
                 new AiofClaim
                 {
                     Id = 4,
                     PublicKey = Guid.NewGuid(),
-                    Name = "email"
+                    Name = AiofClaims.Name
                 }
             };
         }

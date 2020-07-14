@@ -127,9 +127,10 @@ namespace aiof.auth.services
             {
                 Subject = new ClaimsIdentity(new Claim[] 
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.UserData, user.Username)
+                    new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
+                    new Claim(AiofClaims.GivenName, user.FirstName),
+                    new Claim(AiofClaims.FamilyName, user.LastName),
+                    new Claim(AiofClaims.Email, user.Email)
                 }),
                 Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtExpires),
                 Issuer = _envConfig.JwtIssuer,

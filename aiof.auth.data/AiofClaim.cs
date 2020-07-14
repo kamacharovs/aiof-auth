@@ -8,4 +8,13 @@ namespace aiof.auth.data
         public Guid PublicKey { get; set; }
         public string Name { get; set; }
     }
+
+    public static class AiofClaims
+    {
+        public const string PublicKey = "public_key";
+        public const string GivenName = "given_name";
+        public const string FamilyName = "family_name";
+        public const string Name = "name";
+        public const string Email = "email";
+    }
 }
