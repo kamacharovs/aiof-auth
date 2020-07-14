@@ -76,6 +76,7 @@ namespace aiof.auth.services
             //TODO: add checks if user exists
             var user = _mapper.Map<User>(userDto);
 
+            user.PublicKey = Guid.NewGuid();
             user.PrimaryApiKey = GenerateApiKey();
             user.SecondaryApiKey = GenerateApiKey();
 
