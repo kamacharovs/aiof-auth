@@ -27,7 +27,7 @@ namespace aiof.auth.data
                 new User
                 {
                     Id = 1,
-                    PublicKey = Guid.NewGuid(),
+                    PublicKey = Guid.Parse("581f3ce6-cf2a-42a5-828f-157a2bfab763"),
                     FirstName = "Georgi",
                     LastName = "Kamacharov",
                     Email = "gkama@test.com",
@@ -39,7 +39,7 @@ namespace aiof.auth.data
                 new User
                 {
                     Id = 2,
-                    PublicKey = Guid.NewGuid(),
+                    PublicKey = Guid.Parse("8e17276c-88ac-43bd-a9e8-5fdf5381dbd5"),
                     FirstName = "Jessie",
                     LastName = "Brown",
                     Email = "jessie@test.com",
