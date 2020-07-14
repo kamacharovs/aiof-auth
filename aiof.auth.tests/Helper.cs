@@ -17,8 +17,10 @@ namespace aiof.auth.tests
         public static Dictionary<string, string> ConfigurationDict
             => new Dictionary<string, string>()
         {
-            { "Token:Ttl", "900" },
-            { "Token:Secret", "egSavDYTnYi3M5gWe3g08XQ46S0E2fdh" }
+            { "Jwt:Expires", "900" },
+            { "Jwt:Issuer", "aiof:auth" },
+            { "Jwt:Audience", "aiof:auth:audience" },
+            { "Jwt:Secret", "egSavDYTnYi3M5gWe3g08XQ46S0E2fdh" }
         };
 
         public static T GetRequiredService<T>()

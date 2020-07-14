@@ -27,6 +27,7 @@ namespace aiof.auth.data
                 new User
                 {
                     Id = 1,
+                    PublicKey = Guid.NewGuid(),
                     FirstName = "Georgi",
                     LastName = "Kamacharov",
                     Email = "gkama@test.com",
@@ -38,6 +39,7 @@ namespace aiof.auth.data
                 new User
                 {
                     Id = 2,
+                    PublicKey = Guid.NewGuid(),
                     FirstName = "Jessie",
                     LastName = "Brown",
                     Email = "jessie@test.com",
