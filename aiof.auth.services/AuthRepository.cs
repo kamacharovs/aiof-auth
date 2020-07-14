@@ -43,10 +43,24 @@ namespace aiof.auth.services
                 .AsQueryable();
         }
 
+        private IQueryable<T> GetEntityQuery<T>()
+            where T : class, IPublicKeyId
+        {
+            return _context.Set<T>()
+                .AsNoTracking()
+                .AsQueryable();
+        }
+
         public async Task<IUser> GetUserAsync(int id)
         {
             return await GetUsersQuery()
                 .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException();
+        }
+        public async Task<IUser> GetUserAsync(Guid publicKey)
+        {
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
                 ?? throw new AuthNotFoundException();
         }
         public async Task<IUser> GetUserAsync(string apiKey)
@@ -60,6 +74,20 @@ namespace aiof.auth.services
             return await GetUsersQuery()
                 .FirstOrDefaultAsync(x => x.Id == id
                     && x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey)
+                ?? throw new AuthNotFoundException();
+        }
+        public async Task<IPublicKeyId> GetUserAsPublicKeyId(string apiKey)
+        {
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey)
+                ?? throw new AuthNotFoundException();
+        }
+
+        public async Task<IPublicKeyId> GetEntityAsync<T>(int id)
+            where T : class, IPublicKeyId
+        {
+            return await GetEntityQuery<T>()
+                .FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new AuthNotFoundException();
         }
 
