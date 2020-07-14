@@ -14,7 +14,7 @@ namespace aiof.auth.services
         Task<IPublicKeyId> GetUserAsPublicKeyId(string apiKey);
         Task<IPublicKeyId> GetEntityAsync<T>(int id)
             where T : class, IPublicKeyId;
-        Task<ITokenResponse> GetUserTokenAsync(int id);
+        Task<ITokenResponse> GetUserTokenAsync(string apiKey);
         Task<IUser> AddUserAsync(UserDto userDto);
         ITokenResponse GenerateJwtToken(IUser user);
         string GenerateApiKey();

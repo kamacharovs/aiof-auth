@@ -19,10 +19,10 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(UsersId))]
-        public async Task GetUserTokenAsync_Valid(int id)
+        [MemberData(nameof(UsersApiKey))]
+        public async Task GetUserTokenAsync_Valid(string apiKey)
         {
-            var userToken = await _repo.GetUserTokenAsync(id);
+            var userToken = await _repo.GetUserTokenAsync(apiKey);
 
             Assert.NotNull(userToken);
         }

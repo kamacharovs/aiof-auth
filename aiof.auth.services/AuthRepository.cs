@@ -91,10 +91,9 @@ namespace aiof.auth.services
                 ?? throw new AuthNotFoundException();
         }
 
-        public async Task<ITokenResponse> GetUserTokenAsync(int id)
+        public async Task<ITokenResponse> GetUserTokenAsync(string apiKey)
         {
-            var user = await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var user = await GetUserAsync(apiKey);
 
             return GenerateJwtToken(user);
         }
