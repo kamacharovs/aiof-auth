@@ -79,6 +79,25 @@ namespace aiof.auth.tests
             Assert.NotNull(user.LastName);
             Assert.NotNull(user.PrimaryApiKey);
             Assert.NotNull(user.SecondaryApiKey);
+            Assert.NotNull(user.Password);
+        }
+
+        [Fact]
+        public async Task AddUserAsync_Check_Password_Hash()
+        {
+            var password = "password123";
+            var userDto = new UserDto
+            {
+                FirstName = "Test",
+                LastName = "McTest",
+                Email = "notanemail@email.com",
+                Username = "test.mctest",
+                Password = password
+            };
+
+            var user = await _repo.AddUserAsync(userDto);
+
+            Assert.True(_repo.Check(user.Password, password).Verified);
         }
 
         [Fact]
