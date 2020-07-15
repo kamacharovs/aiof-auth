@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 using AutoMapper;
@@ -136,7 +137,7 @@ namespace aiof.auth.services
             var key = Encoding.ASCII.GetBytes(_envConfig.JwtSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[] 
+                Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
                     new Claim(AiofClaims.GivenName, user.FirstName),
@@ -165,6 +166,49 @@ namespace aiof.auth.services
             using (var generator = RandomNumberGenerator.Create())
                 generator.GetBytes(key);
             return Convert.ToBase64String(key);
+        }
+
+        public string Hash(string password)
+        {
+            using (var algorithm = new Rfc2898DeriveBytes(
+                password,
+                _envConfig.HashSaltSize,
+                _envConfig.HashIterations,
+                HashAlgorithmName.SHA256))
+            {
+                var key = Convert.ToBase64String(algorithm.GetBytes(_envConfig.HashKeySize));
+                var salt = Convert.ToBase64String(algorithm.Salt);
+
+                return $"{_envConfig.HashIterations}.{salt}.{key}";
+            }
+        }
+
+        public (bool Verified, bool NeedsUpgrade) Check(string hash, string password)
+        {
+            var parts = hash.Split('.', 3);
+
+            if (parts.Length != 3)
+                throw new FormatException("Unexpected hash format. " +
+                  "Should be formatted as `{iterations}.{salt}.{hash}`");
+
+            var iterations = Convert.ToInt32(parts[0]);
+            var salt = Convert.FromBase64String(parts[1]);
+            var key = Convert.FromBase64String(parts[2]);
+
+            var needsUpgrade = iterations != _envConfig.HashIterations;
+
+            using (var algorithm = new Rfc2898DeriveBytes(
+              password,
+              salt,
+              iterations,
+              HashAlgorithmName.SHA256))
+            {
+                var keyToCheck = algorithm.GetBytes(_envConfig.HashKeySize);
+
+                var verified = keyToCheck.SequenceEqual(key);
+
+                return (verified, needsUpgrade);
+            }
         }
     }
 }

@@ -18,5 +18,7 @@ namespace aiof.auth.services
         Task<IUser> AddUserAsync(UserDto userDto);
         ITokenResponse GenerateJwtToken(IUser user);
         string GenerateApiKey();
+        string Hash(string password);
+        (bool Verified, bool NeedsUpgrade) Check(string hash, string password);
     }
 }

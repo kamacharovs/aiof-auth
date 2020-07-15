@@ -17,5 +17,9 @@ namespace aiof.auth.data
         public string JwtIssuer => _config[$"{Keys.Jwt}:{Keys.Issuer}"];
         public string JwtAudience => _config[$"{Keys.Jwt}:{Keys.Audience}"];
         public string JwtSecret => _config[$"{Keys.Jwt}:{Keys.Secret}"];
+
+        public int HashIterations => int.Parse(_config[$"{Keys.Hash}:{Keys.Iterations}"]);
+        public int HashSaltSize => int.Parse(_config[$"{Keys.Hash}:{Keys.SaltSize}"]);
+        public int HashKeySize => int.Parse(_config[$"{Keys.Hash}:{Keys.KeySize}"]);
     }
 }

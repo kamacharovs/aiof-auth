@@ -9,5 +9,10 @@ namespace aiof.auth.data
         public const string Issuer = nameof(Issuer);
         public const string Audience = nameof(Audience);
         public const string Secret = nameof(Secret);
+
+        public const string Hash = nameof(Hash);
+        public const string Iterations = nameof(Iterations);
+        public const string SaltSize = nameof(SaltSize);
+        public const string KeySize = nameof(KeySize);
     }
 }

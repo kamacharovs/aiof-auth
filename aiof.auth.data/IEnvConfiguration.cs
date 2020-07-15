@@ -8,5 +8,9 @@ namespace aiof.auth.data
         string JwtIssuer { get; }
         string JwtAudience { get; }
         string JwtSecret { get; }
+
+        int HashIterations { get; }
+        int HashSaltSize { get; }
+        int HashKeySize { get; }
     }
 }
