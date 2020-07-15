@@ -9,6 +9,12 @@ namespace aiof.auth.data
         [JsonPropertyName("api_key")]
         public string ApiKey { get; set; }
 
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
+
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+
         [JsonIgnore]
         public T Entity { get; set; }
     }
