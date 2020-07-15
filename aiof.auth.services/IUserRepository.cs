@@ -15,6 +15,7 @@ namespace aiof.auth.services
         Task<IPublicKeyId> GetEntityAsync<T>(int id)
             where T : class, IPublicKeyId;
         Task<ITokenResponse> GetUserTokenAsync(string apiKey);
+        Task<ITokenResponse> GetUserTokenAsync(string username, string password);
         Task<IUser> AddUserAsync(UserDto userDto);
         string Hash(string password);
         (bool Verified, bool NeedsUpgrade) Check(string hash, string password);

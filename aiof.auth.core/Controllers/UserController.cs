@@ -29,6 +29,13 @@ namespace aiof.auth.core.Controllers
         }
 
         [HttpPost]
+        [Route("basic/token")]
+        public async Task<IActionResult> GetTokenAsync([FromBody]BasicUserDto basicUserDto)
+        {
+            return Ok(await _repo.GetUserTokenAsync(basicUserDto.Username, basicUserDto.Password));
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddUserAsync([FromBody]UserDto userDto)
         {
             return Ok(await _repo.AddUserAsync(userDto));

@@ -87,10 +87,27 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey)
                 ?? throw new AuthNotFoundException();
         }
+        public async Task<IUser> GetUserByUsernameAsync(string username)
+        {
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.Username == username);
+        }
 
         public async Task<ITokenResponse> GetUserTokenAsync(string apiKey)
         {
-            var user = await GetUserAsync(apiKey);
+            var user = await GetUserAsync(apiKey)
+                ?? throw new AuthNotFoundException($"User with apiKey='{apiKey}' was not found.");
+
+            return _repo.GenerateJwtToken(user);
+        }
+
+        public async Task<ITokenResponse> GetUserTokenAsync(string username, string password)
+        {
+            var user = await GetUserByUsernameAsync(username)
+                ?? throw new AuthNotFoundException($"User with username='{username}' was not found.");
+
+            if (!Check(user.Password, password).Verified)
+                throw new AuthFriendlyException($"Incorrect password for User='{username}'");
 
             return _repo.GenerateJwtToken(user);
         }

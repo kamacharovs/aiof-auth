@@ -27,9 +27,6 @@ namespace aiof.auth.services
 
         public ITokenResponse GenerateJwtToken(IUser user)
         {
-            if (user == null)
-                throw new ArgumentNullException(nameof(user));
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_envConfig.JwtSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
