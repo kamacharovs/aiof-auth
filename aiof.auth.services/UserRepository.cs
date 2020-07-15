@@ -93,6 +93,20 @@ namespace aiof.auth.services
             return await GetUsersQuery()
                 .FirstOrDefaultAsync(x => x.Username == username);
         }
+        
+        public async Task<ITokenResponse> GetUserTokenAsync(ITokenRequest<User> request)
+        {
+            if (!string.IsNullOrWhiteSpace(request.ApiKey))
+                return await GetUserTokenAsync(request.ApiKey);
+
+            else if (!string.IsNullOrWhiteSpace(request.Username)
+                && !string.IsNullOrWhiteSpace(request.Password))
+                return await GetUserTokenAsync(request.Username, request.Password);
+
+            else
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    "Incorrect Token request.");
+        }
 
         public async Task<ITokenResponse> GetUserTokenAsync(string apiKey)
         {

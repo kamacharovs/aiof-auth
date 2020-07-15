@@ -26,10 +26,4 @@ namespace aiof.auth.data
         public string Username { get; set; }
         public string Password { get; set; }
     }
-
-    public class BasicUserDto
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
 }
