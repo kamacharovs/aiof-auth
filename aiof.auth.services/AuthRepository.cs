@@ -114,9 +114,9 @@ namespace aiof.auth.services
 
             var user = _mapper.Map<User>(userDto);
 
-            user.PublicKey = Guid.NewGuid();
             user.PrimaryApiKey = GenerateApiKey();
             user.SecondaryApiKey = GenerateApiKey();
+            user.Password = Hash(userDto.Password);
 
             await _context.Users
                 .AddAsync(user);

@@ -21,7 +21,10 @@ namespace aiof.auth.tests
             { "Jwt:Expires", "900" },
             { "Jwt:Issuer", "aiof:auth" },
             { "Jwt:Audience", "aiof:auth:audience" },
-            { "Jwt:Secret", "egSavDYTnYi3M5gWe3g08XQ46S0E2fdh" }
+            { "Jwt:Secret", "egSavDYTnYi3M5gWe3g08XQ46S0E2fdh" },
+            { "Hash:Iterations", "10000" },
+            { "Hash:SaltSize", "16" },
+            { "Hash:KeySize", "32" }
         };
 
         public static T GetRequiredService<T>()
