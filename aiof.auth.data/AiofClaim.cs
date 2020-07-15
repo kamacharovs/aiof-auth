@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace aiof.auth.data
 {
@@ -16,5 +17,15 @@ namespace aiof.auth.data
         public const string FamilyName = "family_name";
         public const string Name = "name";
         public const string Email = "email";
+
+        public static IEnumerable<string> All
+            => new List<string>
+            {
+                PublicKey,
+                GivenName,
+                FamilyName,
+                Name,
+                Email
+            };
     }
 }
