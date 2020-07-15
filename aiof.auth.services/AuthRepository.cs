@@ -109,8 +109,7 @@ namespace aiof.auth.services
             var validation = _userDtoValidator.Validate(userDto);
 
             if (!validation.IsValid)
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    validation.Errors);
+                throw new AuthValidationException(validation.Errors);
 
             var user = _mapper.Map<User>(userDto);
 

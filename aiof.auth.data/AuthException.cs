@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Text.Json;
-
-using FluentValidation.Results;
 
 namespace aiof.auth.data
 {
@@ -12,7 +8,6 @@ namespace aiof.auth.data
     {
         public int StatusCode { get; set; }
         public string ContentType { get; set; }
-        public IList<ValidationFailure> Failures { get; set; }
 
         protected AuthException()
         { }
@@ -38,16 +33,15 @@ namespace aiof.auth.data
             StatusCode = statusCode;
         }
 
-        protected AuthException(HttpStatusCode statusCode, string message)
-            : base(message)
+        protected AuthException(HttpStatusCode statusCode)
         {
             StatusCode = (int)statusCode;
         }
 
-        protected AuthException(HttpStatusCode statusCode, IList<ValidationFailure> failures)
+        protected AuthException(HttpStatusCode statusCode, string message)
+            : base(message)
         {
             StatusCode = (int)statusCode;
-            Failures = failures;
         }
 
         protected AuthException(int statusCode, Exception inner)

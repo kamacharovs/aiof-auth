@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -11,6 +12,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
+
+using FluentValidation.Results;
 
 using aiof.auth.data;
 
@@ -59,7 +62,7 @@ namespace aiof.auth.core
         {
             var canViewSensitiveInfo = _env
                 .IsDevelopment();
-
+            
             var problem = new ProblemDetails()
             {
                 Title = canViewSensitiveInfo
@@ -74,9 +77,15 @@ namespace aiof.auth.core
             if (e is AuthException ae)
             {
                 problem.Status = ae.StatusCode;
-                problem.Title = ae.Failures != null
-                    ? string.Join("\n", ae.Failures)
-                    : problem.Title;
+        
+                if (e is AuthValidationException ave)
+                    problem = new AuthProblemDetails
+                    {
+                        Title = problem.Title,
+                        Detail = problem.Detail,
+                        Instance = problem.Instance,
+                        Errors = ave.Errors
+                    };
             }
             else
                 problem.Status = StatusCodes.Status500InternalServerError;
@@ -90,6 +99,11 @@ namespace aiof.auth.core
             await httpContext.Response
                 .WriteAsync(problemjson);
         }
+    }
+
+    public class AuthProblemDetails : ProblemDetails
+    {
+        public IEnumerable<string> Errors { get; set; }
     }
 
     public static partial class HttpStatusCodeExceptionMiddlewareExtensions

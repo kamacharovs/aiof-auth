@@ -9,7 +9,7 @@ namespace aiof.auth.data
         [JsonPropertyName("api_key")]
         public string ApiKey { get; set; }
 
-        [JsonIgnoreAttribute]
+        [JsonIgnore]
         public T Entity { get; set; }
     }
 }
