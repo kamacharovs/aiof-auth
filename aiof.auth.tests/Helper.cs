@@ -65,5 +65,32 @@ namespace aiof.auth.tests
 
             return services.BuildServiceProvider();
         }
+
+        #region TestData
+        static FakeDataManager _Fake
+            => Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
+
+        public static IEnumerable<object[]> UsersId()
+        {
+            return _Fake.GetFakeUsersData(
+                id: true
+            );
+        }
+
+        public static IEnumerable<object[]> UsersApiKey()
+        {
+            return _Fake.GetFakeUsersData(
+                apiKey: true
+            );
+        }
+
+        public static IEnumerable<object[]> UsersIdApiKey()
+        {
+            return _Fake.GetFakeUsersData(
+                id: true,
+                apiKey: true
+            );
+        }
+        #endregion
     }
 }

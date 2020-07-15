@@ -9,27 +9,17 @@ using aiof.auth.services;
 
 namespace aiof.auth.tests
 {
-    public class AuthRepositoryTests
+    public class UserRepositoryTests
     {
         private readonly IUserRepository _repo;
 
-        public AuthRepositoryTests()
+        public UserRepositoryTests()
         {
             _repo = Helper.GetRequiredService<IUserRepository>() ?? throw new ArgumentNullException(nameof(IUserRepository));
         }
 
-/*
         [Theory]
-        [MemberData(nameof(UsersApiKey))]
-        public async Task GetUserTokenAsync_Valid(string apiKey)
-        {
-            var userToken = await _repo.GetUserTokenAsync(apiKey);
-
-            Assert.NotNull(userToken);
-        }*/
-
-        [Theory]
-        [MemberData(nameof(UsersIdApiKey))]
+        [MemberData(nameof(Helper.UsersIdApiKey), MemberType=typeof(Helper))]
         public async Task GetUserAsync_By_Id_ApiKey(int id, string apiKey)
         {
             var user = await _repo.GetUserAsync(id, apiKey);
@@ -42,7 +32,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(UsersApiKey))]
+        [MemberData(nameof(Helper.UsersApiKey), MemberType=typeof(Helper))]
         public async Task GetUserAsync_By_ApiKey(string apiKey)
         {
             var user = await _repo.GetUserAsync(apiKey);
@@ -52,7 +42,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(UsersApiKey))]
+        [MemberData(nameof(Helper.UsersApiKey), MemberType=typeof(Helper))]
         public async Task GetUserAsPublicKeyId_By_ApiKey(string apiKey)
         {
             var user = await _repo.GetUserAsPublicKeyId(apiKey);
@@ -108,45 +98,6 @@ namespace aiof.auth.tests
 
             Assert.NotNull(apiKey);
             Assert.True(apiKey.Length > 30);
-        }
-
-/*
-        [Theory]
-        [MemberData(nameof(UsersId))]
-        public async Task GenerateToken_With_Valid_User(int id)
-        {
-            var user = await _repo.GetUserAsync(id);
-
-            var token = _repo.GenerateJwtToken(user);
-
-            Assert.NotNull(token);
-            Assert.True(token.AccessToken.Length > 10);
-        }*/
-
-
-        static FakeDataManager _Fake
-            => Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
-
-        public static IEnumerable<object[]> UsersId()
-        {
-            return _Fake.GetFakeUsersData(
-                id: true
-            );
-        }
-
-        public static IEnumerable<object[]> UsersApiKey()
-        {
-            return _Fake.GetFakeUsersData(
-                apiKey: true
-            );
-        }
-
-        public static IEnumerable<object[]> UsersIdApiKey()
-        {
-            return _Fake.GetFakeUsersData(
-                id: true,
-                apiKey: true
-            );
         }
     }
 }
