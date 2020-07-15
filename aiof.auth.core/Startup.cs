@@ -42,6 +42,7 @@ namespace aiof.auth.core
             services.AddAutoMapper(typeof(AutoMappingProfile).Assembly);
             
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
+            services.AddScoped<AbstractValidator<User>, UserValidator>();
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));

@@ -4,19 +4,11 @@ using FluentValidation;
 
 namespace aiof.auth.data
 {
-    public class UserValidator : AbstractValidator<User>
+    public class UserDtoValidator : AbstractValidator<UserDto>
     {
-        public UserValidator()
+        public UserDtoValidator()
         {
             ValidatorOptions.Global.CascadeMode = CascadeMode.StopOnFirstFailure;
-
-            RuleFor(x => x.Id)
-                .NotNull()
-                .NotEmpty();
-
-            RuleFor(x => x.PublicKey)
-                .NotNull()
-                .NotEmpty();
 
             RuleFor(x => x.FirstName)
                 .NotNull()
@@ -36,14 +28,6 @@ namespace aiof.auth.data
                 .NotEmpty();
 
             RuleFor(x => x.Password)
-                .NotNull()
-                .NotEmpty();
-
-            RuleFor(x => x.PrimaryApiKey)
-                .NotNull()
-                .NotEmpty();
-
-            RuleFor(x => x.SecondaryApiKey)
                 .NotNull()
                 .NotEmpty();
         }
