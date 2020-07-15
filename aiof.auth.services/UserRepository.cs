@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -107,7 +108,8 @@ namespace aiof.auth.services
                 ?? throw new AuthNotFoundException($"User with username='{username}' was not found.");
 
             if (!Check(user.Password, password).Verified)
-                throw new AuthFriendlyException($"Incorrect password for User='{username}'");
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Incorrect password for User='{username}'");
 
             return _repo.GenerateJwtToken(user);
         }

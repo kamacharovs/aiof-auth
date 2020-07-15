@@ -38,7 +38,7 @@ namespace aiof.auth.data
                     Username = "gkama",
                     PrimaryApiKey = "api-key",
                     SecondaryApiKey = "api-key-2",
-                    Password = "pass1234"
+                    Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=" //pass1234
                 },
                 new User
                 {
@@ -50,7 +50,7 @@ namespace aiof.auth.data
                     Username = "jbro",
                     PrimaryApiKey = "api-key-jbro",
                     SecondaryApiKey = "api-key-jbro-2",
-                    Password = "notpass"
+                    Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
                 }
             };
         }
