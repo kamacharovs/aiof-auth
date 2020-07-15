@@ -91,13 +91,13 @@ namespace aiof.auth.tests
             Assert.True(_repo.Check(user.Password, password).Verified);
         }
 
-        [Fact]
-        public void GenerateApiKey()
+        [Theory]
+        [MemberData(nameof(Helper.UsersApiKey), MemberType=typeof(Helper))]
+        public async Task GetUserTokenAsync_Valid(string apiKey)
         {
-            var apiKey = _repo.GenerateApiKey();
+            var userToken = await _repo.GetUserTokenAsync(apiKey);
 
-            Assert.NotNull(apiKey);
-            Assert.True(apiKey.Length > 30);
+            Assert.NotNull(userToken);
         }
     }
 }

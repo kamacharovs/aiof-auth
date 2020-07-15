@@ -1,18 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Net;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 using AutoMapper;
 using FluentValidation;
@@ -24,6 +16,7 @@ namespace aiof.auth.services
     public class UserRepository : IUserRepository
     {
         private readonly ILogger<AuthRepository> _logger;
+        private readonly IAuthRepository _repo;
         private readonly IEnvConfiguration _envConfig;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
@@ -32,6 +25,7 @@ namespace aiof.auth.services
 
         public UserRepository(
             ILogger<AuthRepository> logger,
+            IAuthRepository repo,
             IEnvConfiguration envConfig,
             IMapper mapper,
             AuthContext context,
@@ -39,6 +33,7 @@ namespace aiof.auth.services
             AbstractValidator<User> userValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -93,6 +88,13 @@ namespace aiof.auth.services
                 ?? throw new AuthNotFoundException();
         }
 
+        public async Task<ITokenResponse> GetUserTokenAsync(string apiKey)
+        {
+            var user = await GetUserAsync(apiKey);
+
+            return _repo.GenerateJwtToken(user);
+        }
+
         public async Task<IPublicKeyId> GetEntityAsync<T>(int id)
             where T : class, IPublicKeyId
         {
@@ -110,8 +112,8 @@ namespace aiof.auth.services
 
             var user = _mapper.Map<User>(userDto);
 
-            user.PrimaryApiKey = GenerateApiKey();
-            user.SecondaryApiKey = GenerateApiKey();
+            user.PrimaryApiKey = _repo.GenerateApiKey();
+            user.SecondaryApiKey = _repo.GenerateApiKey();
             user.Password = Hash(userDto.Password);
 
             await _context.Users
@@ -123,15 +125,7 @@ namespace aiof.auth.services
 
             return user;
         }
-
-        public string GenerateApiKey()
-        {
-            var key = new byte[32];
-            using (var generator = RandomNumberGenerator.Create())
-                generator.GetBytes(key);
-            return Convert.ToBase64String(key);
-        }
-
+        
         public string Hash(string password)
         {
             using (var algorithm = new Rfc2898DeriveBytes(
@@ -168,7 +162,6 @@ namespace aiof.auth.services
               HashAlgorithmName.SHA256))
             {
                 var keyToCheck = algorithm.GetBytes(_envConfig.HashKeySize);
-
                 var verified = keyToCheck.SequenceEqual(key);
 
                 return (verified, needsUpgrade);

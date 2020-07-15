@@ -7,7 +7,7 @@ namespace aiof.auth.services
 {
     public interface IAuthRepository
     {
-        Task<ITokenResponse> GetUserTokenAsync(string apiKey);
         ITokenResponse GenerateJwtToken(IUser user);
+        string GenerateApiKey();
     }
 }

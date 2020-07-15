@@ -21,15 +21,6 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersApiKey), MemberType=typeof(Helper))]
-        public async Task GetUserTokenAsync_Valid(string apiKey)
-        {
-            var userToken = await _repo.GetUserTokenAsync(apiKey);
-
-            Assert.NotNull(userToken);
-        }
-
-        [Theory]
         [MemberData(nameof(Helper.UsersId), MemberType=typeof(Helper))]
         public async Task GenerateToken_With_Valid_User(int id)
         {
@@ -39,6 +30,15 @@ namespace aiof.auth.tests
 
             Assert.NotNull(token);
             Assert.True(token.AccessToken.Length > 10);
+        }
+
+        [Fact]
+        public void GenerateApiKey()
+        {
+            var apiKey = _repo.GenerateApiKey();
+
+            Assert.NotNull(apiKey);
+            Assert.True(apiKey.Length > 30);
         }
     }
 }

@@ -20,12 +20,5 @@ namespace aiof.auth.core.Controllers
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
-
-        [HttpPost]
-        [Route("token")]
-        public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest<User> tokenRequest)
-        {
-            return Ok(await _repo.GetUserTokenAsync(tokenRequest.ApiKey));
-        }
     }
 }
