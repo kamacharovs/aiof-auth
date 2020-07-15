@@ -49,6 +49,7 @@ namespace aiof.auth.tests
                 return configurationBuilder.Build();
             });
 
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<FakeDataManager>();
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
@@ -56,6 +57,7 @@ namespace aiof.auth.tests
             services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
 
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
+            services.AddScoped<AbstractValidator<User>, UserValidator>();
 
             services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
