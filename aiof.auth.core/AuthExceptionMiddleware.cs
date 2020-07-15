@@ -26,6 +26,7 @@ namespace aiof.auth.core
         private readonly IWebHostEnvironment _env;
 
         private const string _defaultMessage = "An unexpected error has occurred.";
+        private const string _defaultValidationMessage = "A validation error has occurred. Please see details.";
 
         public AuthExceptionMiddleware(RequestDelegate next, ILogger<AuthExceptionMiddleware> logger, IWebHostEnvironment env)
         {
@@ -79,13 +80,10 @@ namespace aiof.auth.core
                 problem.Status = ae.StatusCode;
         
                 if (e is AuthValidationException ave)
-                    problem = new AuthProblemDetails
-                    {
-                        Title = problem.Title,
-                        Detail = problem.Detail,
-                        Instance = problem.Instance,
-                        Errors = ave.Errors
-                    };
+                {
+                    problem.Title = _defaultValidationMessage;
+                    problem.Detail = string.Join(' ', ave.Errors);
+                }
             }
             else
                 problem.Status = StatusCodes.Status500InternalServerError;
@@ -103,6 +101,10 @@ namespace aiof.auth.core
 
     public class AuthProblemDetails : ProblemDetails
     {
+        public AuthProblemDetails()
+            : base() 
+        { }
+
         public IEnumerable<string> Errors { get; set; }
     }
 
