@@ -9,5 +9,6 @@ namespace aiof.auth.data
         string Username { get; set; }
         string Password { get; set; }
         T Entity { get; set; }
+        string EntityType { get; }
     }
 }

@@ -17,5 +17,8 @@ namespace aiof.auth.data
 
         [JsonIgnore]
         public T Entity { get; set; }
+
+        [JsonIgnore]
+        public string EntityType => typeof(T).Name;
     }
 }
