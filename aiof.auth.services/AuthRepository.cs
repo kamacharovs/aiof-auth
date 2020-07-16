@@ -17,18 +17,27 @@ namespace aiof.auth.services
         private readonly ILogger<AuthRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
 
+        private readonly string _key;
+        private readonly string  _issuer;
+        private readonly string _audience;
+
+
         public AuthRepository(
             ILogger<AuthRepository> logger,
             IEnvConfiguration envConfig)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
+
+            _key = _envConfig.JwtSecret ?? throw new ArgumentNullException(nameof(_envConfig.JwtSecret));
+            _issuer = _envConfig.JwtIssuer ?? throw new ArgumentNullException(nameof(_envConfig.JwtIssuer));
+            _audience = _envConfig.JwtAudience ?? throw new ArgumentNullException(nameof(_envConfig.JwtAudience));
         }
 
         public ITokenResponse GenerateJwtToken(IUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_envConfig.JwtSecret);
+            var key = Encoding.ASCII.GetBytes(_key);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -39,8 +48,8 @@ namespace aiof.auth.services
                     new Claim(AiofClaims.Email, user.Email)
                 }),
                 Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtExpires),
-                Issuer = _envConfig.JwtIssuer,
-                Audience = _envConfig.JwtAudience,
+                Issuer = _issuer,
+                Audience = _audience,
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature)
@@ -53,6 +62,31 @@ namespace aiof.auth.services
             {
                 ExpiresIn = _envConfig.JwtExpires,
                 AccessToken = tokenHandler.WriteToken(token)
+            };
+        }
+
+        public ITokenResult ValidateToken(string token)
+        {
+            var key = Encoding.ASCII.GetBytes(_key);
+            var tokenParams = new TokenValidationParameters
+            {
+                RequireSignedTokens = true,
+                ValidAudience = _audience,
+                ValidateAudience = true,
+                ValidIssuer = _issuer,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key)
+            };
+
+            var handler = new JwtSecurityTokenHandler();
+            var result = handler.ValidateToken(token, tokenParams, out var securityToken);
+
+            return new TokenResult 
+            { 
+                Principal = result, 
+                Status = TokenResultStatus.Valid
             };
         }
 
