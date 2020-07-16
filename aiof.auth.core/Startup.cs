@@ -72,8 +72,6 @@ namespace aiof.auth.core
             app.UseAuthExceptionMiddleware();
             app.UseHealthChecks("/health");
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(e =>
