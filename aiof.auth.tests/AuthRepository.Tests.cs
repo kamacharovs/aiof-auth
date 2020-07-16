@@ -32,6 +32,19 @@ namespace aiof.auth.tests
             Assert.True(token.AccessToken.Length > 10);
         }
 
+        [Theory]
+        [MemberData(nameof(Helper.UsersId), MemberType=typeof(Helper))]
+        public async Task ValidateToken_With_Valid_User(int id)
+        {
+            var user = await _userRepo.GetUserAsync(id);
+
+            var token = _repo.GenerateJwtToken(user);
+            var tokenValidation = _repo.ValidateToken(token.AccessToken);
+
+            Assert.NotNull(tokenValidation);
+            Assert.True(tokenValidation.Principal.Identity.IsAuthenticated);
+        }
+
         [Fact]
         public void GenerateApiKey()
         {
