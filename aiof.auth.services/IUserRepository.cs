@@ -18,6 +18,10 @@ namespace aiof.auth.services
         Task<ITokenResponse> GetUserTokenAsync(string apiKey);
         Task<ITokenResponse> GetUserTokenAsync(string username, string password);
         Task<IUser> AddUserAsync(UserDto userDto);
+        Task<IUser> UpdateUserPasswordAsync(
+            string username, 
+            string oldPassword, 
+            string newPassword);
         string Hash(string password);
         (bool Verified, bool NeedsUpgrade) Check(string hash, string password);
     }

@@ -90,7 +90,7 @@ namespace aiof.auth.services
         }
         public async Task<IUser> GetUserByUsernameAsync(string username)
         {
-            return await GetUsersQuery()
+            return await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == username);
         }
         
@@ -155,6 +155,25 @@ namespace aiof.auth.services
             await _context.SaveChangesAsync();
 
             _logger.LogInformation($"Created User with Id='{user.Id}' and PublicKey='{user.PublicKey}'");
+
+            return user;
+        }
+
+        public async Task<IUser> UpdateUserPasswordAsync(
+            string username, 
+            string oldPassword, 
+            string newPassword)
+        {
+            var user = await GetUserByUsernameAsync(username)
+                ?? throw new AuthNotFoundException($"User with username='{username}' was not found.");
+
+            if (!Check(user.Password, oldPassword).Verified)
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Incorrect password for User='{username}'");
+
+            user.Password = Hash(newPassword);
+
+            await _context.SaveChangesAsync();
 
             return user;
         }
