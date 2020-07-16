@@ -51,6 +51,24 @@ namespace aiof.auth.tests
             Assert.NotEqual(Guid.Empty, user.PublicKey);
         }
 
+        [Theory]
+        [InlineData(333)]
+        [InlineData(555)]
+        [InlineData(999)]
+        public async Task GetUserAsync_By_Id_NotFound(int id)
+        {
+            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetUserAsync(id));
+        }
+
+        [Theory]
+        [InlineData("maybeanapikey")]
+        [InlineData("notanapikey")]
+        [InlineData("")]
+        public async Task GetUserAsync_By_ApiKey_NotFound(string apiKey)
+        {
+            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetUserAsync(apiKey));
+        }
+
         [Fact]
         public async Task AddUserAsync_Valid()
         {
