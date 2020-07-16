@@ -9,6 +9,7 @@ namespace aiof.auth.services
     {
         ITokenResponse GenerateJwtToken(IUser user);
         ITokenResult ValidateToken(string token);
+        bool IsAuthenticated(string token);
         string GenerateApiKey();
     }
 }

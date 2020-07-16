@@ -89,6 +89,13 @@ namespace aiof.auth.services
                 Status = TokenResultStatus.Valid
             };
         }
+        public bool IsAuthenticated(string token)
+        {
+            return ValidateToken(token)
+                .Principal
+                .Identity
+                .IsAuthenticated;
+        }
 
         public string GenerateApiKey()
         {
