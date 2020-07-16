@@ -18,7 +18,7 @@ namespace aiof.auth.services
         private readonly IEnvConfiguration _envConfig;
 
         private readonly string _key;
-        private readonly string  _issuer;
+        private readonly string _issuer;
         private readonly string _audience;
 
 
@@ -67,27 +67,37 @@ namespace aiof.auth.services
 
         public ITokenResult ValidateToken(string token)
         {
-            var key = Encoding.ASCII.GetBytes(_key);
-            var tokenParams = new TokenValidationParameters
+            try
             {
-                RequireSignedTokens = true,
-                ValidAudience = _audience,
-                ValidateAudience = true,
-                ValidIssuer = _issuer,
-                ValidateIssuer = true,
-                ValidateIssuerSigningKey = true,
-                ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            };
+                var key = Encoding.ASCII.GetBytes(_key);
+                var tokenParams = new TokenValidationParameters
+                {
+                    RequireSignedTokens = true,
+                    ValidAudience = _audience,
+                    ValidateAudience = true,
+                    ValidIssuer = _issuer,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
 
-            var handler = new JwtSecurityTokenHandler();
-            var result = handler.ValidateToken(token, tokenParams, out var securityToken);
+                var handler = new JwtSecurityTokenHandler();
+                var result = handler.ValidateToken(token, tokenParams, out var securityToken);
 
-            return new TokenResult 
-            { 
-                Principal = result, 
-                Status = TokenResultStatus.Valid
-            };
+                return new TokenResult
+                {
+                    Principal = result,
+                    Status = TokenResultStatus.Valid
+                };
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                return new TokenResult
+                {
+                    Status = TokenResultStatus.Expired
+                };
+            }
         }
         public bool IsAuthenticated(string token)
         {

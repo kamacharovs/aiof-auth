@@ -99,6 +99,9 @@ namespace aiof.auth.tests
                 password: true
             );
         }
+
+        public static string ExpiredJwtToken =>
+            _Fake.ExpiredJwtToken;
         #endregion
     }
 }

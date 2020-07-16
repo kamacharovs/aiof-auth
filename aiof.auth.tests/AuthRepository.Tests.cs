@@ -46,6 +46,14 @@ namespace aiof.auth.tests
         }
 
         [Fact]
+        public void ValidateToken_Expired()
+        {
+            var validation = _repo.ValidateToken(Helper.ExpiredJwtToken);
+
+            Assert.Equal(TokenResultStatus.Expired, validation.Status);
+        }
+
+        [Fact]
         public void GenerateApiKey()
         {
             var apiKey = _repo.GenerateApiKey();
