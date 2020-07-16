@@ -99,5 +99,19 @@ namespace aiof.auth.tests
 
             Assert.NotNull(userToken);
         }
+
+        [Theory]
+        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType=typeof(Helper))]
+        public async Task UpdateUserPasswordAsync_Is_Successful(string username, string password)
+        {
+            var newPassword = "newpassword123";
+
+            var user = await _repo.UpdateUserPasswordAsync(
+                username,
+                password, 
+                newPassword);
+
+            Assert.True(_repo.Check(user.Password, newPassword).Verified);
+        }
     }
 }

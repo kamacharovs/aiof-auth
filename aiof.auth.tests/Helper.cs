@@ -91,6 +91,14 @@ namespace aiof.auth.tests
                 apiKey: true
             );
         }
+
+        public static IEnumerable<object[]> UsersUsernamePassword()
+        {
+            return _Fake.GetFakeUsersData(
+                username: true,
+                password: true
+            );
+        }
         #endregion
     }
 }

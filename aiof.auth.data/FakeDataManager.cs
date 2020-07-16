@@ -84,7 +84,9 @@ namespace aiof.auth.data
 
         public IEnumerable<object[]> GetFakeUsersData(
             bool id = false,
-            bool apiKey = false
+            bool apiKey = false,
+            bool username = false,
+            bool password = false
         )
         {
             var fakeUsers = GetFakeUsers()
@@ -95,6 +97,12 @@ namespace aiof.auth.data
                 {
                     new object[] { fakeUsers[0].Id, fakeUsers[0].PrimaryApiKey },
                     new object[] { fakeUsers[1].Id, fakeUsers[1].PrimaryApiKey }
+                };
+            else if (username && password)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].Username, "pass1234" },
+                    new object[] { fakeUsers[1].Username, "password123" }
                 };
             else if (id)
                 return new List<object[]>
