@@ -7,6 +7,7 @@ namespace aiof.auth.data
     public class AuthContext : DbContext
     {
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<AiofClaim> Claims { get; set; }
 
         public AuthContext(DbContextOptions<AuthContext> options)
@@ -35,6 +36,25 @@ namespace aiof.auth.data
                 e.Property(x => x.SecondaryApiKey).HasColumnName("secondary_api_key").HasMaxLength(100);
             });
 
+            modelBuilder.Entity<Client>(e =>
+            {
+                e.ToTable("client");
+
+                e.HasKey(x => x.Id);
+
+                e.HasIndex(x => x.Slug)
+                    .IsUnique();
+
+                e.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd().IsRequired();
+                e.Property(x => x.PublicKey).HasColumnName("public_key").IsRequired();
+                e.Property(x => x.Name).HasColumnName("name").HasMaxLength(200).IsRequired();
+                e.Property(x => x.Slug).HasColumnName("slug").HasMaxLength(50).IsRequired();
+                e.Property(x => x.Enabled).HasColumnName("enabled").IsRequired();
+                e.Property(x => x.PrimaryApiKey).HasColumnName("primary_api_key").HasMaxLength(100);
+                e.Property(x => x.SecondaryApiKey).HasColumnName("secondary_api_key").HasMaxLength(100);
+                e.Property(x => x.Created).HasColumnType("date").IsRequired();
+            });
+
             modelBuilder.Entity<AiofClaim>(e =>
             {
                 e.ToTable("claim");
@@ -49,7 +69,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Name).HasColumnName("name").HasMaxLength(200).IsRequired();
             });
 
-            //TODO: add EntityClaim where an entity (User) maps to a list of Claims
+            
         }
     }
 }
