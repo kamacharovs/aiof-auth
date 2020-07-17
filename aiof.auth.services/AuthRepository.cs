@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -36,17 +36,34 @@ namespace aiof.auth.services
 
         public ITokenResponse GenerateJwtToken(IUser user)
         {
+            return GenerateJwtToken(new Claim[]
+            {
+                new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
+                new Claim(AiofClaims.GivenName, user.FirstName),
+                new Claim(AiofClaims.FamilyName, user.LastName),
+                new Claim(AiofClaims.Email, user.Email)
+            },
+            user as IPublicKeyId);
+        }
+
+        public ITokenResponse GenerateJwtToken(IClient client)
+        {
+            return GenerateJwtToken(new Claim[]
+            {
+                new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
+                new Claim(AiofClaims.Name, client.Name),
+                new Claim(AiofClaims.Slug, client.Slug)
+            },
+            client as IPublicKeyId);
+        }
+
+        public ITokenResponse GenerateJwtToken(IEnumerable<Claim> claims, IPublicKeyId entity = null)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_key);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
-                    new Claim(AiofClaims.GivenName, user.FirstName),
-                    new Claim(AiofClaims.FamilyName, user.LastName),
-                    new Claim(AiofClaims.Email, user.Email)
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtExpires),
                 Issuer = _issuer,
                 Audience = _audience,
@@ -56,7 +73,7 @@ namespace aiof.auth.services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            _logger.LogInformation($"Created JWT for User with Id='{user.Id}' and PublicKey='{user.PublicKey}'");
+            _logger.LogInformation($"Created JWT for {entity.GetType().Name} with Id='{entity.Id}' and PublicKey='{entity.PublicKey}'");
 
             return new TokenResponse
             {
