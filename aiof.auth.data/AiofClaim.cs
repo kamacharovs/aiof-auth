@@ -17,6 +17,7 @@ namespace aiof.auth.data
         public const string FamilyName = "family_name";
         public const string Name = "name";
         public const string Email = "email";
+        public const string Slug = "slug";
 
         public static IEnumerable<string> All
             => new List<string>
@@ -25,7 +26,8 @@ namespace aiof.auth.data
                 GivenName,
                 FamilyName,
                 Name,
-                Email
+                Email,
+                Slug
             };
     }
 }
