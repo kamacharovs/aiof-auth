@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace aiof.auth.data
 {
-    public class User : IUser, IPublicKeyId
+    public class User : IUser, 
+        IPublicKeyId, IApiKey
     {
         public int Id { get; set; }
         public Guid PublicKey { get; set; } = Guid.NewGuid();
