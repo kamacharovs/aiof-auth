@@ -20,5 +20,12 @@ namespace aiof.auth.core.Controllers
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
+
+        [HttpGet]
+        [Route("claims")]
+        public IActionResult GetClaims()
+        {
+            return Ok(AiofClaims.All);
+        }
     }
 }
