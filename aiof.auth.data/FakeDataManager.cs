@@ -18,6 +18,9 @@ namespace aiof.auth.data
             _context.Users
                 .AddRange(GetFakeUsers());
 
+            _context.Clients
+                .AddRange(GetFakeClients());
+
             _context.Claims
                 .AddRange(GetFakeClaims());
 
@@ -51,6 +54,33 @@ namespace aiof.auth.data
                     PrimaryApiKey = "api-key-jbro",
                     SecondaryApiKey = "api-key-jbro-2",
                     Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
+                }
+            };
+        }
+
+        public IEnumerable<Client> GetFakeClients()
+        {
+            return new List<Client>
+            {
+                new Client
+                {
+                    Id = 1,
+                    PublicKey = Guid.Parse("306a90cc-7d55-4829-8da0-55f8f047addd"),
+                    Name = "GK Client 1",
+                    Slug = "gk-client-1",
+                    Enabled = true,
+                    PrimaryApiKey = "gk-client-1-p-key",
+                    SecondaryApiKey = "gk-client-1-s-key"
+                },
+                new Client
+                {
+                    Id = 2,
+                    PublicKey = Guid.Parse("517dd6b8-8dc1-49e0-8e4d-2759379a8bc8"),
+                    Name = "GK Client 2",
+                    Slug = "gk-client-2",
+                    Enabled = true,
+                    PrimaryApiKey = "gk-client-2-p-key",
+                    SecondaryApiKey = "gk-client-2-s-key"
                 }
             };
         }
@@ -115,6 +145,36 @@ namespace aiof.auth.data
                 {
                     new object[] { fakeUsers[0].PrimaryApiKey },
                     new object[] { fakeUsers[1].PrimaryApiKey }
+                }; 
+            else
+                return null;
+        }
+
+        public IEnumerable<object[]> GetFakeClientsData(
+            bool id = false,
+            bool apiKey = false
+        )
+        {
+            var fakeClients = GetFakeClients()
+                .ToArray();
+
+            if (id && apiKey)
+                return new List<object[]>
+                {
+                    new object[] { fakeClients[0].Id, fakeClients[0].PrimaryApiKey },
+                    new object[] { fakeClients[1].Id, fakeClients[1].PrimaryApiKey }
+                };
+            else if (id)
+                return new List<object[]>
+                {
+                    new object[] { fakeClients[0].Id },
+                    new object[] { fakeClients[1].Id }
+                };
+            else if (apiKey)
+                return new List<object[]>
+                {
+                    new object[] { fakeClients[0].PrimaryApiKey },
+                    new object[] { fakeClients[1].PrimaryApiKey }
                 }; 
             else
                 return null;
