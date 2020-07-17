@@ -68,8 +68,6 @@ namespace aiof.auth.data
                 e.Property(x => x.PublicKey).HasColumnName("public_key").IsRequired();
                 e.Property(x => x.Name).HasColumnName("name").HasMaxLength(200).IsRequired();
             });
-
-            
         }
     }
 }

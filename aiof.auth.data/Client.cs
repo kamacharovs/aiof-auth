@@ -14,4 +14,11 @@ namespace aiof.auth.data
         public string SecondaryApiKey { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
     }
+
+    public class ClientDto
+    {
+        public string Name { get; set; }
+        public string Slug { get; set; }
+        public bool Enabled { get; set; }
+    }
 }
