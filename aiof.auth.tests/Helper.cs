@@ -50,6 +50,7 @@ namespace aiof.auth.tests
             });
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<FakeDataManager>();
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();

@@ -14,11 +14,10 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public class ClientRepository
+    public class ClientRepository : IClientRepository
     {
         private readonly ILogger<ClientRepository> _logger;
         private readonly IAuthRepository _repo;
-        private readonly IEnvConfiguration _envConfig;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
         private readonly AbstractValidator<ClientDto> _clientDtoValidator;
@@ -26,19 +25,59 @@ namespace aiof.auth.services
         public ClientRepository(
             ILogger<ClientRepository> logger,
             IAuthRepository repo,
-            IEnvConfiguration envConfig,
             IMapper mapper,
             AuthContext context,
             AbstractValidator<ClientDto> clientDtoValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
-            _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
         }
 
+        private IQueryable<Client> GetClientsQuery()
+        {
+            return _context.Clients
+                .AsNoTracking()
+                .AsQueryable();
+        }
 
+        public async Task<IClient> GetClientAsync(int id)
+        {
+            return await GetClientsQuery()
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException();
+        }
+
+        public async Task<IClient> GetClientAsync(string apiKey)
+        {
+            return await GetClientsQuery()
+                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
+                    || x.SecondaryApiKey == apiKey)
+                ?? throw new AuthNotFoundException();
+        }
+
+        public async Task<IClient> AddClientAsync(ClientDto clientDto)
+        {
+            var validation = _clientDtoValidator.Validate(clientDto);
+
+            if (!validation.IsValid)
+                throw new AuthValidationException(validation.Errors);
+
+            var client = _mapper.Map<Client>(clientDto);
+
+            client.PrimaryApiKey = _repo.GenerateApiKey();
+            client.SecondaryApiKey = _repo.GenerateApiKey();
+
+            await _context.Clients
+                .AddAsync(client);
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Created Client with Id='{client.Id}' and PublicKey='{client.PublicKey}'");
+
+            return client;
+        }
     }
 }
