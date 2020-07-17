@@ -73,7 +73,8 @@ namespace aiof.auth.services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            _logger.LogInformation($"Created JWT for {entity.GetType().Name} with Id='{entity.Id}' and PublicKey='{entity.PublicKey}'");
+            if (entity != null)
+                _logger.LogInformation($"Created JWT for {entity.GetType().Name} with Id='{entity.Id}' and PublicKey='{entity.PublicKey}'");
 
             return new TokenResponse
             {
