@@ -16,7 +16,7 @@ namespace aiof.auth.services
 {
     public class UserRepository : IUserRepository
     {
-        private readonly ILogger<AuthRepository> _logger;
+        private readonly ILogger<UserRepository> _logger;
         private readonly IAuthRepository _repo;
         private readonly IEnvConfiguration _envConfig;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace aiof.auth.services
         private readonly AbstractValidator<User> _userValidator;
 
         public UserRepository(
-            ILogger<AuthRepository> logger,
+            ILogger<UserRepository> logger,
             IAuthRepository repo,
             IEnvConfiguration envConfig,
             IMapper mapper,

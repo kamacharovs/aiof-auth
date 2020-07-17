@@ -58,6 +58,7 @@ namespace aiof.auth.tests
 
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
             services.AddScoped<AbstractValidator<User>, UserValidator>();
+            services.AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>();
 
             services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
