@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Bogus;
+
 namespace aiof.auth.data
 {
     public class FakeDataManager
@@ -110,6 +112,14 @@ namespace aiof.auth.data
                     Name = AiofClaims.Email
                 }
             };
+        }
+
+        private User GetFakeUser()
+        {
+            return new Faker<User>()
+                .RuleFor(x => x.Id, f => f.Random.Int(0, 100))
+                .RuleFor(x => x.FirstName, f => f.Name.FirstName())
+                .Generate();
         }
 
         public IEnumerable<object[]> GetFakeUsersData(
