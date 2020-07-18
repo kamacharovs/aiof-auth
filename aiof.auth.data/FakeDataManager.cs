@@ -118,7 +118,9 @@ namespace aiof.auth.data
         {
             return new Faker<User>()
                 .RuleFor(x => x.Id, f => f.Random.Int(0, 100))
+                .RuleFor(x => x.PublicKey, f => Guid.NewGuid())
                 .RuleFor(x => x.FirstName, f => f.Name.FirstName())
+                .RuleFor(x => x.LastName, f => f.Name.LastName())
                 .Generate();
         }
 
