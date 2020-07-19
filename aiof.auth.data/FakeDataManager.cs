@@ -56,7 +56,8 @@ namespace aiof.auth.data
                     PrimaryApiKey = "api-key-jbro",
                     SecondaryApiKey = "api-key-jbro-2",
                     Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
-                }
+                },
+                GetRandomFakeUser()
             };
         }
 
@@ -83,7 +84,8 @@ namespace aiof.auth.data
                     Enabled = true,
                     PrimaryApiKey = "gk-client-2-p-key",
                     SecondaryApiKey = "gk-client-2-s-key"
-                }
+                },
+                GetRandomFakeClient()
             };
         }
 
@@ -114,15 +116,29 @@ namespace aiof.auth.data
             };
         }
 
-        private User GetFakeUser()
+        private User GetRandomFakeUser()
         {
             return new Faker<User>()
-                .RuleFor(x => x.Id, f => f.Random.Int(0, 100))
+                .RuleFor(x => x.Id, f => f.Random.Int(5, 20))
                 .RuleFor(x => x.PublicKey, f => Guid.NewGuid())
                 .RuleFor(x => x.FirstName, f => f.Name.FirstName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())
                 .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
                 .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
+                .RuleFor(x => x.Password, f => HashedPassword)
+                .RuleFor(x => x.PrimaryApiKey, f => f.Random.String())
+                .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
+                .Generate();
+        }
+
+        private Client GetRandomFakeClient()
+        {
+            return new Faker<Client>()
+                .RuleFor(x => x.Id, f => f.Random.Int(5, 20))
+                .RuleFor(x => x.PublicKey, f => Guid.NewGuid())
+                .RuleFor(x => x.Name, f => f.Name.FullName())
+                .RuleFor(x => x.Slug, f => f.Random.String())
+                .RuleFor(x => x.Enabled, f => true)
                 .RuleFor(x => x.PrimaryApiKey, f => f.Random.String())
                 .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
                 .Generate();
@@ -214,6 +230,7 @@ namespace aiof.auth.data
             return claims;
         }
 
+        public string HashedPassword => "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA="; //pass1234
         public string ExpiredJwtToken => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfa2V5IjoiNTgxZjNjZTYtY2YyYS00MmE1LTgyOGYtMTU3YTJiZmFiNzYzIiwiZ2l2ZW5fbmFtZSI6Ikdlb3JnaSIsImZhbWlseV9uYW1lIjoiS2FtYWNoYXJvdiIsImVtYWlsIjoiZ2thbWFAdGVzdC5jb20iLCJuYmYiOjE1OTQ4MzY5NTksImV4cCI6MTU5NDgzNzg1OCwiaWF0IjoxNTk0ODM2OTU5LCJpc3MiOiJhaW9mOmF1dGgiLCJhdWQiOiJhaW9mOmF1dGg6YXVkaWVuY2UifQ.RYiY7lr7uVb6gBHovsV4qlpHgqa7WEmq-Uhd_8F7B1o";
     }
 }
