@@ -121,6 +121,10 @@ namespace aiof.auth.data
                 .RuleFor(x => x.PublicKey, f => Guid.NewGuid())
                 .RuleFor(x => x.FirstName, f => f.Name.FirstName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())
+                .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
+                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
+                .RuleFor(x => x.PrimaryApiKey, f => f.Random.String())
+                .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
                 .Generate();
         }
 
