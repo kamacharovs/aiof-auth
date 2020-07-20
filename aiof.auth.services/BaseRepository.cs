@@ -38,10 +38,17 @@ namespace aiof.auth.services
                     .AsQueryable();
         }
 
-        public async Task<T> GetEntityAsync(int id)
+        public async Task<T> GetEntityAsync(int id, bool asNoTracking = true)
+        {
+            return await GetEntityQuery(asNoTracking)
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException();
+        }
+
+        public async Task<T> GetEntityAsync(Guid publicKey)
         {
             return await GetEntityQuery()
-                .FirstOrDefaultAsync(x => x.Id == id)
+                .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
                 ?? throw new AuthNotFoundException();
         }
 
@@ -51,6 +58,18 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
                     || x.SecondaryApiKey == apiKey)
                 ?? throw new AuthNotFoundException();
+        }
+
+        public async Task<T> RegenerateKeysAync(int id)
+        {
+            var entity = await GetEntityAsync(id, asNoTracking: false);
+
+            entity.PrimaryApiKey = _repo.GenerateApiKey();
+            entity.SecondaryApiKey = _repo.GenerateApiKey();
+
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
     }
 }
