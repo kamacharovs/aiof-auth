@@ -102,6 +102,11 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> ClientDtos()
+        {
+            return _Fake.GetFakeClientsDtoData();
+        }
+
         public static string ExpiredJwtToken =>
             _Fake.ExpiredJwtToken;
         #endregion

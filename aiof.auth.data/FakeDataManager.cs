@@ -143,6 +143,14 @@ namespace aiof.auth.data
                 .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
                 .Generate();
         }
+        private IEnumerable<ClientDto> GetRandomFakeClientDtos(int n)
+        {
+            return new Faker<ClientDto>()
+                .RuleFor(x => x.Name, f => f.Random.String())
+                .RuleFor(x => x.Slug, f => f.Internet.DomainName().ToLower())
+                .RuleFor(x => x.Enabled, f => true)
+                .Generate(n);
+        }
 
         public IEnumerable<object[]> GetFakeUsersData(
             bool id = false,
@@ -210,6 +218,19 @@ namespace aiof.auth.data
                 }; 
             else
                 return null;
+        }
+
+        public IEnumerable<object[]> GetFakeClientsDtoData()
+        {
+            var clientDtos = GetRandomFakeClientDtos(3)
+                .ToArray();
+
+            return new List<object[]>
+            {
+                new object[] { clientDtos[0].Name, clientDtos[0].Slug, clientDtos[0].Enabled },
+                new object[] { clientDtos[1].Name, clientDtos[1].Slug, clientDtos[1].Enabled },
+                new object[] { clientDtos[2].Name, clientDtos[2].Slug, clientDtos[2].Enabled }
+            };
         }
 
         public IEnumerable<object[]> GetFakeClaimsData()
