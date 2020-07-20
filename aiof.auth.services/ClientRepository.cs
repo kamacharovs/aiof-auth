@@ -35,31 +35,16 @@ namespace aiof.auth.services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
-        }
-
-        private IQueryable<Client> GetClientsQuery(bool asNoTracking = true)
-        {
-            return asNoTracking
-                ? _context.Clients
-                    .AsNoTracking()
-                    .AsQueryable()
-                : _context.Clients
-                    .AsQueryable();
-        }
+        }     
 
         public async Task<IClient> GetClientAsync(int id)
         {
-            return await GetClientsQuery()
-                .FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new AuthNotFoundException();
+            return await base.GetEntityAsync(id);
         }
 
         public async Task<IClient> GetClientAsync(string apiKey)
         {
-            return await GetClientsQuery()
-                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
-                    || x.SecondaryApiKey == apiKey)
-                ?? throw new AuthNotFoundException();
+            return await base.GetEntityAsync(apiKey);
         }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
@@ -86,9 +71,7 @@ namespace aiof.auth.services
 
         public async Task<IClient> DisableClientAsync(int id)
         {
-            var client = await GetClientsQuery(asNoTracking: false)
-                .FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new AuthNotFoundException();
+            var client = await base.GetEntityAsync(id, asNoTracking: false);
 
             client.Enabled = false;
 
