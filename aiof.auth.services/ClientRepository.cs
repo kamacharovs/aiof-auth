@@ -69,11 +69,11 @@ namespace aiof.auth.services
             return client;
         }
 
-        public async Task<IClient> DisableClientAsync(int id)
+        public async Task<IClient> EnableDisableClientAsync(int id, bool enable = true)
         {
             var client = await base.GetEntityAsync(id, asNoTracking: false);
 
-            client.Enabled = false;
+            client.Enabled = enable;
 
             await _context.SaveChangesAsync();
 

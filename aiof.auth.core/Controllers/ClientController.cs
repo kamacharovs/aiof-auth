@@ -28,6 +28,20 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetClientAsync(id));
         }
 
+        [HttpGet]
+        [Route("{id}/disable")]
+        public async Task<IActionResult> DisableClientAsync([FromRoute]int id)
+        {
+            return Ok(await _repo.EnableDisableClientAsync(id, false));
+        }
+
+        [HttpGet]
+        [Route("{id}/enable")]
+        public async Task<IActionResult> EnableClientAsync([FromRoute]int id)
+        {
+            return Ok(await _repo.EnableDisableClientAsync(id));
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddClientAsync([FromBody]ClientDto clientDto)
         {
