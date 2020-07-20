@@ -42,6 +42,13 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.EnableDisableClientAsync(id));
         }
 
+        [HttpGet]
+        [Route("{id}/regenerate/keys")]
+        public async Task<IActionResult> RegenerateKeysAsync([FromRoute]int id)
+        {
+            return Ok(await _repo.RegenerateKeysAsync(id));
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddClientAsync([FromBody]ClientDto clientDto)
         {

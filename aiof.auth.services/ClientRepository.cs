@@ -69,6 +69,11 @@ namespace aiof.auth.services
             return client;
         }
 
+        public async Task<IClient> RegenerateKeysAsync(int id)
+        {
+            return await base.RegenerateKeysAync(id);
+        }
+
         public async Task<IClient> EnableDisableClientAsync(int id, bool enable = true)
         {
             var client = await base.GetEntityAsync(id, asNoTracking: false);

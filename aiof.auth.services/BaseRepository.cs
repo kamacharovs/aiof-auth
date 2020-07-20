@@ -69,7 +69,7 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Regenerated Keys for {typeof(T).Name} with Id='{id}'");
+            _logger.LogInformation($"Regenerated Keys for {typeof(T).Name} with Id='{id}' and PublicKey='{entity.PublicKey}'");
 
             return entity;
         }
