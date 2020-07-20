@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +67,11 @@ namespace aiof.auth.services
             _logger.LogInformation($"Created Client with Id='{client.Id}' and PublicKey='{client.PublicKey}'");
 
             return client;
+        }
+        public async IAsyncEnumerable<IClient> AddClientsAsync(IEnumerable<ClientDto> clientDtos)
+        {
+            foreach (var clientDto in clientDtos)
+                yield return await AddClientAsync(clientDto);
         }
 
         public async Task<IClient> RegenerateKeysAsync(int id)
