@@ -14,12 +14,12 @@ namespace aiof.auth.services
     public abstract class BaseRepository<T>
         where T : class, IPublicKeyId, IApiKey
     {
-        private readonly ILogger<BaseRepository<T>> _logger;
+        private readonly ILogger _logger;
         private readonly IAuthRepository _repo;
         private readonly AuthContext _context;
 
         public BaseRepository(
-            ILogger<BaseRepository<T>> logger,
+            ILogger logger,
             IAuthRepository repo,
             AuthContext context)
         {
@@ -68,6 +68,8 @@ namespace aiof.auth.services
             entity.SecondaryApiKey = _repo.GenerateApiKey();
 
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Regenerated Keys for {typeof(T).Name} with Id='{id}'");
 
             return entity;
         }

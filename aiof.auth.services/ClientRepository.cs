@@ -14,7 +14,7 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public class ClientRepository : IClientRepository
+    public class ClientRepository : BaseRepository<Client>, IClientRepository
     {
         private readonly ILogger<ClientRepository> _logger;
         private readonly IAuthRepository _repo;
@@ -28,6 +28,7 @@ namespace aiof.auth.services
             IMapper mapper,
             AuthContext context,
             AbstractValidator<ClientDto> clientDtoValidator)
+            : base(logger, repo, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
