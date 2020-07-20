@@ -31,6 +31,17 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [MemberData(nameof(Helper.ClientsApiKey), MemberType=typeof(Helper))]
+        public async Task GetClientAsync_By_ApiKey(string apiKey)
+        {
+            var client = await _repo.GetClientAsync(apiKey);
+
+            Assert.NotNull(client);
+            Assert.NotNull(client.PrimaryApiKey);
+            Assert.NotNull(client.SecondaryApiKey);
+        }
+
+        [Theory]
         [MemberData(nameof(Helper.ClientDtos), MemberType=typeof(Helper))]
         public async Task AddClientAsync_Valid(string name, string slug, bool enabled)
         {
