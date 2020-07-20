@@ -10,5 +10,6 @@ namespace aiof.auth.services
         Task<IClient> GetClientAsync(int id);
         Task<IClient> GetClientAsync(string apiKey);
         Task<IClient> AddClientAsync(ClientDto clientDto);
+        Task<IClient> DisableClientAsync(int id);
     }
 }

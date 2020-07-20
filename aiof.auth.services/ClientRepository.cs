@@ -36,11 +36,14 @@ namespace aiof.auth.services
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
         }
 
-        private IQueryable<Client> GetClientsQuery()
+        private IQueryable<Client> GetClientsQuery(bool asNoTracking = true)
         {
-            return _context.Clients
-                .AsNoTracking()
-                .AsQueryable();
+            return asNoTracking
+                ? _context.Clients
+                    .AsNoTracking()
+                    .AsQueryable()
+                : _context.Clients
+                    .AsQueryable();
         }
 
         public async Task<IClient> GetClientAsync(int id)
@@ -76,6 +79,19 @@ namespace aiof.auth.services
             await _context.SaveChangesAsync();
 
             _logger.LogInformation($"Created Client with Id='{client.Id}' and PublicKey='{client.PublicKey}'");
+
+            return client;
+        }
+
+        public async Task<IClient> DisableClientAsync(int id)
+        {
+            var client = await GetClientsQuery(asNoTracking: false)
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException();
+
+            client.Enabled = false;
+
+            await _context.SaveChangesAsync();
 
             return client;
         }
