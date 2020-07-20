@@ -60,6 +60,19 @@ namespace aiof.auth.services
                 ?? throw new AuthNotFoundException();
         }
 
+        public async Task DeleteEntityAsync(int id)
+        {
+            var entity = await GetEntityAsync(id, asNoTracking: false);
+            var publicKey = entity.PublicKey;
+
+            _context.Set<T>()
+                .Remove(entity);
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Deleted {typeof(T).Name} with Id='{id}' and PublicKey='{publicKey}'");
+        }
+
         public async Task<T> RegenerateKeysAync(int id)
         {
             var entity = await GetEntityAsync(id, asNoTracking: false);
