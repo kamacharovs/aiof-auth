@@ -70,6 +70,10 @@ namespace aiof.auth.services
         }
         public async IAsyncEnumerable<IClient> AddClientsAsync(IEnumerable<ClientDto> clientDtos)
         {
+            if (clientDtos.Count() > 15)
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Cannot add more than 15 Clients at a time");
+                    
             foreach (var clientDto in clientDtos)
                 yield return await AddClientAsync(clientDto);
         }
