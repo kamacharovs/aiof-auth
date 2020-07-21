@@ -31,7 +31,8 @@ namespace aiof.auth.data
             RuleFor(x => x.Password)
                 .NotNull()
                 .NotEmpty()
-                .Must(x => IsValid(x));
+                .Must(x => IsValid(x))
+                .WithMessage("Password must meet the following requirements: has a number, has an upper character, has between 8 and 50 characters");
         }
 
         public bool IsValid(string password)
