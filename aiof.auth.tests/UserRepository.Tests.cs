@@ -69,16 +69,23 @@ namespace aiof.auth.tests
             await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetUserAsync(apiKey));
         }
 
-        [Fact]
-        public async Task AddUserAsync_Valid()
+        [Theory]
+        [MemberData(nameof(Helper.UsersDto), MemberType=typeof(Helper))]
+        public async Task AddUserAsync_Valid(
+            string firstName,
+            string lastName,
+            string email,
+            string username,
+            string password
+        )
         {
             var userDto = new UserDto
             {
-                FirstName = "Test",
-                LastName = "McTest",
-                Email = "notanemail@email.com",
-                Username = "test.mctest",
-                Password = "123456"
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Username = username,
+                Password = password
             };
 
             var user = await _repo.AddUserAsync(userDto);
