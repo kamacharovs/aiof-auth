@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -65,12 +65,14 @@ namespace aiof.auth.services
             var entity = await GetEntityAsync(id, asNoTracking: false);
             var publicKey = entity.PublicKey;
 
+            var entityJson = JsonSerializer.Serialize(entity);
+
             _context.Set<T>()
                 .Remove(entity);
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Deleted {typeof(T).Name} with Id='{id}' and PublicKey='{publicKey}'");
+            _logger.LogInformation($"Deleted {typeof(T).Name}. EntityJson='{entityJson}'");
         }
 
         public async Task<T> RegenerateKeysAync(int id)
