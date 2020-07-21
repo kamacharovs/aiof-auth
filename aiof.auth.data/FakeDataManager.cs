@@ -130,6 +130,16 @@ namespace aiof.auth.data
                 .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
                 .Generate();
         }
+        private IEnumerable<UserDto> GetRandomFakeUserDtos(int n)
+        {
+            return new Faker<UserDto>()
+                .RuleFor(x => x.FirstName, f => f.Name.FirstName())
+                .RuleFor(x => x.LastName, f => f.Name.LastName())
+                .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
+                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
+                .RuleFor(x => x.Password, f => HashedPassword)
+                .Generate(n);
+        }
 
         private Client GetRandomFakeClient()
         {
@@ -188,6 +198,26 @@ namespace aiof.auth.data
                 }; 
             else
                 return null;
+        }
+
+        public IEnumerable<object[]> GetFakeUserDtosData()
+        {
+            var fakeUserDtos = GetRandomFakeUserDtos(3);
+            var fakeUserDtosList = new List<object[]>();
+
+            foreach (var fakeUserDto in fakeUserDtos)
+            {
+                fakeUserDtosList.Add(new object[]
+                {
+                    fakeUserDto.FirstName,
+                    fakeUserDto.LastName,
+                    fakeUserDto.Email,
+                    fakeUserDto.Username,
+                    fakeUserDto.Password
+                });
+            }
+
+            return fakeUserDtosList;
         }
 
         public IEnumerable<object[]> GetFakeClientsData(
