@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 
 using FluentValidation;
 
@@ -29,7 +30,19 @@ namespace aiof.auth.data
 
             RuleFor(x => x.Password)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .Must(x => IsValid(x));
+        }
+
+        public bool IsValid(string password)
+        {
+            var hasNumber = new Regex(@"[0-9]+");
+            var hasUpperChar = new Regex(@"[A-Z]+");
+            var hasMinimum8Maximum50Chars = new Regex(@".{8,50}");
+
+            return hasNumber.IsMatch(password) 
+                && hasUpperChar.IsMatch(password) 
+                && hasMinimum8Maximum50Chars.IsMatch(password);
         }
     }
 }
