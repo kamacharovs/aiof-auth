@@ -101,7 +101,7 @@ namespace aiof.auth.tests
         [Fact]
         public async Task AddUserAsync_Check_Password_Hash()
         {
-            var password = "password123";
+            var password = "Password123";
             var userDto = new UserDto
             {
                 FirstName = "Test",
