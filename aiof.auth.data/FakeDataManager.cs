@@ -23,6 +23,9 @@ namespace aiof.auth.data
             _context.Clients
                 .AddRange(GetFakeClients());
 
+            _context.ClientRefreshTokens
+                .AddRange(GetFakeClientRefreshTokens());
+
             _context.Claims
                 .AddRange(GetFakeClaims());
 
@@ -86,6 +89,27 @@ namespace aiof.auth.data
                     SecondaryApiKey = "gk-client-2-s-key"
                 },
                 GetRandomFakeClient()
+            };
+        }
+
+        public IEnumerable<ClientRefreshToken> GetFakeClientRefreshTokens()
+        {
+            return new List<ClientRefreshToken>
+            {
+                new ClientRefreshToken
+                {
+                    Id = 1,
+                    PublicKey = Guid.Parse("239eebf7-30f1-4f32-b1f1-18622dc2342d"),
+                    ClientId = 1,
+                    RefreshToken = "refresh-token-1"
+                },
+                new ClientRefreshToken
+                {
+                    Id = 2,
+                    PublicKey = Guid.Parse("c8f80b28-3459-42b8-9c13-30e719a14df7"),
+                    ClientId = 2,
+                    RefreshToken = "refresh-token-2"
+                }
             };
         }
 

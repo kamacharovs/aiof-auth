@@ -21,6 +21,9 @@ namespace aiof.auth.data
                 .ForMember(x => x.Name, o => o.Condition(s => s.Name != null))
                 .ForMember(x => x.Slug, o => o.Condition(s => s.Slug != null))
                 .ForMember(x => x.Enabled, o => o.MapFrom(x => x.Enabled));
+
+            CreateMap<Client, ClientRefreshToken>()
+                .ForMember(x => x.ClientId, o => o.MapFrom(s => s.Id));
         }
     }
 }

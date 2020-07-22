@@ -37,6 +37,18 @@ namespace aiof.auth.services
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
         }
 
+        private IQueryable<ClientRefreshToken> GetClientRefreshTokenQuery(bool asNoTracking = true)
+        {
+            return asNoTracking
+                ? _context.ClientRefreshTokens
+                    .Include(x => x.Client)
+                    .AsNoTracking()
+                    .AsQueryable()
+                : _context.ClientRefreshTokens
+                    .Include(x => x.Client)
+                    .AsQueryable();
+        }
+
         public async Task<IClient> GetClientAsync(int id)
         {
             return await base.GetEntityAsync<Client>(id);
@@ -45,6 +57,16 @@ namespace aiof.auth.services
         public async Task<IClient> GetClientAsync(string apiKey)
         {
             return await base.GetEntityAsync<Client>(apiKey);
+        }
+
+        public async Task<IClientRefreshToken> GetClientRefreshTokenAsync(
+            int clientId, 
+            string refreshToken, 
+            bool asNoTracking = true)
+        {
+            return await GetClientRefreshTokenQuery(asNoTracking)
+                .FirstOrDefaultAsync(x => x.ClientId == clientId
+                    && x.RefreshToken == refreshToken);
         }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
@@ -76,6 +98,30 @@ namespace aiof.auth.services
                     
             foreach (var clientDto in clientDtos)
                 yield return await AddClientAsync(clientDto);
+        }
+
+        public async Task<(IClient Client, IClientRefreshToken ClientRefreshToken)> AddClientRefreshTokenAsync(string clientApiKey)
+        {
+            var client = await GetClientAsync(clientApiKey);
+            var clientRefreshToken = _mapper.Map<ClientRefreshToken>(client);
+
+            clientRefreshToken.RefreshToken = _repo.GenerateApiKey();
+
+            await _context.ClientRefreshTokens
+                .AddAsync(clientRefreshToken);
+
+            await _context.SaveChangesAsync();
+
+            return (client, clientRefreshToken);
+        }
+
+        public async Task<ITokenResponse> GenerateAccessRefreshTokenAsync(string clientApiKey)
+        {
+            var clientRefreshToken = await AddClientRefreshTokenAsync(clientApiKey);
+
+            return _repo.GenerateJwtToken(
+                clientRefreshToken.Client,
+                clientRefreshToken.ClientRefreshToken.RefreshToken);
         }
 
         public async Task<IClient> RegenerateKeysAsync(int id)

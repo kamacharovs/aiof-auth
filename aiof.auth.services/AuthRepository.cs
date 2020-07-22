@@ -46,7 +46,7 @@ namespace aiof.auth.services
             user as IPublicKeyId);
         }
 
-        public ITokenResponse GenerateJwtToken(IClient client)
+        public ITokenResponse GenerateJwtToken(IClient client, string refreshToken = null)
         {
             return GenerateJwtToken(new Claim[]
             {
@@ -54,10 +54,14 @@ namespace aiof.auth.services
                 new Claim(AiofClaims.Name, client.Name),
                 new Claim(AiofClaims.Slug, client.Slug)
             },
-            client as IPublicKeyId);
+            entity: client as IPublicKeyId,
+            refreshToken: refreshToken);
         }
 
-        public ITokenResponse GenerateJwtToken(IEnumerable<Claim> claims, IPublicKeyId entity = null)
+        public ITokenResponse GenerateJwtToken(
+            IEnumerable<Claim> claims, 
+            IPublicKeyId entity = null,
+            string refreshToken = null)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_key);
@@ -80,7 +84,7 @@ namespace aiof.auth.services
             {
                 ExpiresIn = _envConfig.JwtExpires,
                 AccessToken = tokenHandler.WriteToken(token),
-                RefreshToken = GenerateApiKey()
+                RefreshToken = refreshToken
             };
         }
 
