@@ -46,14 +46,6 @@ namespace aiof.auth.services
                 .AsQueryable();
         }
 
-        private IQueryable<T> GetEntityQuery<T>()
-            where T : class, IPublicKeyId
-        {
-            return _context.Set<T>()
-                .AsNoTracking()
-                .AsQueryable();
-        }
-
         public async Task<IUser> GetUserAsync(int id)
         {
             return await GetUsersQuery()
@@ -77,14 +69,6 @@ namespace aiof.auth.services
             return await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == username
                     && Check(x.Password, password))
-                ?? throw new AuthNotFoundException();
-        }
-
-        public async Task<IPublicKeyId> GetEntityAsync<T>(int id)
-            where T : class, IPublicKeyId
-        {
-            return await GetEntityQuery<T>()
-                .FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new AuthNotFoundException();
         }
 
