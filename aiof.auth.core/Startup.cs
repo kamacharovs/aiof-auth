@@ -59,6 +59,7 @@ namespace aiof.auth.core
                 {
                     o.JsonSerializerOptions.WriteIndented = true;
                     o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    o.JsonSerializerOptions.IgnoreNullValues = true;
                 });
         }
 

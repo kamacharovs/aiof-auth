@@ -110,8 +110,7 @@ namespace aiof.auth.services
 
         public async Task<ITokenResponse> GetUserTokenAsync(string apiKey)
         {
-            var user = await GetUserAsync(apiKey)
-                ?? throw new AuthNotFoundException($"User with apiKey='{apiKey}' was not found.");
+            var user = await GetUserAsync(apiKey);
 
             return _repo.GenerateJwtToken(user);
         }

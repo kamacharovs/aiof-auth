@@ -100,6 +100,13 @@ namespace aiof.auth.services
                 yield return await AddClientAsync(clientDto);
         }
 
+        public async Task<ITokenResponse> GetTokenAsync(string apiKey)
+        {
+            var client = await GetClientAsync(apiKey);
+
+            return _repo.GenerateJwtToken(client);
+        }
+
         public async Task<(IClient Client, IClientRefreshToken ClientRefreshToken)> AddClientRefreshTokenAsync(string clientApiKey)
         {
             var client = await GetClientAsync(clientApiKey);
