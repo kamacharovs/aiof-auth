@@ -116,7 +116,7 @@ namespace aiof.auth.data
             };
         }
 
-        private User GetRandomFakeUser()
+        public User GetRandomFakeUser()
         {
             return new Faker<User>()
                 .RuleFor(x => x.Id, f => f.Random.Int(5, 20))
@@ -130,7 +130,7 @@ namespace aiof.auth.data
                 .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
                 .Generate();
         }
-        private IEnumerable<UserDto> GetRandomFakeUserDtos(int n)
+        public IEnumerable<UserDto> GetRandomFakeUserDtos(int n)
         {
             return new Faker<UserDto>()
                 .RuleFor(x => x.FirstName, f => f.Name.FirstName())
@@ -141,7 +141,7 @@ namespace aiof.auth.data
                 .Generate(n);
         }
 
-        private Client GetRandomFakeClient()
+        public Client GetRandomFakeClient()
         {
             return new Faker<Client>()
                 .RuleFor(x => x.Id, f => f.Random.Int(5, 20))
@@ -153,7 +153,7 @@ namespace aiof.auth.data
                 .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
                 .Generate();
         }
-        private IEnumerable<ClientDto> GetRandomFakeClientDtos(int n)
+        public IEnumerable<ClientDto> GetRandomFakeClientDtos(int n)
         {
             return new Faker<ClientDto>()
                 .RuleFor(x => x.Name, f => f.Random.String())
