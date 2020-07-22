@@ -7,5 +7,6 @@ namespace aiof.auth.data
         string TokenType { get; set; }
         int ExpiresIn { get; set; }
         string AccessToken { get; set; }
+        string RefreshToken { get; set; }
     }
 }

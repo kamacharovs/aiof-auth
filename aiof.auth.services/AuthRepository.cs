@@ -79,7 +79,8 @@ namespace aiof.auth.services
             return new TokenResponse
             {
                 ExpiresIn = _envConfig.JwtExpires,
-                AccessToken = tokenHandler.WriteToken(token)
+                AccessToken = tokenHandler.WriteToken(token),
+                RefreshToken = GenerateApiKey()
             };
         }
 
