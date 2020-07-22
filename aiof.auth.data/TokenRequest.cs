@@ -21,4 +21,16 @@ namespace aiof.auth.data
         [JsonIgnore]
         public string EntityType => typeof(T).Name;
     }
+
+    public class TokenRequest : ITokenRequest
+    {
+        [JsonPropertyName("api_key")]
+        public string ApiKey { get; set; }
+
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
+
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+    }
 }

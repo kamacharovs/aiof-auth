@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace aiof.auth.data
 {
     public class User : IUser, 
-        IPublicKeyId, IApiKey
+        IPublicKeyId
     {
         public int Id { get; set; }
         public Guid PublicKey { get; set; } = Guid.NewGuid();
@@ -12,8 +12,6 @@ namespace aiof.auth.data
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
-        public string PrimaryApiKey { get; set; }
-        public string SecondaryApiKey { get; set; }
 
         [JsonIgnore]
         public string Password { get; set; }

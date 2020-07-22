@@ -38,14 +38,6 @@ namespace aiof.auth.data
             RuleFor(x => x.Password)
                 .NotNull()
                 .NotEmpty();
-
-            RuleFor(x => x.PrimaryApiKey)
-                .NotNull()
-                .NotEmpty();
-
-            RuleFor(x => x.SecondaryApiKey)
-                .NotNull()
-                .NotEmpty();
         }
     }
 }

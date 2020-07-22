@@ -69,56 +69,26 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
                 ?? throw new AuthNotFoundException();
         }
-        public async Task<IUser> GetUserAsync(string apiKey)
-        {
-            return await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey)
-                ?? throw new AuthNotFoundException();
-        }
-        public async Task<IUser> GetUserAsync(int id, string apiKey)
-        {
-            return await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.Id == id
-                    && x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey)
-                ?? throw new AuthNotFoundException();
-        }
-        public async Task<IPublicKeyId> GetUserAsPublicKeyId(string apiKey)
-        {
-            return await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey)
-                ?? throw new AuthNotFoundException();
-        }
-        public async Task<IUser> GetUserByUsernameAsync(string username)
+        public async Task<IUser> GetUserAsync(string username)
         {
             return await _context.Users
-                .FirstOrDefaultAsync(x => x.Username == username);
+                .FirstOrDefaultAsync(x => x.Username == username)
+                ?? throw new AuthNotFoundException();
         }
         
         public async Task<ITokenResponse> GetUserTokenAsync(ITokenRequest<User> request)
         {
-            if (!string.IsNullOrWhiteSpace(request.ApiKey))
-                return await GetUserTokenAsync(request.ApiKey);
-
-            else if (!string.IsNullOrWhiteSpace(request.Username)
+            if (!string.IsNullOrWhiteSpace(request.Username)
                 && !string.IsNullOrWhiteSpace(request.Password))
                 return await GetUserTokenAsync(request.Username, request.Password);
-
             else
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                     "Incorrect Token request.");
         }
 
-        public async Task<ITokenResponse> GetUserTokenAsync(string apiKey)
-        {
-            var user = await GetUserAsync(apiKey);
-
-            return _repo.GenerateJwtToken(user);
-        }
-
         public async Task<ITokenResponse> GetUserTokenAsync(string username, string password)
         {
-            var user = await GetUserByUsernameAsync(username)
-                ?? throw new AuthNotFoundException($"User with username='{username}' was not found.");
+            var user = await GetUserAsync(username);
 
             if (!Check(user.Password, password).Verified)
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -144,8 +114,6 @@ namespace aiof.auth.services
 
             var user = _mapper.Map<User>(userDto);
 
-            user.PrimaryApiKey = _repo.GenerateApiKey();
-            user.SecondaryApiKey = _repo.GenerateApiKey();
             user.Password = Hash(userDto.Password);
 
             await _context.Users
@@ -163,7 +131,7 @@ namespace aiof.auth.services
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetUserByUsernameAsync(username)
+            var user = await GetUserAsync(username)
                 ?? throw new AuthNotFoundException($"User with username='{username}' was not found.");
 
             if (!Check(user.Password, oldPassword).Verified)

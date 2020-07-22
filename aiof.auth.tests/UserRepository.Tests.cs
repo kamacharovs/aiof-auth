@@ -19,54 +19,12 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersIdApiKey), MemberType=typeof(Helper))]
-        public async Task GetUserAsync_By_Id_ApiKey(int id, string apiKey)
-        {
-            var user = await _repo.GetUserAsync(id, apiKey);
-
-            Assert.NotNull(user);
-            Assert.NotNull(user.FirstName);
-            Assert.NotNull(user.LastName);
-            Assert.NotNull(user.PrimaryApiKey);
-            Assert.NotNull(user.SecondaryApiKey);
-        }
-
-        [Theory]
-        [MemberData(nameof(Helper.UsersApiKey), MemberType=typeof(Helper))]
-        public async Task GetUserAsync_By_ApiKey(string apiKey)
-        {
-            var user = await _repo.GetUserAsync(apiKey);
-
-            Assert.NotNull(user);
-            Assert.NotNull(user.FirstName);
-        }
-
-        [Theory]
-        [MemberData(nameof(Helper.UsersApiKey), MemberType=typeof(Helper))]
-        public async Task GetUserAsPublicKeyId_By_ApiKey(string apiKey)
-        {
-            var user = await _repo.GetUserAsPublicKeyId(apiKey);
-
-            Assert.NotEqual(0, user.Id);
-            Assert.NotEqual(Guid.Empty, user.PublicKey);
-        }
-
-        [Theory]
         [InlineData(333)]
         [InlineData(555)]
         [InlineData(999)]
         public async Task GetUserAsync_By_Id_NotFound(int id)
         {
             await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetUserAsync(id));
-        }
-
-        [Theory]
-        [InlineData("maybeanapikey")]
-        [InlineData("notanapikey")]
-        [InlineData("")]
-        public async Task GetUserAsync_By_ApiKey_NotFound(string apiKey)
-        {
-            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetUserAsync(apiKey));
         }
 
         [Theory]
@@ -93,8 +51,6 @@ namespace aiof.auth.tests
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
             Assert.NotNull(user.LastName);
-            Assert.NotNull(user.PrimaryApiKey);
-            Assert.NotNull(user.SecondaryApiKey);
             Assert.NotNull(user.Password);
         }
 
@@ -117,10 +73,10 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersApiKey), MemberType=typeof(Helper))]
-        public async Task GetUserTokenAsync_Valid(string apiKey)
+        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType=typeof(Helper))]
+        public async Task GetUserTokenAsync_Valid(string username, string password)
         {
-            var userToken = await _repo.GetUserTokenAsync(apiKey);
+            var userToken = await _repo.GetUserTokenAsync(username, password);
 
             Assert.NotNull(userToken);
         }

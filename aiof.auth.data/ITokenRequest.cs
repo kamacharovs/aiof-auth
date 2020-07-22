@@ -11,4 +11,11 @@ namespace aiof.auth.data
         T Entity { get; set; }
         string EntityType { get; }
     }
+
+    public interface ITokenRequest
+    {
+        string ApiKey { get; set; }
+        string Username { get; set; }
+        string Password { get; set; }
+    }
 }

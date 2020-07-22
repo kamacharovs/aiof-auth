@@ -25,7 +25,7 @@ namespace aiof.auth.core.Controllers
 
         [HttpPost]
         [Route("token")]
-        public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest<Client> request)
+        public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest request)
         {
             return Ok(await _clientRepo.GetTokenAsync(request.ApiKey));
         }

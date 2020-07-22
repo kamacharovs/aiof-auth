@@ -33,8 +33,6 @@ namespace aiof.auth.data
                 e.Property(x => x.Email).HasColumnName("email").HasMaxLength(200).IsRequired();
                 e.Property(x => x.Username).HasColumnName("username").HasMaxLength(200).IsRequired();
                 e.Property(x => x.Password).HasColumnName("password").HasMaxLength(100).IsRequired();
-                e.Property(x => x.PrimaryApiKey).HasColumnName("primary_api_key").HasMaxLength(100);
-                e.Property(x => x.SecondaryApiKey).HasColumnName("secondary_api_key").HasMaxLength(100);
             });
 
             modelBuilder.Entity<Client>(e =>

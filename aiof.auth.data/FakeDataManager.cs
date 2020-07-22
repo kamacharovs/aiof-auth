@@ -44,8 +44,6 @@ namespace aiof.auth.data
                     LastName = "Kamacharov",
                     Email = "gkama@test.com",
                     Username = "gkama",
-                    PrimaryApiKey = "api-key",
-                    SecondaryApiKey = "api-key-2",
                     Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=" //pass1234
                 },
                 new User
@@ -56,8 +54,6 @@ namespace aiof.auth.data
                     LastName = "Brown",
                     Email = "jessie@test.com",
                     Username = "jbro",
-                    PrimaryApiKey = "api-key-jbro",
-                    SecondaryApiKey = "api-key-jbro-2",
                     Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
                 },
                 GetRandomFakeUser()
@@ -150,8 +146,6 @@ namespace aiof.auth.data
                 .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
                 .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
                 .RuleFor(x => x.Password, f => HashedPassword)
-                .RuleFor(x => x.PrimaryApiKey, f => f.Random.String())
-                .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
                 .Generate();
         }
         public IEnumerable<UserDto> GetRandomFakeUserDtos(int n)
@@ -188,7 +182,6 @@ namespace aiof.auth.data
 
         public IEnumerable<object[]> GetFakeUsersData(
             bool id = false,
-            bool apiKey = false,
             bool username = false,
             bool password = false
         )
@@ -196,13 +189,7 @@ namespace aiof.auth.data
             var fakeUsers = GetFakeUsers()
                 .ToArray();
 
-            if (id && apiKey)
-                return new List<object[]>
-                {
-                    new object[] { fakeUsers[0].Id, fakeUsers[0].PrimaryApiKey },
-                    new object[] { fakeUsers[1].Id, fakeUsers[1].PrimaryApiKey }
-                };
-            else if (username && password)
+            if (username && password)
                 return new List<object[]>
                 {
                     new object[] { fakeUsers[0].Username, "pass1234" },
@@ -214,12 +201,6 @@ namespace aiof.auth.data
                     new object[] { fakeUsers[0].Id },
                     new object[] { fakeUsers[1].Id }
                 };
-            else if (apiKey)
-                return new List<object[]>
-                {
-                    new object[] { fakeUsers[0].PrimaryApiKey },
-                    new object[] { fakeUsers[1].PrimaryApiKey }
-                }; 
             else
                 return null;
         }
