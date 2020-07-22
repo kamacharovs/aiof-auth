@@ -21,6 +21,8 @@ namespace aiof.auth.services
         private readonly AuthContext _context;
         private readonly AbstractValidator<ClientDto> _clientDtoValidator;
 
+        private const int _refreshTokenValidDay = 1;
+
         public ClientRepository(
             ILogger<ClientRepository> logger,
             IMapper mapper,
@@ -71,7 +73,7 @@ namespace aiof.auth.services
         {
             return await GetClientRefreshTokenQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
-                    && x.GeneratedOn > DateTime.UtcNow.AddDays(-1));
+                    && x.GeneratedOn > DateTime.UtcNow.AddDays(_refreshTokenValidDay * -1));
         }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
@@ -122,6 +124,10 @@ namespace aiof.auth.services
                     .AddAsync(clientRefreshToken);
 
                 await _context.SaveChangesAsync();
+
+                await _context.Entry(clientRefreshToken)
+                    .Reference(x => x.Client)
+                    .LoadAsync();
 
                 return clientRefreshToken;
             }    
