@@ -69,7 +69,7 @@ namespace aiof.auth.tests
 
             var user = await _repo.AddUserAsync(userDto);
 
-            Assert.True(_repo.Check(user.Password, password).Verified);
+            Assert.True(_repo.Check(user.Password, password));
         }
 
         [Theory]
@@ -83,7 +83,7 @@ namespace aiof.auth.tests
                 password, 
                 newPassword);
 
-            Assert.True(_repo.Check(user.Password, newPassword).Verified);
+            Assert.True(_repo.Check(user.Password, newPassword));
         }
     }
 }

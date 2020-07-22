@@ -11,7 +11,7 @@ namespace aiof.auth.data
             ValidatorOptions.Global.CascadeMode = CascadeMode.StopOnFirstFailure;
 
             // Either Username, Password is provided or ApiKey
-            RuleFor(x => new { x.Username, x.Password, x.ApiKey })
+            RuleFor(x => x)
                 .Must(x => 
                 {
                     if (!string.IsNullOrWhiteSpace(x.Username)

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Net;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+
+using FluentValidation;
 
 using aiof.auth.data;
 
@@ -15,6 +19,9 @@ namespace aiof.auth.services
     {
         private readonly ILogger<AuthRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
+        private readonly IUserRepository _userRepo;
+        private readonly IClientRepository _clientRepo;
+        private readonly AbstractValidator<TokenRequest> _tokenRequestValidator;
 
         private readonly string _key;
         private readonly string _issuer;
@@ -23,14 +30,45 @@ namespace aiof.auth.services
 
         public AuthRepository(
             ILogger<AuthRepository> logger,
-            IEnvConfiguration envConfig)
+            IEnvConfiguration envConfig,
+            IUserRepository userRepo,
+            IClientRepository clientRepo,
+            AbstractValidator<TokenRequest> tokenRequestValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
+            _userRepo = userRepo ?? throw new ArgumentNullException(nameof(userRepo));
+            _clientRepo = clientRepo ?? throw new ArgumentNullException(nameof(clientRepo));
+            _tokenRequestValidator = tokenRequestValidator ?? throw new ArgumentNullException(nameof(tokenRequestValidator));
 
             _key = _envConfig.JwtSecret ?? throw new ArgumentNullException(nameof(_envConfig.JwtSecret));
             _issuer = _envConfig.JwtIssuer ?? throw new ArgumentNullException(nameof(_envConfig.JwtIssuer));
             _audience = _envConfig.JwtAudience ?? throw new ArgumentNullException(nameof(_envConfig.JwtAudience));
+        }
+
+        public async Task<ITokenResponse> GetTokenAsync(ITokenRequest request)
+        {
+            var validation = _tokenRequestValidator.Validate(request as TokenRequest);
+
+            if (!validation.IsValid)
+                throw new AuthValidationException(validation.Errors);
+
+            if (!string.IsNullOrWhiteSpace(request.ApiKey))
+            {
+                var client = await _clientRepo.GetClientAsync(request.ApiKey);
+
+                return GenerateJwtToken(client);
+            }
+            else if (!string.IsNullOrWhiteSpace(request.Username)
+                && !string.IsNullOrWhiteSpace(request.Password))
+            {
+                var user = await _userRepo.GetUserAsync(request.Username, request.Password);
+
+                return GenerateJwtToken(user);
+            }
+            else
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Invalid token request");
         }
 
         public ITokenResponse GenerateJwtToken(IUser user)
@@ -42,7 +80,7 @@ namespace aiof.auth.services
                 new Claim(AiofClaims.FamilyName, user.LastName),
                 new Claim(AiofClaims.Email, user.Email)
             },
-            user as IPublicKeyId);
+            entity: user as IPublicKeyId);
         }
 
         public ITokenResponse GenerateJwtToken(IClient client, string refreshToken = null)

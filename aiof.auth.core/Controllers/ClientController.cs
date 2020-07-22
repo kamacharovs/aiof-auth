@@ -11,7 +11,7 @@ using aiof.auth.services;
 namespace aiof.auth.core.Controllers
 {
     [ApiController]
-    [Route("auth/client")]
+    [Route("client")]
     public class ClientController : ControllerBase
     {
         private readonly IClientRepository _repo;

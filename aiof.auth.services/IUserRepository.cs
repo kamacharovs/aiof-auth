@@ -9,6 +9,7 @@ namespace aiof.auth.services
     {
         Task<IUser> GetUserAsync(int id);
         Task<IUser> GetUserAsync(Guid publicKey);
+        Task<IUser> GetUserAsync(string username, string password);
         Task<IPublicKeyId> GetEntityAsync<T>(int id)
             where T : class, IPublicKeyId;
         Task<IUser> AddUserAsync(UserDto userDto);
@@ -17,6 +18,6 @@ namespace aiof.auth.services
             string oldPassword, 
             string newPassword);
         string Hash(string password);
-        (bool Verified, bool NeedsUpgrade) Check(string hash, string password);
+        bool Check(string hash, string password);
     }
 }
