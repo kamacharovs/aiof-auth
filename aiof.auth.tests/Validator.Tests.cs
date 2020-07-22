@@ -33,7 +33,7 @@ namespace aiof.auth.tests
         [Theory]
         [InlineData("password1234")]
         [InlineData("")]
-        public void UserDto_ValidatePassword_InValid(string password)
+        public void UserDto_ValidatePassword_Invalid(string password)
         {
             var userDto = Helper.RandomUserDtos(1).First();
 
