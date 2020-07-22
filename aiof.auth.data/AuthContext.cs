@@ -8,6 +8,7 @@ namespace aiof.auth.data
     {
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
+        public virtual DbSet<ClientRefreshToken> ClientRefreshTokens { get; set; }
         public virtual DbSet<AiofClaim> Claims { get; set; }
 
         public AuthContext(DbContextOptions<AuthContext> options)
@@ -53,6 +54,25 @@ namespace aiof.auth.data
                 e.Property(x => x.PrimaryApiKey).HasColumnName("primary_api_key").HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasColumnName("secondary_api_key").HasMaxLength(100);
                 e.Property(x => x.Created).HasColumnType("date").IsRequired();
+            });
+
+            modelBuilder.Entity<ClientRefreshToken>(e =>
+            {
+                e.ToTable("client_refresh_token");
+
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd().IsRequired();
+                e.Property(x => x.PublicKey).HasColumnName("public_key").IsRequired();
+                e.Property(x => x.ClientId).HasColumnName("client_id").IsRequired();
+                e.Property(x => x.GeneratedOn).HasColumnType("date").HasColumnName("generated_on").IsRequired();
+                e.Property(x => x.RefreshToken).HasColumnName("refresh_token").HasMaxLength(100).IsRequired();
+
+                e.HasOne(x => x.Client)
+                    .WithMany()
+                    .HasForeignKey(x => x.ClientId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<AiofClaim>(e =>
