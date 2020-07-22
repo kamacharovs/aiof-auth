@@ -10,6 +10,11 @@ namespace aiof.auth.data
         public int ClientId { get; set; }
         public Client Client { get; set; }
         public DateTime GeneratedOn { get; set; } = DateTime.UtcNow;
-        public string RefreshToken { get; set; }
+        public string RefreshToken { get; set; } = Utils.GenerateApiKey(64);
+    }
+
+    public class ClientRefreshTokenDto
+    {
+        public int ClientId { get; set; }
     }
 }

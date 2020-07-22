@@ -65,6 +65,14 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
                     && x.RefreshToken == refreshToken);
         }
+        public async Task<IClientRefreshToken> GetClientRefreshTokenAsync(
+            int clientId,  
+            bool asNoTracking = true)
+        {
+            return await GetClientRefreshTokenQuery(asNoTracking)
+                .FirstOrDefaultAsync(x => x.ClientId == clientId
+                    && x.GeneratedOn > DateTime.UtcNow.AddDays(-1));
+        }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
         {
@@ -97,19 +105,28 @@ namespace aiof.auth.services
                 yield return await AddClientAsync(clientDto);
         }
 
-        public async Task<(IClient Client, IClientRefreshToken ClientRefreshToken)> AddClientRefreshTokenAsync(string clientApiKey)
+        public async Task<IClientRefreshToken> AddClientRefreshTokenAsync(string clientApiKey)
         {
             var client = await GetClientAsync(clientApiKey);
-            var clientRefreshToken = _mapper.Map<ClientRefreshToken>(client);
+            var clientRefreshToken = await GetClientRefreshTokenAsync(client.Id)
+                ?? await AddClientRefreshTokenAsync(client);
 
-            clientRefreshToken.RefreshToken = Utils.GenerateApiKey(64);
+            async Task<IClientRefreshToken> AddClientRefreshTokenAsync(IClient client)
+            {
+                var clientRefreshToken = new ClientRefreshToken
+                {
+                    ClientId = client.Id
+                };
 
-            await _context.ClientRefreshTokens
-                .AddAsync(clientRefreshToken);
+                await _context.ClientRefreshTokens
+                    .AddAsync(clientRefreshToken);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return (client, clientRefreshToken);
+                return clientRefreshToken;
+            }    
+
+            return clientRefreshToken;
         }
 
         public async Task<IClient> RegenerateKeysAsync(int id)
