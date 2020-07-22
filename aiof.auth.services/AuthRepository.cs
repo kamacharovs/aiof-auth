@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography;
 using System.Security.Claims;
 using System.Text;
 using System.Collections.Generic;
@@ -128,14 +127,6 @@ namespace aiof.auth.services
                 .Principal
                 .Identity
                 .IsAuthenticated;
-        }
-
-        public string GenerateApiKey()
-        {
-            var key = new byte[32];
-            using (var generator = RandomNumberGenerator.Create())
-                generator.GetBytes(key);
-            return Convert.ToBase64String(key);
         }
     }
 }

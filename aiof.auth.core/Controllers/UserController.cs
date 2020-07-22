@@ -11,7 +11,7 @@ using aiof.auth.services;
 namespace aiof.auth.core.Controllers
 {
     [ApiController]
-    [Route("auth")]
+    [Route("user")]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
@@ -22,14 +22,6 @@ namespace aiof.auth.core.Controllers
         }
 
         [HttpPost]
-        [Route("user/token")]
-        public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest<User> tokenRequest)
-        {
-            return Ok(await _repo.GetUserTokenAsync(tokenRequest));
-        }
-
-        [HttpPost]
-        [Route("user")]
         public async Task<IActionResult> AddUserAsync([FromBody]UserDto userDto)
         {
             return Ok(await _repo.AddUserAsync(userDto));

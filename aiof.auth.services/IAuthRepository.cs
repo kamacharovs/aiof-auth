@@ -16,6 +16,5 @@ namespace aiof.auth.services
             string refreshToken = null);
         ITokenResult ValidateToken(string token);
         bool IsAuthenticated(string token);
-        string GenerateApiKey();
     }
 }

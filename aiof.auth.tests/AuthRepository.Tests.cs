@@ -52,14 +52,5 @@ namespace aiof.auth.tests
 
             Assert.Equal(TokenResultStatus.Expired, validation.Status);
         }
-
-        [Fact]
-        public void GenerateApiKey()
-        {
-            var apiKey = _repo.GenerateApiKey();
-
-            Assert.NotNull(apiKey);
-            Assert.True(apiKey.Length > 30);
-        }
     }
 }

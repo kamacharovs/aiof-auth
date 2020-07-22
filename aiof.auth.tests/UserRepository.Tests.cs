@@ -74,15 +74,6 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.UsersUsernamePassword), MemberType=typeof(Helper))]
-        public async Task GetUserTokenAsync_Valid(string username, string password)
-        {
-            var userToken = await _repo.GetUserTokenAsync(username, password);
-
-            Assert.NotNull(userToken);
-        }
-
-        [Theory]
-        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType=typeof(Helper))]
         public async Task UpdateUserPasswordAsync_Is_Successful(string username, string password)
         {
             var newPassword = "newpassword123";

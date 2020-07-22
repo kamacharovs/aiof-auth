@@ -17,21 +17,18 @@ namespace aiof.auth.services
     public class ClientRepository : BaseRepository, IClientRepository
     {
         private readonly ILogger<ClientRepository> _logger;
-        private readonly IAuthRepository _repo;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
         private readonly AbstractValidator<ClientDto> _clientDtoValidator;
 
         public ClientRepository(
             ILogger<ClientRepository> logger,
-            IAuthRepository repo,
             IMapper mapper,
             AuthContext context,
             AbstractValidator<ClientDto> clientDtoValidator)
-            : base(logger, repo, context)
+            : base(logger, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
@@ -78,8 +75,8 @@ namespace aiof.auth.services
 
             var client = _mapper.Map<Client>(clientDto);
 
-            client.PrimaryApiKey = _repo.GenerateApiKey();
-            client.SecondaryApiKey = _repo.GenerateApiKey();
+            client.PrimaryApiKey = Utils.GenerateApiKey();
+            client.SecondaryApiKey = Utils.GenerateApiKey();
 
             await _context.Clients
                 .AddAsync(client);
@@ -100,19 +97,12 @@ namespace aiof.auth.services
                 yield return await AddClientAsync(clientDto);
         }
 
-        public async Task<ITokenResponse> GetTokenAsync(string apiKey)
-        {
-            var client = await GetClientAsync(apiKey);
-
-            return _repo.GenerateJwtToken(client);
-        }
-
         public async Task<(IClient Client, IClientRefreshToken ClientRefreshToken)> AddClientRefreshTokenAsync(string clientApiKey)
         {
             var client = await GetClientAsync(clientApiKey);
             var clientRefreshToken = _mapper.Map<ClientRefreshToken>(client);
 
-            clientRefreshToken.RefreshToken = _repo.GenerateApiKey();
+            clientRefreshToken.RefreshToken = Utils.GenerateApiKey();
 
             await _context.ClientRefreshTokens
                 .AddAsync(clientRefreshToken);
@@ -120,15 +110,6 @@ namespace aiof.auth.services
             await _context.SaveChangesAsync();
 
             return (client, clientRefreshToken);
-        }
-
-        public async Task<ITokenResponse> GenerateAccessRefreshTokenAsync(string clientApiKey)
-        {
-            var clientRefreshToken = await AddClientRefreshTokenAsync(clientApiKey);
-
-            return _repo.GenerateJwtToken(
-                clientRefreshToken.Client,
-                clientRefreshToken.ClientRefreshToken.RefreshToken);
         }
 
         public async Task<IClient> RegenerateKeysAsync(int id)

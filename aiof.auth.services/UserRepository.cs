@@ -17,7 +17,6 @@ namespace aiof.auth.services
     public class UserRepository : IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
-        private readonly IAuthRepository _repo;
         private readonly IEnvConfiguration _envConfig;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
@@ -26,7 +25,6 @@ namespace aiof.auth.services
 
         public UserRepository(
             ILogger<UserRepository> logger,
-            IAuthRepository repo,
             IEnvConfiguration envConfig,
             IMapper mapper,
             AuthContext context,
@@ -34,7 +32,6 @@ namespace aiof.auth.services
             AbstractValidator<User> userValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -74,27 +71,6 @@ namespace aiof.auth.services
             return await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == username)
                 ?? throw new AuthNotFoundException();
-        }
-        
-        public async Task<ITokenResponse> GetUserTokenAsync(ITokenRequest<User> request)
-        {
-            if (!string.IsNullOrWhiteSpace(request.Username)
-                && !string.IsNullOrWhiteSpace(request.Password))
-                return await GetUserTokenAsync(request.Username, request.Password);
-            else
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    "Incorrect Token request.");
-        }
-
-        public async Task<ITokenResponse> GetUserTokenAsync(string username, string password)
-        {
-            var user = await GetUserAsync(username);
-
-            if (!Check(user.Password, password).Verified)
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Incorrect password for User='{username}'");
-
-            return _repo.GenerateJwtToken(user);
         }
 
         public async Task<IPublicKeyId> GetEntityAsync<T>(int id)

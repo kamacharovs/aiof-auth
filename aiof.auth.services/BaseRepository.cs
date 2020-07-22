@@ -14,16 +14,13 @@ namespace aiof.auth.services
     public abstract class BaseRepository
     {
         private readonly ILogger _logger;
-        private readonly IAuthRepository _repo;
         private readonly AuthContext _context;
 
         public BaseRepository(
             ILogger logger,
-            IAuthRepository repo,
             AuthContext context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
@@ -112,8 +109,8 @@ namespace aiof.auth.services
         {
             var entity = await GetEntityAsync<T>(id, asNoTracking: false);
 
-            entity.PrimaryApiKey = _repo.GenerateApiKey();
-            entity.SecondaryApiKey = _repo.GenerateApiKey();
+            entity.PrimaryApiKey = Utils.GenerateApiKey();
+            entity.SecondaryApiKey = Utils.GenerateApiKey();
 
             await _context.SaveChangesAsync();
 

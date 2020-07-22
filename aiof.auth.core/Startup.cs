@@ -44,6 +44,7 @@ namespace aiof.auth.core
             services.AddScoped<AbstractValidator<User>, UserValidator>();
             services.AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>();
             services.AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>();
+            services.AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
