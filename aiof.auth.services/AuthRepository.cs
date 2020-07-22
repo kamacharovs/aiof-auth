@@ -55,9 +55,11 @@ namespace aiof.auth.services
 
             if (!string.IsNullOrWhiteSpace(request.ApiKey))
             {
-                var client = await _clientRepo.GetClientAsync(request.ApiKey);
+                var client = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
 
-                return GenerateJwtToken(client);
+                return GenerateJwtToken(
+                    client.Client,
+                    client.ClientRefreshToken.RefreshToken);;
             }
             else if (!string.IsNullOrWhiteSpace(request.Username)
                 && !string.IsNullOrWhiteSpace(request.Password))

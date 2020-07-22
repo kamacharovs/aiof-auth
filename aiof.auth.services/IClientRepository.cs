@@ -12,6 +12,7 @@ namespace aiof.auth.services
         Task<IClient> GetClientAsync(string apiKey);
         Task<IClient> AddClientAsync(ClientDto clientDto);
         IAsyncEnumerable<IClient> AddClientsAsync(IEnumerable<ClientDto> clientDtos);
+        Task<(IClient Client, IClientRefreshToken ClientRefreshToken)> AddClientRefreshTokenAsync(string clientApiKey);
         Task<IClient> RegenerateKeysAsync(int id);
         Task<IClient> EnableDisableClientAsync(int id, bool enable = true);
     }

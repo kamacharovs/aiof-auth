@@ -102,7 +102,7 @@ namespace aiof.auth.services
             var client = await GetClientAsync(clientApiKey);
             var clientRefreshToken = _mapper.Map<ClientRefreshToken>(client);
 
-            clientRefreshToken.RefreshToken = Utils.GenerateApiKey();
+            clientRefreshToken.RefreshToken = Utils.GenerateApiKey(64);
 
             await _context.ClientRefreshTokens
                 .AddAsync(clientRefreshToken);
