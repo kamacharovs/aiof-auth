@@ -11,8 +11,7 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public abstract class BaseRepository<T>
-        where T : class, IPublicKeyId, IApiKey
+    public abstract class BaseRepository
     {
         private readonly ILogger _logger;
         private readonly IAuthRepository _repo;
@@ -28,7 +27,28 @@ namespace aiof.auth.services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IQueryable<T> GetEntityQuery(bool asNoTracking = true)
+        public IQueryable<T> GetEntityQuery<T>(bool asNoTracking = true)
+            where T : class, IPublicKeyId, IApiKey
+        {
+            return asNoTracking
+                ? _context.Set<T>()
+                    .AsNoTracking()
+                    .AsQueryable()
+                : _context.Set<T>()
+                    .AsQueryable();
+        }
+        public IQueryable<T> GetEntityPublicKeyIdQuery<T>(bool asNoTracking = true)
+            where T : class, IPublicKeyId
+        {
+            return asNoTracking
+                ? _context.Set<T>()
+                    .AsNoTracking()
+                    .AsQueryable()
+                : _context.Set<T>()
+                    .AsQueryable();
+        }
+        public IQueryable<T> GetEntityApiKeyQuery<T>(bool asNoTracking = true)
+            where T : class, IApiKey
         {
             return asNoTracking
                 ? _context.Set<T>()
@@ -38,31 +58,43 @@ namespace aiof.auth.services
                     .AsQueryable();
         }
 
-        public async Task<T> GetEntityAsync(int id, bool asNoTracking = true)
+        public async Task<T> GetEntityPublicKeyAsync<T>(int id, bool asNoTracking = true)
+            where T : class, IPublicKeyId
         {
-            return await GetEntityQuery(asNoTracking)
+            return await GetEntityPublicKeyIdQuery<T>(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new AuthNotFoundException();
         }
 
-        public async Task<T> GetEntityAsync(Guid publicKey)
+        public async Task<T> GetEntityAsync<T>(int id, bool asNoTracking = true)
+            where T : class, IPublicKeyId, IApiKey
         {
-            return await GetEntityQuery()
+            return await GetEntityQuery<T>(asNoTracking)
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException();
+        }
+
+        public async Task<T> GetEntityAsync<T>(Guid publicKey)
+            where T : class, IPublicKeyId
+        {
+            return await GetEntityPublicKeyIdQuery<T>()
                 .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
                 ?? throw new AuthNotFoundException();
         }
 
-        public async Task<T> GetEntityAsync(string apiKey)
+        public async Task<T> GetEntityAsync<T>(string apiKey)
+            where T : class, IApiKey
         {
-            return await GetEntityQuery()
+            return await GetEntityApiKeyQuery<T>()
                 .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
                     || x.SecondaryApiKey == apiKey)
                 ?? throw new AuthNotFoundException();
         }
 
-        public async Task DeleteEntityAsync(int id)
+        public async Task DeleteEntityAsync<T>(int id)
+            where T : class, IPublicKeyId
         {
-            var entity = await GetEntityAsync(id, asNoTracking: false);
+            var entity = await GetEntityPublicKeyAsync<T>(id, asNoTracking: false);
             var publicKey = entity.PublicKey;
 
             var entityJson = JsonSerializer.Serialize(entity);
@@ -75,9 +107,10 @@ namespace aiof.auth.services
             _logger.LogInformation($"Deleted {typeof(T).Name}. EntityJson='{entityJson}'");
         }
 
-        public async Task<T> RegenerateKeysAync(int id)
+        public async Task<T> RegenerateKeysAync<T>(int id)
+            where T : class, IPublicKeyId, IApiKey
         {
-            var entity = await GetEntityAsync(id, asNoTracking: false);
+            var entity = await GetEntityAsync<T>(id, asNoTracking: false);
 
             entity.PrimaryApiKey = _repo.GenerateApiKey();
             entity.SecondaryApiKey = _repo.GenerateApiKey();

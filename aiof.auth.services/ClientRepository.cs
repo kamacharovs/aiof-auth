@@ -14,7 +14,7 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public class ClientRepository : BaseRepository<Client>, IClientRepository
+    public class ClientRepository : BaseRepository, IClientRepository
     {
         private readonly ILogger<ClientRepository> _logger;
         private readonly IAuthRepository _repo;
@@ -35,16 +35,16 @@ namespace aiof.auth.services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
-        }     
+        }
 
         public async Task<IClient> GetClientAsync(int id)
         {
-            return await base.GetEntityAsync(id);
+            return await base.GetEntityAsync<Client>(id);
         }
 
         public async Task<IClient> GetClientAsync(string apiKey)
         {
-            return await base.GetEntityAsync(apiKey);
+            return await base.GetEntityAsync<Client>(apiKey);
         }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
@@ -80,12 +80,12 @@ namespace aiof.auth.services
 
         public async Task<IClient> RegenerateKeysAsync(int id)
         {
-            return await base.RegenerateKeysAync(id);
+            return await base.RegenerateKeysAync<Client>(id);
         }
 
         public async Task<IClient> EnableDisableClientAsync(int id, bool enable = true)
         {
-            var client = await base.GetEntityAsync(id, asNoTracking: false);
+            var client = await base.GetEntityAsync<Client>(id, asNoTracking: false);
 
             client.Enabled = enable;
 
