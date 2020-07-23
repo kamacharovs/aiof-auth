@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xunit;
@@ -60,6 +60,25 @@ namespace aiof.auth.tests
             Assert.Equal(enabled, client.Enabled);
             Assert.NotNull(client.PrimaryApiKey);
             Assert.NotNull(client.SecondaryApiKey);
+        }
+
+        [Fact]
+        public async Task RevokeTokenAsync()
+        {
+            var clientId = 1;
+            var token = "refresh-token-1";
+
+            var clientRefreshTokenBefore = await _repo.GetClientRefreshTokenAsync(
+                clientId, 
+                token,
+                asNoTracking: true);
+
+            Assert.True(DateTime.UtcNow < clientRefreshTokenBefore.Expires);
+
+            Thread.Sleep(1);
+            var clientRefreshTokenAfter = await _repo.RevokeTokenAsync(token, clientId);
+
+            Assert.False(DateTime.UtcNow < clientRefreshTokenAfter.Expires);
         }
     }
 }

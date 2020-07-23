@@ -147,8 +147,12 @@ namespace aiof.auth.services
 
         public async Task<IClientRefreshToken> RevokeTokenAsync(string token, int clientId)
         {
-            var clientRefreshToken = await GetClientRefreshTokenAsync(clientId, token)
-                as ClientRefreshToken;
+            var clientRefreshToken = await GetClientRefreshTokenAsync(
+                clientId, 
+                token,
+                asNoTracking: false)
+                as ClientRefreshToken
+                ?? throw new AuthNotFoundException();
 
             clientRefreshToken.Revoked = DateTime.UtcNow;
             clientRefreshToken.Expires = DateTime.UtcNow;
