@@ -58,6 +58,8 @@ namespace aiof.auth.tests
             Assert.Equal(name, client.Name);
             Assert.Equal(slug, client.Slug);
             Assert.Equal(enabled, client.Enabled);
+            Assert.NotNull(client.PrimaryApiKey);
+            Assert.NotNull(client.SecondaryApiKey);
         }
     }
 }

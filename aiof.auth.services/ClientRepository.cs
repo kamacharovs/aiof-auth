@@ -83,10 +83,8 @@ namespace aiof.auth.services
             if (!validation.IsValid)
                 throw new AuthValidationException(validation.Errors);
 
-            var client = _mapper.Map<Client>(clientDto);
-
-            client.PrimaryApiKey = Utils.GenerateApiKey();
-            client.SecondaryApiKey = Utils.GenerateApiKey();
+            var client = _mapper.Map<Client>(clientDto)
+                .GenerateApiKeys();
 
             await _context.Clients
                 .AddAsync(client);
@@ -130,7 +128,7 @@ namespace aiof.auth.services
                     .LoadAsync();
 
                 return clientRefreshToken;
-            }    
+            }
 
             return clientRefreshToken;
         }
