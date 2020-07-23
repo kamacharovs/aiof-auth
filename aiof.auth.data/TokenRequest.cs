@@ -33,4 +33,10 @@ namespace aiof.auth.data
         [JsonPropertyName("password")]
         public string Password { get; set; }
     }
+
+    public class RevokeRequest : IRevokeRequest
+    {
+        public int ClientId { get; set; }
+        public string Token { get; set; }
+    }
 }

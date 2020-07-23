@@ -18,4 +18,10 @@ namespace aiof.auth.data
         string Username { get; set; }
         string Password { get; set; }
     }
+
+    public interface IRevokeRequest
+    {
+        int ClientId { get; set; }
+        string Token { get; set; }
+    }
 }

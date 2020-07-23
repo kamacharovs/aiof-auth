@@ -31,10 +31,10 @@ namespace aiof.auth.core.Controllers
         }
 
         [HttpPut]
-        [Route("token/revoke")]
-        public async Task<IActionResult> RevokeRefreshTokenAsync([FromQuery]int clientId, string token)
+        [Route("token/revoke")] //TODO: make into HttpPost because it can't be read propert from query
+        public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
         {
-            await _repo.RevokeTokenAsync(clientId, token);
+            await _repo.RevokeTokenAsync(request.ClientId, request.Token);
 
             return Ok("Success");
         }
