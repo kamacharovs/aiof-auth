@@ -118,6 +118,9 @@ namespace aiof.auth.services
                     ClientId = client.Id
                 };
 
+                clientRefreshToken.IsExpired = DateTime.UtcNow >= clientRefreshToken.Expires;
+                clientRefreshToken.IsActive = clientRefreshToken.Revoked == null && !clientRefreshToken.IsExpired;
+
                 await _context.ClientRefreshTokens
                     .AddAsync(clientRefreshToken);
 
