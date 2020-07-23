@@ -12,5 +12,11 @@ namespace aiof.auth.data
                 generator.GetBytes(key);
             return Convert.ToBase64String(key);
         }
+
+        public static void GenerateApiKeys(this IClient client, int length = 32)
+        {
+            client.PrimaryApiKey = GenerateApiKey(length);
+            client.SecondaryApiKey = GenerateApiKey(length);
+        }
     }
 }
