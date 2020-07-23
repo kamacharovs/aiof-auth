@@ -74,7 +74,7 @@ namespace aiof.auth.tests
             Assert.True(DateTime.UtcNow < clientRefreshTokenBefore.Expires);
 
             Thread.Sleep(1);
-            var clientRefreshTokenAfter = await _repo.RevokeTokenAsync(token, clientId);
+            var clientRefreshTokenAfter = await _repo.RevokeTokenAsync(clientId, token);
 
             Assert.False(DateTime.UtcNow < clientRefreshTokenAfter.Expires);
         }

@@ -73,6 +73,11 @@ namespace aiof.auth.services
                     $"Invalid token request");
         }
 
+        public async Task RevokeTokenAsync(int clientId, string token)
+        {
+            await _clientRepo.RevokeTokenAsync(clientId, token);
+        }
+
         public ITokenResponse GenerateJwtToken(IUser user)
         {
             return GenerateJwtToken(new Claim[]

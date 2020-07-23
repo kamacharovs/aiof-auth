@@ -145,7 +145,7 @@ namespace aiof.auth.services
             return clientRefreshToken;
         }
 
-        public async Task<IClientRefreshToken> RevokeTokenAsync(string token, int clientId)
+        public async Task<IClientRefreshToken> RevokeTokenAsync(int clientId, string token)
         {
             var clientRefreshToken = await GetClientRefreshTokenAsync(
                 clientId, 
