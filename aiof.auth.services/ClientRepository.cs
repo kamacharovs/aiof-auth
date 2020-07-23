@@ -65,6 +65,7 @@ namespace aiof.auth.services
         {
             return await GetClientRefreshTokenQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
+                    && x.Client.Enabled
                     && x.Token == refreshToken);
         }
         public async Task<IClientRefreshToken> GetClientRefreshTokenAsync(
@@ -73,6 +74,7 @@ namespace aiof.auth.services
         {
             return await GetClientRefreshTokenQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
+                    && x.Client.Enabled
                     && x.IsActive);
         }
 
@@ -108,6 +110,11 @@ namespace aiof.auth.services
         public async Task<IClientRefreshToken> AddClientRefreshTokenAsync(string clientApiKey)
         {
             var client = await GetClientAsync(clientApiKey);
+
+            if (!client.Enabled)
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"The current Client with ApiKey='{clientApiKey}' is DISABLED");
+
             var clientRefreshToken = await GetClientRefreshTokenAsync(client.Id)
                 ?? await AddClientRefreshTokenAsync(client);
 
