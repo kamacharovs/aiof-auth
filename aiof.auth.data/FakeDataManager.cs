@@ -282,6 +282,23 @@ namespace aiof.auth.data
             };
         }
 
+        public IEnumerable<object[]> GetFakeClientRefreshTokensData(
+            bool clientId = false,
+            bool token = false
+        )
+        {
+            var clientRefreshTokens = GetFakeClientRefreshTokens()
+                .ToArray();
+
+            if (clientId && token)
+                return new List<object[]>
+                {
+                    new object[] { clientRefreshTokens[0].ClientId, clientRefreshTokens[0].Token }
+                };
+            else
+                return null;
+        }
+
         public IEnumerable<object[]> GetFakeClaimsData()
         {
             var fakeClaims = GetFakeClaims()

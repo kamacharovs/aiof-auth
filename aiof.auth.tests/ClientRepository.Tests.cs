@@ -62,12 +62,10 @@ namespace aiof.auth.tests
             Assert.NotNull(client.SecondaryApiKey);
         }
 
-        [Fact]
-        public async Task RevokeTokenAsync()
+        [Theory]
+        [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType=typeof(Helper))]
+        public async Task RevokeTokenAsync(int clientId, string token)
         {
-            var clientId = 1;
-            var token = "refresh-token-1";
-
             var clientRefreshTokenBefore = await _repo.GetClientRefreshTokenAsync(
                 clientId, 
                 token,
