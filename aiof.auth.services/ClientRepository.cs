@@ -65,7 +65,7 @@ namespace aiof.auth.services
         {
             return await GetClientRefreshTokenQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
-                    && x.RefreshToken == refreshToken);
+                    && x.Token == refreshToken);
         }
         public async Task<IClientRefreshToken> GetClientRefreshTokenAsync(
             int clientId,  
@@ -73,7 +73,7 @@ namespace aiof.auth.services
         {
             return await GetClientRefreshTokenQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
-                    && x.GeneratedOn > DateTime.UtcNow.AddDays(_refreshTokenValidDay * -1));
+                    && x.IsActive);
         }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)

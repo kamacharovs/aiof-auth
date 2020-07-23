@@ -62,9 +62,13 @@ namespace aiof.auth.data
 
                 e.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasColumnName("public_key").IsRequired();
+                e.Property(x => x.Token).HasColumnName("token").HasMaxLength(100).IsRequired();
                 e.Property(x => x.ClientId).HasColumnName("client_id").IsRequired();
-                e.Property(x => x.GeneratedOn).HasColumnType("date").HasColumnName("generated_on").IsRequired();
-                e.Property(x => x.RefreshToken).HasColumnName("refresh_token").HasMaxLength(100).IsRequired();
+                e.Property(x => x.Created).HasColumnType("date").HasColumnName("created").IsRequired();
+                e.Property(x => x.Expires).HasColumnType("date").HasColumnName("expires").IsRequired();
+                e.Property(x => x.IsExpired).HasColumnName("is_expired").IsRequired();
+                e.Property(x => x.Revoked).HasColumnType("date").HasColumnName("Revoked");
+                e.Property(x => x.IsActive).HasColumnName("is_active").IsRequired();
 
                 e.HasOne(x => x.Client)
                     .WithMany()

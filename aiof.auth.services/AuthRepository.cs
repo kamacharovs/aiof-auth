@@ -59,7 +59,7 @@ namespace aiof.auth.services
 
                 return GenerateJwtToken(
                     client.Client,
-                    client.RefreshToken);;
+                    client.Token);;
             }
             else if (!string.IsNullOrWhiteSpace(request.Username)
                 && !string.IsNullOrWhiteSpace(request.Password))
