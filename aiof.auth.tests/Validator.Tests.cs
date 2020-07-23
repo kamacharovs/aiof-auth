@@ -14,12 +14,14 @@ namespace aiof.auth.tests
         private readonly AbstractValidator<UserDto> _userDtoValidator;
         private readonly AbstractValidator<ClientDto> _clientDtoValidator;
         private readonly AbstractValidator<TokenRequest> _tokenRequestValidator;
+        private readonly AbstractValidator<AiofClaim> _claimValidator;
 
         public ValidatorTests()
         {
             _userDtoValidator = Helper.GetRequiredService<AbstractValidator<UserDto>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<UserDto>));
             _clientDtoValidator = Helper.GetRequiredService<AbstractValidator<ClientDto>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<ClientDto>));
             _tokenRequestValidator = Helper.GetRequiredService<AbstractValidator<TokenRequest>>()  ?? throw new ArgumentNullException(nameof(AbstractValidator<TokenRequest>));
+            _claimValidator = Helper.GetRequiredService<AbstractValidator<AiofClaim>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<AiofClaim>));
         }
 
         [Theory]
@@ -110,6 +112,35 @@ namespace aiof.auth.tests
                 });
 
             Assert.False(validation.IsValid);
+        }
+
+        [Theory]
+        [InlineData("public_key")]
+        [InlineData("given_name")]
+        [InlineData("family_name")]
+        public void AiofClaim_Validate_Valid(string name)
+        {
+            var claim = new AiofClaim
+            {
+                Name = name
+            };
+
+            Assert.True(_claimValidator.Validate(claim).IsValid);
+        }
+
+        [Theory]
+        [InlineData("test")]
+        [InlineData("1")]
+        [InlineData("")]
+        [InlineData(null)]
+        public void AiofClaim_Validate_Invalid(string name)
+        {
+            var claim = new AiofClaim
+            {
+                Name = name
+            };
+
+            Assert.False(_claimValidator.Validate(claim).IsValid);
         }
     }
 }
