@@ -126,13 +126,13 @@ namespace aiof.auth.services
                     $"The current Client with ApiKey='{clientApiKey}' is DISABLED");
 
             var clientRefreshToken = await GetClientRefreshTokenAsync(client.Id)
-                ?? await AddClientRefreshTokenAsync(client);
+                ?? await AddClientRefreshTokenAsync(client.Id);
 
-            async Task<IClientRefreshToken> AddClientRefreshTokenAsync(IClient client)
+            async Task<IClientRefreshToken> AddClientRefreshTokenAsync(int clientId)
             {
                 var clientRefreshToken = new ClientRefreshToken
                 {
-                    ClientId = client.Id,
+                    ClientId = clientId,
                     Expires = DateTime.UtcNow.AddMinutes(_envConfig.JwtRefreshExpires)
                 };
 
