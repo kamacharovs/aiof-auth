@@ -84,7 +84,16 @@ namespace aiof.auth.data
                     PrimaryApiKey = "gk-client-2-p-key",
                     SecondaryApiKey = "gk-client-2-s-key"
                 },
-                GetRandomFakeClient()
+                new Client
+                {
+                    Id = 3,
+                    PublicKey = Guid.Parse("e0e4a4b2-c923-4cc5-9bcf-671221e56b3a"),
+                    Name = "GK Client 3",
+                    Slug = "gk-client-3",
+                    Enabled = false,
+                    PrimaryApiKey = "gk-client-3-p-key",
+                    SecondaryApiKey = "gk-client-3-s-key"
+                }
             };
         }
 
