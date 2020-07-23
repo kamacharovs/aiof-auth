@@ -5,6 +5,7 @@ namespace aiof.auth.data
     public interface IEnvConfiguration
     {
         int JwtExpires { get; }
+        int JwtRefreshExpires { get; }
         string JwtIssuer { get; }
         string JwtAudience { get; }
         string JwtSecret { get; }
