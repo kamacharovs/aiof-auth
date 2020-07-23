@@ -80,7 +80,7 @@ namespace aiof.auth.services
                     && x.Client.Enabled
                     && DateTime.UtcNow < x.Expires);
         }
-        
+
         public async Task<IEnumerable<IClientRefreshToken>> GetRefreshTokensAsync(int clientId)
         {
             return await GetClientRefreshTokenQuery()
@@ -132,10 +132,9 @@ namespace aiof.auth.services
             {
                 var clientRefreshToken = new ClientRefreshToken
                 {
-                    ClientId = client.Id
+                    ClientId = client.Id,
+                    Expires = DateTime.UtcNow.AddMinutes(_envConfig.JwtRefreshExpires)
                 };
-
-                clientRefreshToken.Expires = DateTime.UtcNow.AddMinutes(_envConfig.JwtRefreshExpires);
 
                 await _context.ClientRefreshTokens
                     .AddAsync(clientRefreshToken);
