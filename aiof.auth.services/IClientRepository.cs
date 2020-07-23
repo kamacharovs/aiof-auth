@@ -14,6 +14,7 @@ namespace aiof.auth.services
             int clientId, 
             string refreshToken, 
             bool asNoTracking = true);
+        Task<IEnumerable<IClientRefreshToken>> GetRefreshTokensAsync(int clientId);
         Task<IClient> AddClientAsync(ClientDto clientDto);
         IAsyncEnumerable<IClient> AddClientsAsync(IEnumerable<ClientDto> clientDtos);
         Task<IClientRefreshToken> AddClientRefreshTokenAsync(string clientApiKey);

@@ -49,6 +49,13 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.RegenerateKeysAsync(id));
         }
 
+        [HttpGet]
+        [Route("{id}/refresh/tokens")]
+        public async Task<IActionResult> GetRefreshTokensAsync([FromRoute]int id)
+        {
+            return Ok(await _repo.GetRefreshTokensAsync(id));
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddClientAsync([FromBody]ClientDto clientDto)
         {

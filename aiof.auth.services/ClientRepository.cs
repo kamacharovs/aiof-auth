@@ -80,6 +80,13 @@ namespace aiof.auth.services
                     && x.Client.Enabled
                     && DateTime.UtcNow < x.Expires);
         }
+        
+        public async Task<IEnumerable<IClientRefreshToken>> GetRefreshTokensAsync(int clientId)
+        {
+            return await GetClientRefreshTokenQuery()
+                .Where(x => x.ClientId == clientId)
+                .ToListAsync();
+        }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
         {
