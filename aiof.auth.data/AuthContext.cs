@@ -66,9 +66,7 @@ namespace aiof.auth.data
                 e.Property(x => x.ClientId).HasColumnName("client_id").IsRequired();
                 e.Property(x => x.Created).HasColumnType("date").HasColumnName("created").IsRequired();
                 e.Property(x => x.Expires).HasColumnType("date").HasColumnName("expires").IsRequired();
-                e.Property(x => x.IsExpired).HasColumnName("is_expired").IsRequired();
                 e.Property(x => x.Revoked).HasColumnType("date").HasColumnName("Revoked");
-                e.Property(x => x.IsActive).HasColumnName("is_active").IsRequired();
 
                 e.HasOne(x => x.Client)
                     .WithMany()

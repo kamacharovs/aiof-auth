@@ -18,6 +18,7 @@ namespace aiof.auth.services
     {
         private readonly ILogger<ClientRepository> _logger;
         private readonly IMapper _mapper;
+        private readonly IEnvConfiguration _envConfig;
         private readonly AuthContext _context;
         private readonly AbstractValidator<ClientDto> _clientDtoValidator;
 
@@ -26,12 +27,14 @@ namespace aiof.auth.services
         public ClientRepository(
             ILogger<ClientRepository> logger,
             IMapper mapper,
+            IEnvConfiguration envConfig,
             AuthContext context,
             AbstractValidator<ClientDto> clientDtoValidator)
             : base(logger, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
         }
@@ -75,7 +78,7 @@ namespace aiof.auth.services
             return await GetClientRefreshTokenQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
                     && x.Client.Enabled
-                    && x.IsActive);
+                    && DateTime.UtcNow < x.Expires);
         }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
@@ -125,8 +128,7 @@ namespace aiof.auth.services
                     ClientId = client.Id
                 };
 
-                clientRefreshToken.IsExpired = DateTime.UtcNow >= clientRefreshToken.Expires;
-                clientRefreshToken.IsActive = clientRefreshToken.Revoked == null && !clientRefreshToken.IsExpired;
+                clientRefreshToken.Expires = DateTime.UtcNow.AddMinutes(_envConfig.JwtRefreshExpires);
 
                 await _context.ClientRefreshTokens
                     .AddAsync(clientRefreshToken);
@@ -139,6 +141,22 @@ namespace aiof.auth.services
 
                 return clientRefreshToken;
             }
+
+            return clientRefreshToken;
+        }
+
+        public async Task<IClientRefreshToken> RevokeTokenAsync(string token, int clientId)
+        {
+            var clientRefreshToken = await GetClientRefreshTokenAsync(clientId, token)
+                as ClientRefreshToken;
+
+            clientRefreshToken.Revoked = DateTime.UtcNow;
+            clientRefreshToken.Expires = DateTime.UtcNow;
+
+            _context.ClientRefreshTokens
+                .Update(clientRefreshToken);
+
+            await _context.SaveChangesAsync();
 
             return clientRefreshToken;
         }

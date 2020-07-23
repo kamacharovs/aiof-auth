@@ -11,8 +11,6 @@ namespace aiof.auth.data
         Client Client { get; set; }
         DateTime Created { get; set; }
         DateTime Expires { get; set; }
-        bool IsExpired { get; set; }
         DateTime? Revoked { get; set; }
-        bool IsActive { get; set; }
     }
 }

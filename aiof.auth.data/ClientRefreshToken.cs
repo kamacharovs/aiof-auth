@@ -11,9 +11,7 @@ namespace aiof.auth.data
         public int ClientId { get; set; }
         public Client Client { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
-        public DateTime Expires { get; set; } = DateTime.UtcNow.AddDays(1);
-        public bool IsExpired { get; set; }
+        public DateTime Expires { get; set; }
         public DateTime? Revoked { get; set; }
-        public bool IsActive { get; set; }
     }
 }

@@ -107,8 +107,8 @@ namespace aiof.auth.data
                     PublicKey = Guid.Parse("239eebf7-30f1-4f32-b1f1-18622dc2342d"),
                     Token = "refresh-token-1",
                     ClientId = 1,
-                    IsExpired = false,
-                    IsActive = true
+                    Created = DateTime.UtcNow,
+                    Expires = DateTime.UtcNow.AddDays(1)
                 },
                 new ClientRefreshToken
                 {
@@ -117,9 +117,8 @@ namespace aiof.auth.data
                     Token = "refresh-token-2",
                     ClientId = 2,
                     Created = DateTime.UtcNow.AddDays(-2),
-                    IsExpired = true,
-                    Revoked = DateTime.UtcNow.AddDays(-1),
-                    IsActive = false
+                    Expires = DateTime.UtcNow.AddDays(-1),
+                    Revoked = DateTime.UtcNow.AddDays(-1)
                 }
             };
         }
