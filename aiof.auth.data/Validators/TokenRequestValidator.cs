@@ -16,14 +16,26 @@ namespace aiof.auth.data
                 {
                     if (!string.IsNullOrWhiteSpace(x.Username)
                         && !string.IsNullOrWhiteSpace(x.Password)
+                        && string.IsNullOrWhiteSpace(x.Token)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
                     {
+                        x.Type = TokenRequestType.User;
                         return true;
                     }
                     else if (!string.IsNullOrWhiteSpace(x.ApiKey)
+                        && string.IsNullOrWhiteSpace(x.Token)
                         && string.IsNullOrWhiteSpace(x.Username)
                         && string.IsNullOrWhiteSpace(x.Password))
                     {
+                        x.Type = TokenRequestType.Client;
+                        return true;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(x.Token)
+                        && string.IsNullOrWhiteSpace(x.Username)
+                        && string.IsNullOrWhiteSpace(x.Password)
+                        && string.IsNullOrWhiteSpace(x.ApiKey))
+                    {
+                        x.Type = TokenRequestType.ClientWithRefresh;
                         return true;
                     }
 

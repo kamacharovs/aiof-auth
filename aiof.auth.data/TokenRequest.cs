@@ -9,6 +9,9 @@ namespace aiof.auth.data
         [JsonPropertyName("api_key")]
         public string ApiKey { get; set; }
 
+        [JsonPropertyName("refresh_token")]
+        public string Token { get; set; }
+
         [JsonPropertyName("username")]
         public string Username { get; set; }
 
@@ -35,11 +38,21 @@ namespace aiof.auth.data
 
         [JsonPropertyName("password")]
         public string Password { get; set; }
+
+        [JsonIgnore]
+        public TokenRequestType Type { get; set; }
     }
 
     public class RevokeRequest : IRevokeRequest
     {
         public int ClientId { get; set; }
         public string Token { get; set; }
+    }
+
+    public enum TokenRequestType
+    {
+        Client = 1,
+        ClientWithRefresh = 2,
+        User = 3
     }
 }

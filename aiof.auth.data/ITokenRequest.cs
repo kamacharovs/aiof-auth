@@ -6,6 +6,7 @@ namespace aiof.auth.data
         where T : class
     {
         string ApiKey { get; set; }
+        string Token { get; set; }
         string Username { get; set; }
         string Password { get; set; }
         T Entity { get; set; }
@@ -18,6 +19,7 @@ namespace aiof.auth.data
         string Token { get; set; }
         string Username { get; set; }
         string Password { get; set; }
+        TokenRequestType Type { get; set; }
     }
 
     public interface IRevokeRequest
