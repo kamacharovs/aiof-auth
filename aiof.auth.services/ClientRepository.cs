@@ -61,6 +61,15 @@ namespace aiof.auth.services
             return await base.GetEntityAsync<Client>(apiKey);
         }
 
+        public async Task<IClientRefreshToken> GetRefreshTokenAsync(
+            string token,
+            bool asNoTracking = true)
+        {
+            return await GetClientRefreshTokenQuery(asNoTracking)
+                .FirstOrDefaultAsync(x => x.Token == token
+                    && x.Client.Enabled)
+                ?? throw new AuthNotFoundException($"RefreshToken='{token}' was not found");
+        }
         public async Task<IClientRefreshToken> GetClientRefreshTokenAsync(
             int clientId, 
             string refreshToken, 

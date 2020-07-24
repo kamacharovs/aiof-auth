@@ -27,6 +27,9 @@ namespace aiof.auth.data
         [JsonPropertyName("api_key")]
         public string ApiKey { get; set; }
 
+        [JsonPropertyName("refresh_token")]
+        public string Token { get; set; }
+
         [JsonPropertyName("username")]
         public string Username { get; set; }
 
