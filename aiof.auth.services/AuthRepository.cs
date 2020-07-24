@@ -53,24 +53,20 @@ namespace aiof.auth.services
             if (!validation.IsValid)
                 throw new AuthValidationException(validation.Errors);
 
-            if (!string.IsNullOrWhiteSpace(request.ApiKey))
+            switch (request.Type)
             {
-                var client = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
-
-                return GenerateJwtToken(
-                    client.Client,
-                    client.Token);;
+                case TokenRequestType.User:
+                    var user = await _userRepo.GetUserAsync(request.Username, request.Password);
+                    return GenerateJwtToken(user);
+                case TokenRequestType.Client:
+                    var client = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
+                    return GenerateJwtToken(
+                        client.Client,
+                        client.Token);
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid token request");
             }
-            else if (!string.IsNullOrWhiteSpace(request.Username)
-                && !string.IsNullOrWhiteSpace(request.Password))
-            {
-                var user = await _userRepo.GetUserAsync(request.Username, request.Password);
-
-                return GenerateJwtToken(user);
-            }
-            else
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Invalid token request");
         }
 
         public async Task RevokeTokenAsync(int clientId, string token)
