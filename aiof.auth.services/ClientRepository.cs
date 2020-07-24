@@ -142,7 +142,7 @@ namespace aiof.auth.services
                 var clientRefreshToken = new ClientRefreshToken
                 {
                     ClientId = clientId,
-                    Expires = DateTime.UtcNow.AddMinutes(_envConfig.JwtRefreshExpires)
+                    Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtRefreshExpires)
                 };
 
                 await _context.ClientRefreshTokens

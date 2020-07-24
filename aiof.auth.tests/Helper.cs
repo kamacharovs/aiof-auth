@@ -18,7 +18,8 @@ namespace aiof.auth.tests
         public static Dictionary<string, string> ConfigurationDict
             => new Dictionary<string, string>()
         {
-            { "Jwt:Expires", "900" },
+            { "Jwt:Expires", "15" },
+            { "Jwt:RefreshExpires", "900" },
             { "Jwt:Issuer", "aiof:auth" },
             { "Jwt:Audience", "aiof:auth:audience" },
             { "Jwt:Secret", "egSavDYTnYi3M5gWe3g08XQ46S0E2fdh" },

@@ -59,10 +59,10 @@ namespace aiof.auth.services
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
                     return GenerateJwtToken(user);
                 case TokenRequestType.Client:
-                    var client = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
+                    var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
                     return GenerateJwtToken(
-                        client.Client,
-                        client.Token);
+                        clientRefresh.Client,
+                        clientRefresh.Token);
                 default:
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                         $"Invalid token request");
@@ -74,41 +74,55 @@ namespace aiof.auth.services
             await _clientRepo.RevokeTokenAsync(clientId, token);
         }
 
+        public ITokenResponse RefreshToken(IClient client)
+        {
+            return GenerateJwtToken(
+                client: client,
+                expiresIn: _envConfig.JwtRefreshExpires
+            );
+        }
+
         public ITokenResponse GenerateJwtToken(IUser user)
         {
             return GenerateJwtToken(new Claim[]
-            {
-                new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
-                new Claim(AiofClaims.GivenName, user.FirstName),
-                new Claim(AiofClaims.FamilyName, user.LastName),
-                new Claim(AiofClaims.Email, user.Email)
-            },
-            entity: user as IPublicKeyId);
+                {
+                    new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
+                    new Claim(AiofClaims.GivenName, user.FirstName),
+                    new Claim(AiofClaims.FamilyName, user.LastName),
+                    new Claim(AiofClaims.Email, user.Email)
+                },
+                entity: user as IPublicKeyId);
         }
 
-        public ITokenResponse GenerateJwtToken(IClient client, string refreshToken = null)
+        public ITokenResponse GenerateJwtToken(
+            IClient client, 
+            string refreshToken = null,
+            int? expiresIn = null)
         {
             return GenerateJwtToken(new Claim[]
-            {
-                new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
-                new Claim(AiofClaims.Name, client.Name),
-                new Claim(AiofClaims.Slug, client.Slug)
-            },
-            entity: client as IPublicKeyId,
-            refreshToken: refreshToken);
+                {
+                    new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
+                    new Claim(AiofClaims.Name, client.Name),
+                    new Claim(AiofClaims.Slug, client.Slug)
+                },
+                client as IPublicKeyId,
+                refreshToken,
+                expiresIn);
         }
 
         public ITokenResponse GenerateJwtToken(
             IEnumerable<Claim> claims, 
             IPublicKeyId entity = null,
-            string refreshToken = null)
+            string refreshToken = null, 
+            int? expiresIn = null)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_key);
+            var expires = expiresIn ?? _envConfig.JwtExpires;
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtExpires),
+                Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
                 Audience = _audience,
                 SigningCredentials = new SigningCredentials(
@@ -122,7 +136,7 @@ namespace aiof.auth.services
 
             return new TokenResponse
             {
-                ExpiresIn = _envConfig.JwtExpires,
+                ExpiresIn = expires,
                 AccessToken = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken
             };
