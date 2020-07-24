@@ -31,7 +31,7 @@ namespace aiof.auth.core.Controllers
         }
 
         [HttpPut]
-        [Route("token/revoke")] //TODO: make into HttpPost because it can't be read propert from query
+        [Route("token/revoke")]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
         {
             await _repo.RevokeTokenAsync(request.ClientId, request.Token);
