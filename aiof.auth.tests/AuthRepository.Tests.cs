@@ -52,5 +52,19 @@ namespace aiof.auth.tests
 
             Assert.Equal(TokenResultStatus.Expired, validation.Status);
         }
+
+        [Theory]
+        [MemberData(nameof(Helper.ClientsApiKey), MemberType=typeof(Helper))]
+        public async Task AuthClient_With_ApiKey(string apiKey)
+        {
+            var req = new TokenRequest { ApiKey = apiKey };
+            var token = await _repo.GetTokenAsync(req);
+
+            Assert.NotNull(token);
+            Assert.NotNull(token.AccessToken);
+            Assert.NotNull(token.RefreshToken);
+            Assert.True(token.ExpiresIn > 0);
+            Assert.Equal("Bearer", token.TokenType);
+        }
     }
 }
