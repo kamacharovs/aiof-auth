@@ -54,6 +54,23 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType=typeof(Helper))]
+        public async Task AuthUser_With_Username_Password(string username, string password)
+        {
+            var req = new TokenRequest 
+            { 
+                Username = username,
+                Password = password
+            };
+            var token = await _repo.GetTokenAsync(req);
+
+            Assert.NotNull(token);
+            Assert.NotNull(token.AccessToken);
+            Assert.True(token.ExpiresIn > 0);
+            Assert.Equal("Bearer", token.TokenType);
+        }
+
+        [Theory]
         [MemberData(nameof(Helper.ClientsApiKey), MemberType=typeof(Helper))]
         public async Task AuthClient_With_ApiKey(string apiKey)
         {
