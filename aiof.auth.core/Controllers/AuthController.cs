@@ -30,6 +30,13 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetTokenAsync(req));
         }
 
+        [HttpPost]
+        [Route("token/refresh")]
+        public async Task<IActionResult> RefreshTokenAsync([FromBody]TokenRequest req)
+        {
+            return Ok(await _repo.GetTokenAsync(req));
+        }
+
         [HttpPut]
         [Route("token/revoke")]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
