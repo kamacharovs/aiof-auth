@@ -52,7 +52,7 @@ namespace aiof.auth.data
     public enum TokenRequestType
     {
         Client = 1,
-        ClientWithRefresh = 2,
+        Refresh = 2,
         User = 3
     }
 }

@@ -10,6 +10,9 @@ namespace aiof.auth.services
     {
         Task<IClient> GetClientAsync(int id);
         Task<IClient> GetClientAsync(string apiKey);
+        Task<IClientRefreshToken> GetRefreshTokenAsync(
+            string token,
+            bool asNoTracking = true);
         Task<IClientRefreshToken> GetClientRefreshTokenAsync(
             int clientId, 
             string refreshToken, 

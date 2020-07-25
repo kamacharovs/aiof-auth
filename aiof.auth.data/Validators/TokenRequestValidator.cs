@@ -35,7 +35,7 @@ namespace aiof.auth.data
                         && string.IsNullOrWhiteSpace(x.Password)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
                     {
-                        x.Type = TokenRequestType.ClientWithRefresh;
+                        x.Type = TokenRequestType.Refresh;
                         return true;
                     }
 

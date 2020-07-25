@@ -63,6 +63,9 @@ namespace aiof.auth.services
                     return GenerateJwtToken(
                         clientRefresh.Client,
                         clientRefresh.Token);
+                case TokenRequestType.Refresh:
+                    var client = (await _clientRepo.GetRefreshTokenAsync(request.Token)).Client;
+                    return RefreshToken(client);
                 default:
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                         $"Invalid token request");
