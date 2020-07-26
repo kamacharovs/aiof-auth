@@ -15,6 +15,7 @@ namespace aiof.auth.data
 
         public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"]);
         public int JwtRefreshExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.RefreshExpires}"]);
+        public string JwtType => _config[$"{Keys.Jwt}:{Keys.Type}"];
         public string JwtIssuer => _config[$"{Keys.Jwt}:{Keys.Issuer}"];
         public string JwtAudience => _config[$"{Keys.Jwt}:{Keys.Audience}"];
         public string JwtSecret => _config[$"{Keys.Jwt}:{Keys.Secret}"];

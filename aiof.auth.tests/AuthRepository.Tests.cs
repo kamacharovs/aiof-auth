@@ -85,7 +85,7 @@ namespace aiof.auth.tests
             Assert.NotNull(token.AccessToken);
             Assert.NotNull(token.RefreshToken);
             Assert.Equal(_envConfig.JwtExpires, token.ExpiresIn);
-            Assert.Equal("Bearer", token.TokenType);
+            Assert.Equal(_envConfig.JwtType, token.TokenType);
         }
 
         [Theory]
@@ -98,7 +98,7 @@ namespace aiof.auth.tests
             Assert.NotNull(token);
             Assert.NotNull(token.AccessToken);
             Assert.Equal(_envConfig.JwtRefreshExpires, token.ExpiresIn);
-            Assert.Equal("Bearer", token.TokenType);
+            Assert.Equal(_envConfig.JwtType, token.TokenType);
         }
     }
 }

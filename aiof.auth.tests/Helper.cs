@@ -20,6 +20,7 @@ namespace aiof.auth.tests
         {
             { "Jwt:Expires", "15" },
             { "Jwt:RefreshExpires", "900" },
+            { "Jwt:Type", "Bearer" },
             { "Jwt:Issuer", "aiof:auth" },
             { "Jwt:Audience", "aiof:auth:audience" },
             { "Jwt:Secret", "egSavDYTnYi3M5gWe3g08XQ46S0E2fdh" },

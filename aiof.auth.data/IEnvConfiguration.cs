@@ -6,6 +6,7 @@ namespace aiof.auth.data
     {
         int JwtExpires { get; }
         int JwtRefreshExpires { get; }
+        string JwtType { get; }
         string JwtIssuer { get; }
         string JwtAudience { get; }
         string JwtSecret { get; }
