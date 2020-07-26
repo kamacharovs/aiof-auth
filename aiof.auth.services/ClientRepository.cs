@@ -154,6 +154,8 @@ namespace aiof.auth.services
                     .Reference(x => x.Client)
                     .LoadAsync();
 
+                _logger.LogInformation($"Added Client refresh token for ClientId='{clientId}' and PublicKey='{clientRefreshToken.Client.PublicKey}'");
+
                 return clientRefreshToken;
             }
 
@@ -176,6 +178,8 @@ namespace aiof.auth.services
                 .Update(clientRefreshToken);
 
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Revoked token='{token}' for cliendId='{clientId}'");
 
             return clientRefreshToken;
         }
