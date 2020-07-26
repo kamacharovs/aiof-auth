@@ -15,12 +15,10 @@ namespace aiof.auth.core.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
-        private readonly IClientRepository _clientRepo;
 
         public AuthController(IAuthRepository repo, IClientRepository clientRepo)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
-            _clientRepo = clientRepo ?? throw new ArgumentNullException(nameof(clientRepo));
         }
 
         [HttpPost]
