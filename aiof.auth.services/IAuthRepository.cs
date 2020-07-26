@@ -10,7 +10,7 @@ namespace aiof.auth.services
     public interface IAuthRepository
     {
         Task<ITokenResponse> GetTokenAsync(ITokenRequest request);
-        Task RevokeTokenAsync(int clientId, string token);
+        Task<object> RevokeTokenAsync(int clientId, string token);
         ITokenResponse GenerateJwtToken(IUser user);
         ITokenResponse GenerateJwtToken(
             IClient client, 

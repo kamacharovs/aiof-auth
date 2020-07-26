@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Net;
 using System.Text;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -72,9 +73,15 @@ namespace aiof.auth.services
             }
         }
 
-        public async Task RevokeTokenAsync(int clientId, string token)
+        public async Task<object> RevokeTokenAsync(int clientId, string token)
         {
-            await _clientRepo.RevokeTokenAsync(clientId, token);
+            var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
+
+            return new {
+                clientId = clientRefresh.ClientId,
+                token = clientRefresh.Token,
+                revoked = clientRefresh.Revoked
+            };
         }
 
         public ITokenResponse RefreshToken(IClient client)
