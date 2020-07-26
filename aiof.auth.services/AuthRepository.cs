@@ -76,7 +76,7 @@ namespace aiof.auth.services
         public async Task<object> RevokeTokenAsync(int clientId, string token)
         {
             var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
-
+            
             return new {
                 clientId = clientRefresh.ClientId,
                 token = clientRefresh.Token,
