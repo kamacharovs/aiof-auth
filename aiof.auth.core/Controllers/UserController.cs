@@ -21,6 +21,20 @@ namespace aiof.auth.core.Controllers
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
 
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetUserAsync([FromRoute]int id)
+        {
+            return Ok(await _repo.GetUserAsync(id));
+        }
+
+        [HttpGet]
+        [Route("{username}/{password}")]
+        public async Task<IActionResult> GetUserUsernamePasswordAsync([FromRoute]string username, string password)
+        {
+            return Ok(await _repo.GetUserAsync(username, password));
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddUserAsync([FromBody]UserDto userDto)
         {
