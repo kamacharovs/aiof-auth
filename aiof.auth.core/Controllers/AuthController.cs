@@ -39,9 +39,7 @@ namespace aiof.auth.core.Controllers
         [Route("token/revoke")]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
         {
-            await _repo.RevokeTokenAsync(request.ClientId, request.Token);
-
-            return Ok("Success");
+            return Ok(await _repo.RevokeTokenAsync(request.ClientId, request.Token));
         }
 
         [HttpGet]
