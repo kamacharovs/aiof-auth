@@ -295,6 +295,11 @@ namespace aiof.auth.data
                 {
                     new object[] { clientRefreshTokens[0].ClientId, clientRefreshTokens[0].Token }
                 };
+            else if (token)
+                return new List<object[]>
+                {
+                    new object[] { clientRefreshTokens[0].Token }
+                };
             else
                 return null;
         }

@@ -127,6 +127,13 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> ClientRefreshToken()
+        {
+            return _Fake.GetFakeClientRefreshTokensData(
+                token: true
+            );
+        }
+
         public static string ExpiredJwtToken =>
             _Fake.ExpiredJwtToken;
         #endregion

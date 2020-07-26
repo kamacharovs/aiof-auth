@@ -13,11 +13,15 @@ namespace aiof.auth.tests
     {
         private readonly IAuthRepository _repo;
         private readonly IUserRepository _userRepo;
+        private readonly IClientRepository _clientRepo;
+        private readonly IEnvConfiguration _envConfig;
 
         public AuthRepositoryTests()
         {
             _repo = Helper.GetRequiredService<IAuthRepository>() ?? throw new ArgumentNullException(nameof(IAuthRepository));
             _userRepo = Helper.GetRequiredService<IUserRepository>() ?? throw new ArgumentNullException(nameof(IUserRepository));
+            _clientRepo = Helper.GetRequiredService<IClientRepository>() ?? throw new ArgumentNullException(nameof(IClientRepository));
+            _envConfig = Helper.GetRequiredService<IEnvConfiguration>() ?? throw new ArgumentNullException(nameof(IEnvConfiguration));
         }
 
         [Theory]
@@ -55,7 +59,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.UsersUsernamePassword), MemberType=typeof(Helper))]
-        public async Task AuthUser_With_Username_Password(string username, string password)
+        public async Task Auth_User_With_Username_Password(string username, string password)
         {
             var req = new TokenRequest 
             { 
@@ -66,13 +70,13 @@ namespace aiof.auth.tests
 
             Assert.NotNull(token);
             Assert.NotNull(token.AccessToken);
-            Assert.True(token.ExpiresIn > 0);
+            Assert.Equal(_envConfig.JwtExpires, token.ExpiresIn);
             Assert.Equal("Bearer", token.TokenType);
         }
 
         [Theory]
         [MemberData(nameof(Helper.ClientsApiKey), MemberType=typeof(Helper))]
-        public async Task AuthClient_With_ApiKey(string apiKey)
+        public async Task Auth_Client_With_ApiKey(string apiKey)
         {
             var req = new TokenRequest { ApiKey = apiKey };
             var token = await _repo.GetTokenAsync(req);
@@ -80,7 +84,20 @@ namespace aiof.auth.tests
             Assert.NotNull(token);
             Assert.NotNull(token.AccessToken);
             Assert.NotNull(token.RefreshToken);
-            Assert.True(token.ExpiresIn > 0);
+            Assert.Equal(_envConfig.JwtExpires, token.ExpiresIn);
+            Assert.Equal("Bearer", token.TokenType);
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.ClientRefreshToken), MemberType=typeof(Helper))]
+        public async Task Auth_Client_With_RefreshToken(string refreshToken)
+        {
+            var req = new TokenRequest { Token = refreshToken };
+            var token = await _repo.GetTokenAsync(req);
+
+            Assert.NotNull(token);
+            Assert.NotNull(token.AccessToken);
+            Assert.Equal(_envConfig.JwtRefreshExpires, token.ExpiresIn);
             Assert.Equal("Bearer", token.TokenType);
         }
     }
