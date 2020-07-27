@@ -38,6 +38,11 @@ Response
 
 Overall documentation for the AIOF Auth Microservice
 
+The authentication microservice is built to additionally leverage the following libraries:
+
+- [Fluent Validation](https://github.com/FluentValidation/FluentValidation#get-started) for validation
+- [Polly](https://github.com/App-vNext/Polly#polly) for resiliency and transient-fault-handling
+
 ### JWT
 
 - [IANA JSON Web Token (JWT)](https://www.iana.org/assignments/jwt/jwt.xhtml)
