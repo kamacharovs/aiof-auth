@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\aiof.auth.data\aiof.auth.data.csproj" />
     <ProjectReference Include="..\aiof.auth.services\aiof.auth.services.csproj" />
+    <ProjectReference Include="..\aiof.auth.core\aiof.auth.core.csproj" />
   </ItemGroup>
 
 </Project>
