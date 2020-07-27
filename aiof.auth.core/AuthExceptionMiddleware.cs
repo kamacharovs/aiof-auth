@@ -13,8 +13,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 
-using FluentValidation.Results;
-
 using aiof.auth.data;
 
 namespace aiof.auth.core
