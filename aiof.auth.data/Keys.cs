@@ -16,5 +16,8 @@ namespace aiof.auth.data
         public const string Iterations = nameof(Iterations);
         public const string SaltSize = nameof(SaltSize);
         public const string KeySize = nameof(KeySize);
+
+        public const string Polly = nameof(Polly);
+        public const string MaxRetryCount = nameof(MaxRetryCount);
     }
 }

@@ -14,5 +14,7 @@ namespace aiof.auth.data
         int HashIterations { get; }
         int HashSaltSize { get; }
         int HashKeySize { get; }
+
+        int PollyMaxRetryCount { get; }
     }
 }

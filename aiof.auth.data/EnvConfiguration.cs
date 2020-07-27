@@ -23,5 +23,7 @@ namespace aiof.auth.data
         public int HashIterations => int.Parse(_config[$"{Keys.Hash}:{Keys.Iterations}"]);
         public int HashSaltSize => int.Parse(_config[$"{Keys.Hash}:{Keys.SaltSize}"]);
         public int HashKeySize => int.Parse(_config[$"{Keys.Hash}:{Keys.KeySize}"]);
+
+        public int PollyMaxRetryCount => int.Parse(_config[$"{Keys.Polly}:{Keys.MaxRetryCount}"]);
     }
 }
