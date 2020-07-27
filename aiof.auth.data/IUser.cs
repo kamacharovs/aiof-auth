@@ -11,5 +11,6 @@ namespace aiof.auth.data
         string Email { get; set; }
         string Username { get; set; }
         string Password { get; set; }
+        DateTime Created { get; set; }
     }
 }

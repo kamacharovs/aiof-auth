@@ -15,6 +15,8 @@ namespace aiof.auth.data
 
         [JsonIgnore]
         public string Password { get; set; }
+
+        public DateTime Created { get; set; } = DateTime.UtcNow;
     }
 
     public class UserDto
