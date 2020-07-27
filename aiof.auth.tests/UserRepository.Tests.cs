@@ -78,7 +78,7 @@ namespace aiof.auth.tests
         {
             var newPassword = "newpassword123";
 
-            var user = await _repo.UpdateUserPasswordAsync(
+            var user = await _repo.UpdatePasswordAsync(
                 username,
                 password, 
                 newPassword);

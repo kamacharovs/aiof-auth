@@ -11,7 +11,7 @@ namespace aiof.auth.services
         Task<IUser> GetUserAsync(Guid publicKey);
         Task<IUser> GetUserAsync(string username, string password);
         Task<IUser> AddUserAsync(UserDto userDto);
-        Task<IUser> UpdateUserPasswordAsync(
+        Task<IUser> UpdatePasswordAsync(
             string username, 
             string oldPassword, 
             string newPassword);

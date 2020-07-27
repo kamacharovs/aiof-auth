@@ -62,7 +62,7 @@ namespace aiof.auth.services
         {
             return await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == username)
-                ?? throw new AuthNotFoundException();
+                ?? throw new AuthNotFoundException($"User with Username='{username}' was not found.");
         }
         public async Task<IUser> GetUserAsync(string username, string password)
         {
@@ -93,21 +93,22 @@ namespace aiof.auth.services
             return user;
         }
 
-        public async Task<IUser> UpdateUserPasswordAsync(
+        public async Task<IUser> UpdatePasswordAsync(
             string username, 
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetUserAsync(username)
-                ?? throw new AuthNotFoundException($"User with username='{username}' was not found.");
+            var user = await GetUserAsync(username);
 
             if (!Check(user.Password, oldPassword))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Incorrect password for User='{username}'");
+                    $"Incorrect password for User with Username='{username}'");
 
             user.Password = Hash(newPassword);
 
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Updated Password for User with Username='{username}'");
 
             return user;
         }
