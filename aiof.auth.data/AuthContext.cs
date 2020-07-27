@@ -33,6 +33,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Email).HasColumnName("email").HasMaxLength(200).IsRequired();
                 e.Property(x => x.Username).HasColumnName("username").HasMaxLength(200).IsRequired();
                 e.Property(x => x.Password).HasColumnName("password").HasMaxLength(100).IsRequired();
+                e.Property(x => x.Created).HasColumnType("date").IsRequired();
             });
 
             modelBuilder.Entity<Client>(e =>
