@@ -6,6 +6,7 @@ using aiof.auth.data;
 
 namespace aiof.auth.tests
 {
+    [Trait(Helper.Category, Helper.UnitTest)]
     public class UtilsTests
     {
         [Theory]

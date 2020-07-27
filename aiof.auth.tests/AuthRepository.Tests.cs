@@ -9,6 +9,7 @@ using aiof.auth.services;
 
 namespace aiof.auth.tests
 {
+    [Trait(Helper.Category, Helper.UnitTest)]
     public class AuthRepositoryTests
     {
         private readonly IAuthRepository _repo;

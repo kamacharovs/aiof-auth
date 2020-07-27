@@ -13,6 +13,7 @@ using aiof.auth.core.Controllers;
 
 namespace aiof.auth.tests
 {
+    [Trait(Helper.Category, Helper.UnitTest)]
     public class ControllersTests
     {
         private readonly AuthController _authController;

@@ -140,6 +140,10 @@ namespace aiof.auth.tests
 
         public static string ExpiredJwtToken =>
             _Fake.ExpiredJwtToken;
+
+        public const string Category = nameof(Category);
+        public const string UnitTest = nameof(UnitTest);
+        public const string IntegrationTest = nameof(IntegrationTest);
         #endregion
     }
 }
