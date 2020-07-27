@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -28,6 +29,7 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetTokenAsync(req));
         }
 
+        [FeatureGate(FeatureFlags.RefreshToken)]
         [HttpPost]
         [Route("token/refresh")]
         public async Task<IActionResult> RefreshTokenAsync([FromBody]TokenRequest req)

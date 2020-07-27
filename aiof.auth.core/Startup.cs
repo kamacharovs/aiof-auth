@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 
 using AutoMapper;
 using FluentValidation;
@@ -53,6 +54,7 @@ namespace aiof.auth.core
 
             services.AddLogging();
             services.AddHealthChecks();
+            services.AddFeatureManagement();
 
             services.AddControllers();
             services.AddMvcCore()

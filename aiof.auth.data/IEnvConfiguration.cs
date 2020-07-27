@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace aiof.auth.data
 {
@@ -14,5 +15,7 @@ namespace aiof.auth.data
         int HashIterations { get; }
         int HashSaltSize { get; }
         int HashKeySize { get; }
+
+        Task<bool> IsEnabledAsync(FeatureFlags featureFlag);
     }
 }
