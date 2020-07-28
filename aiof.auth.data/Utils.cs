@@ -1,5 +1,11 @@
 using System;
+using System.Linq;
 using System.Security.Cryptography;
+
+using JetBrains.Annotations;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace aiof.auth.data
 {
@@ -26,6 +32,23 @@ namespace aiof.auth.data
             entity.SecondaryApiKey = GenerateApiKey(length);
 
             return entity;
+        }
+
+        public static string ToSnakeCase(this string str)
+        {
+            return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
+        }
+
+        public static PropertyBuilder HasSnakeCaseColumnName(
+            [NotNull] this PropertyBuilder propertyBuilder)
+        {
+            propertyBuilder.Metadata.SetColumnName(
+                propertyBuilder
+                    .Metadata
+                    .Name
+                    .ToSnakeCase());
+
+            return propertyBuilder;
         }
     }
 }
