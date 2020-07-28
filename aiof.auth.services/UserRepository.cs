@@ -66,10 +66,13 @@ namespace aiof.auth.services
         }
         public async Task<IUser> GetUserAsync(string username, string password)
         {
-            return await _context.Users
-                .FirstOrDefaultAsync(x => x.Username == username
-                    && Check(x.Password, password))
-                ?? throw new AuthNotFoundException();
+            var user = await GetUserAsync(username);
+
+            if (!Check(user.Password, password))
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Incorrect password for User with Username='{username}'");
+
+            return user;
         }
 
         public async Task<IUser> AddUserAsync(UserDto userDto)
