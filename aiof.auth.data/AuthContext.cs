@@ -19,7 +19,7 @@ namespace aiof.auth.data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Server=127.0.0.1;Port=5432;Database=aiof;User Id=postgres;Password=postgres;");
+            optionsBuilder.UseNpgsql("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=postgres;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
