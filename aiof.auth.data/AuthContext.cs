@@ -59,7 +59,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Enabled).HasColumnName("enabled").IsRequired();
                 e.Property(x => x.PrimaryApiKey).HasColumnName("primary_api_key").HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasColumnName("secondary_api_key").HasMaxLength(100);
-                e.Property(x => x.Created).HasColumnType("date").IsRequired();
+                e.Property(x => x.Created).HasColumnType("date").HasColumnName("created").IsRequired();
             });
 
             modelBuilder.Entity<ClientRefreshToken>(e =>
