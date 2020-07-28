@@ -46,6 +46,7 @@ The authentication microservice is built to additionally leverage the following 
 ### Microsoft
 
 - [Implement the Circuit Breaker pattern](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/implement-circuit-breaker-pattern)
+- [Microsoft Feature Flag Management](https://docs.microsoft.com/en-us/azure/azure-app-configuration/use-feature-flags-dotnet-core)
 
 ### JWT
 

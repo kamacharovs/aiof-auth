@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 
 using AutoMapper;
 using FluentValidation;
@@ -49,10 +50,11 @@ namespace aiof.auth.core
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
-                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration["ConnectionString"]));
+                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration.GetConnectionString(Keys.Database)));
 
             services.AddLogging();
             services.AddHealthChecks();
+            services.AddFeatureManagement();
 
             services.AddControllers();
             services.AddMvcCore()

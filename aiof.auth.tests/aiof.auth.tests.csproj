@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="9.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.5" />
+    <PackageReference Include="Microsoft.FeatureManagement" Version="2.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
@@ -18,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\aiof.auth.data\aiof.auth.data.csproj" />
     <ProjectReference Include="..\aiof.auth.services\aiof.auth.services.csproj" />
+    <ProjectReference Include="..\aiof.auth.core\aiof.auth.core.csproj" />
   </ItemGroup>
 
 </Project>

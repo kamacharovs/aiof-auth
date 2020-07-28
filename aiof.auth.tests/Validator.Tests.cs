@@ -9,6 +9,7 @@ using aiof.auth.data;
 
 namespace aiof.auth.tests
 {
+    [Trait(Helper.Category, Helper.UnitTest)]
     public class ValidatorTests
     {
         private readonly AbstractValidator<UserDto> _userDtoValidator;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.FeatureManagement;
 
 using AutoMapper;
 using FluentValidation;
@@ -18,6 +19,8 @@ namespace aiof.auth.tests
         public static Dictionary<string, string> ConfigurationDict
             => new Dictionary<string, string>()
         {
+            { "ConnectionStrings:Database", "" },
+            { "FeatureManagement:RefreshToken", "false" },
             { "Jwt:Expires", "15" },
             { "Jwt:RefreshExpires", "900" },
             { "Jwt:Type", "Bearer" },
@@ -68,6 +71,7 @@ namespace aiof.auth.tests
             services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
             services.AddLogging();
+            services.AddFeatureManagement();
 
             return services.BuildServiceProvider();
         }
@@ -135,8 +139,22 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> ApiKeyLength()
+        {
+            return new List<object[]>
+            {
+                new object[] { 32 },
+                new object[] { 64 },
+                new object[] { 128 }
+            };
+        }
+
         public static string ExpiredJwtToken =>
             _Fake.ExpiredJwtToken;
+
+        public const string Category = nameof(Category);
+        public const string UnitTest = nameof(UnitTest);
+        public const string IntegrationTest = nameof(IntegrationTest);
         #endregion
     }
 }

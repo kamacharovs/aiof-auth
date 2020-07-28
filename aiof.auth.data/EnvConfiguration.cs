@@ -1,17 +1,25 @@
 using System;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.FeatureManagement;
 
 namespace aiof.auth.data
 {
     public class EnvConfiguration : IEnvConfiguration
     {
         public readonly IConfiguration _config;
+        public readonly IFeatureManager _featureManager;
 
-        public EnvConfiguration(IConfiguration config)
+        public EnvConfiguration(
+            IConfiguration config,
+            IFeatureManager featureManager)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
+            _featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
         }
+
+        public string DatabaseConString => _config.GetConnectionString(Keys.Database);
 
         public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"]);
         public int JwtRefreshExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.RefreshExpires}"]);
@@ -24,6 +32,14 @@ namespace aiof.auth.data
         public int HashSaltSize => int.Parse(_config[$"{Keys.Hash}:{Keys.SaltSize}"]);
         public int HashKeySize => int.Parse(_config[$"{Keys.Hash}:{Keys.KeySize}"]);
 
-        public int PollyMaxRetryCount => int.Parse(_config[$"{Keys.Polly}:{Keys.MaxRetryCount}"]);
+        public async Task<bool> IsEnabledAsync(FeatureFlags featureFlag)
+        {
+            return await _featureManager.IsEnabledAsync(nameof(featureFlag));
+        }
+    }
+
+    public enum FeatureFlags
+    {
+        RefreshToken
     }
 }

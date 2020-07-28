@@ -1,9 +1,12 @@
 using System;
+using System.Threading.Tasks;
 
 namespace aiof.auth.data
 {
     public interface IEnvConfiguration
     {
+        string DatabaseConString { get; }
+
         int JwtExpires { get; }
         int JwtRefreshExpires { get; }
         string JwtType { get; }
@@ -15,6 +18,6 @@ namespace aiof.auth.data
         int HashSaltSize { get; }
         int HashKeySize { get; }
 
-        int PollyMaxRetryCount { get; }
+        Task<bool> IsEnabledAsync(FeatureFlags featureFlag);
     }
 }

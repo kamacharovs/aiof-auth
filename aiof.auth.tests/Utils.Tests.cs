@@ -6,12 +6,11 @@ using aiof.auth.data;
 
 namespace aiof.auth.tests
 {
+    [Trait(Helper.Category, Helper.UnitTest)]
     public class UtilsTests
     {
         [Theory]
-        [InlineData(32)]
-        [InlineData(64)]
-        [InlineData(128)]
+        [MemberData(nameof(Helper.ApiKeyLength), MemberType=typeof(Helper))]
         public void GenerateApiKey_Valid(int length)
         {
             var apiKey = Utils.GenerateApiKey(length);
@@ -21,9 +20,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData(32)]
-        [InlineData(64)]
-        [InlineData(128)]
+        [MemberData(nameof(Helper.ApiKeyLength), MemberType=typeof(Helper))]
         public void GenerateApiKey_From_IClient(int length)
         {
             var client = new Client
@@ -37,7 +34,22 @@ namespace aiof.auth.tests
             client.GenerateApiKeys(length);
 
             Assert.NotNull(client.PrimaryApiKey);
-            Assert.NotNull(client.SecondaryApiKey);
+            Assert.NotNull(client.SecondaryApiKey);           
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.ApiKeyLength), MemberType=typeof(Helper))]
+        public void GenerateApiKeys_From_IApiKey(int length)
+        {
+            var clientApiKey = new Client { } as IApiKey;
+
+            Assert.Null(clientApiKey.PrimaryApiKey);
+            Assert.Null(clientApiKey.SecondaryApiKey);
+
+            clientApiKey.GenerateApiKeys(length);
+
+            Assert.NotNull(clientApiKey.PrimaryApiKey);
+            Assert.NotNull(clientApiKey.SecondaryApiKey);
         }
     }
 }
