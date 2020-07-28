@@ -32,7 +32,7 @@ namespace aiof.auth.data
 
                 e.HasIndex(x => x.Username)
                     .IsUnique();
-
+                
                 e.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasColumnName("public_key").IsRequired();
                 e.Property(x => x.FirstName).HasColumnName("first_name").HasMaxLength(200).IsRequired();
