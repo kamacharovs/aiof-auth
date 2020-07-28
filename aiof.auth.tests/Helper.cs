@@ -138,6 +138,16 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> ApiKeyLength()
+        {
+            return new List<object[]>
+            {
+                new object[] { 32 },
+                new object[] { 64 },
+                new object[] { 128 }
+            };
+        }
+
         public static string ExpiredJwtToken =>
             _Fake.ExpiredJwtToken;
 
