@@ -33,7 +33,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Email).HasColumnName("email").HasMaxLength(200).IsRequired();
                 e.Property(x => x.Username).HasColumnName("username").HasMaxLength(200).IsRequired();
                 e.Property(x => x.Password).HasColumnName("password").HasMaxLength(100).IsRequired();
-                e.Property(x => x.Created).HasColumnType("date").IsRequired();
+                e.Property(x => x.Created).HasColumnType("datetime").IsRequired();
             });
 
             modelBuilder.Entity<Client>(e =>
@@ -52,7 +52,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Enabled).HasColumnName("enabled").IsRequired();
                 e.Property(x => x.PrimaryApiKey).HasColumnName("primary_api_key").HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasColumnName("secondary_api_key").HasMaxLength(100);
-                e.Property(x => x.Created).HasColumnType("date").HasColumnName("created").IsRequired();
+                e.Property(x => x.Created).HasColumnType("datetime").HasColumnName("created").IsRequired();
             });
 
             modelBuilder.Entity<ClientRefreshToken>(e =>
@@ -63,11 +63,11 @@ namespace aiof.auth.data
 
                 e.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasColumnName("public_key").IsRequired();
-                e.Property(x => x.Token).HasColumnName("token").HasMaxLength(100).IsRequired();
                 e.Property(x => x.ClientId).HasColumnName("client_id").IsRequired();
-                e.Property(x => x.Created).HasColumnType("date").HasColumnName("created").IsRequired();
-                e.Property(x => x.Expires).HasColumnType("date").HasColumnName("expires").IsRequired();
-                e.Property(x => x.Revoked).HasColumnType("date").HasColumnName("revoked");
+                e.Property(x => x.Token).HasColumnName("token").HasMaxLength(100).IsRequired();
+                e.Property(x => x.Created).HasColumnType("datetime").HasColumnName("created").IsRequired();
+                e.Property(x => x.Expires).HasColumnType("datetime").HasColumnName("expires").IsRequired();
+                e.Property(x => x.Revoked).HasColumnType("datetime").HasColumnName("revoked");
 
                 e.HasOne(x => x.Client)
                     .WithMany()
