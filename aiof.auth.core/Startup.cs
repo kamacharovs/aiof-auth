@@ -50,7 +50,7 @@ namespace aiof.auth.core
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
-                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration["ConnectionString"]));
+                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration.GetConnectionString(Keys.Database)));
 
             services.AddLogging();
             services.AddHealthChecks();
