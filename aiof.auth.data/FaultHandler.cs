@@ -33,7 +33,7 @@ namespace aiof.auth.data
             return Policy
                 .Handle<TException>()
                 .RetryAsync(
-                    _envConfig.PollyMaxRetryCount
+                    3
                 );
         }
 
