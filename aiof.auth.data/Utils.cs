@@ -20,5 +20,12 @@ namespace aiof.auth.data
 
             return client;
         }
+        public static IApiKey GenerateApiKeys(this IApiKey entity, int length = 32)
+        {
+            entity.PrimaryApiKey = GenerateApiKey(length);
+            entity.SecondaryApiKey = GenerateApiKey(length);
+
+            return entity;
+        }
     }
 }
