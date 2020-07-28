@@ -39,11 +39,14 @@ namespace aiof.auth.services
             _userValidator = userValidator ?? throw new ArgumentNullException(nameof(userValidator));
         }
 
-        private IQueryable<User> GetUsersQuery()
+        private IQueryable<User> GetUsersQuery(bool asNoTracking = true)
         {
-            return _context.Users
-                .AsNoTracking()
-                .AsQueryable();
+            return asNoTracking
+                ? _context.Users
+                    .AsNoTracking()
+                    .AsQueryable()
+                : _context.Users
+                    .AsQueryable();
         }
 
         public async Task<IUser> GetUserAsync(int id)
@@ -58,9 +61,11 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
                 ?? throw new AuthNotFoundException();
         }
-        public async Task<IUser> GetUserAsync(string username)
+        public async Task<IUser> GetUserAsync(
+            string username, 
+            bool asNoTracking = true)
         {
-            return await _context.Users
+            return await GetUsersQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Username == username)
                 ?? throw new AuthNotFoundException($"User with Username='{username}' was not found.");
         }
@@ -74,6 +79,33 @@ namespace aiof.auth.services
 
             return user;
         }
+        public async Task<IUser> GetUserAsync(
+            string firstName,
+            string lastName,
+            string email,
+            string username)
+        {
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(
+                    x => x.FirstName == firstName
+                    && x.LastName == lastName
+                    && x.Email == email
+                    && x.Username == username);
+        }
+        public async Task<IUser> GetUserAsync(UserDto userDto)
+        {
+            return await GetUserAsync(
+                userDto.FirstName,
+                userDto.LastName,
+                userDto.Email,
+                userDto.Username);
+        }
+
+        public async Task<bool> IsUsernameUnique(string username)
+        {
+            return await GetUsersQuery()
+                .AnyAsync(x => x.Username == username);
+        }
 
         public async Task<IUser> AddUserAsync(UserDto userDto)
         {
@@ -82,7 +114,13 @@ namespace aiof.auth.services
             if (!validation.IsValid)
                 throw new AuthValidationException(validation.Errors);
 
-            var user = _mapper.Map<User>(userDto);
+            var user = await GetUserAsync(userDto) == null
+                ? _mapper.Map<User>(userDto)
+                : throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"User with FirstName='{userDto.FirstName}', " +
+                    $"LastName='{userDto.LastName}', " +
+                    $"Email='{userDto.Email}' " +
+                    $"and Username='{userDto.Username}' already exists");
 
             user.Password = Hash(userDto.Password);
 
@@ -101,7 +139,9 @@ namespace aiof.auth.services
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetUserAsync(username);
+            var user = await GetUserAsync(
+                username, 
+                asNoTracking: false);
 
             if (!Check(user.Password, oldPassword))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,

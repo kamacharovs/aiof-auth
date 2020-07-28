@@ -55,8 +55,7 @@ namespace aiof.auth.data
                     Email = "jessie@test.com",
                     Username = "jbro",
                     Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
-                },
-                GetRandomFakeUser()
+                }
             };
         }
 
