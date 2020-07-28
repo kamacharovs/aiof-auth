@@ -19,6 +19,8 @@ namespace aiof.auth.data
             _featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
         }
 
+        public string DatabaseConString => _config.GetConnectionString(Keys.Database);
+
         public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"]);
         public int JwtRefreshExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.RefreshExpires}"]);
         public string JwtType => _config[$"{Keys.Jwt}:{Keys.Type}"];

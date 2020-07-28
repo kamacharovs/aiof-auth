@@ -19,6 +19,7 @@ namespace aiof.auth.tests
         public static Dictionary<string, string> ConfigurationDict
             => new Dictionary<string, string>()
         {
+            { "ConnectionStrings:Database", "" },
             { "FeatureManagement:RefreshToken", "false" },
             { "Jwt:Expires", "15" },
             { "Jwt:RefreshExpires", "900" },

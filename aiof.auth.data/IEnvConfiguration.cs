@@ -5,6 +5,8 @@ namespace aiof.auth.data
 {
     public interface IEnvConfiguration
     {
+        string DatabaseConString { get; }
+
         int JwtExpires { get; }
         int JwtRefreshExpires { get; }
         string JwtType { get; }
