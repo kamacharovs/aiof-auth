@@ -19,6 +19,6 @@ namespace aiof.auth.data
     {
         public string Name { get; set; }
         public string Slug { get; set; }
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
     }
 }
