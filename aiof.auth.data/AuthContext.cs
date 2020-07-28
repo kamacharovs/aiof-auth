@@ -15,6 +15,13 @@ namespace aiof.auth.data
             : base(options)
         { }
 
+        public AuthContext() { }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql("Server=127.0.0.1;Port=5432;Database=aiof;User Id=postgres;Password=postgres;");
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(e =>
