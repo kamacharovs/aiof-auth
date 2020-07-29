@@ -22,6 +22,7 @@ namespace aiof.auth.tests
         {
             { "ConnectionStrings:Database", "" },
             { "FeatureManagement:RefreshToken", "false" },
+            { "FeatureManagement:OpenId", "false" },
             { "Jwt:Expires", "15" },
             { "Jwt:RefreshExpires", "900" },
             { "Jwt:Type", "Bearer" },

@@ -101,5 +101,26 @@ namespace aiof.auth.tests
             Assert.Equal(_envConfig.JwtRefreshExpires, token.ExpiresIn);
             Assert.Equal(_envConfig.JwtType, token.TokenType);
         }
+
+        [Theory]
+        [InlineData("testhost", true)]
+        [InlineData("aiof-auth", true)]
+        [InlineData("aiof-auth-dev", true)]
+        public void GetOpenIdConfig_Valid(string host, bool isHttps)
+        {
+            var openIdConfig = _repo.GetOpenIdConfig(
+                host,
+                isHttps);
+
+            Assert.NotNull(openIdConfig);
+            Assert.NotNull(openIdConfig.Issuer);
+            Assert.NotNull(openIdConfig.TokenEndpoint);
+            Assert.NotNull(openIdConfig.TokenRefreshEndpoint);
+            Assert.NotEmpty(openIdConfig.ResponseTypes);
+            Assert.NotEmpty(openIdConfig.SubjectTypesSupported);
+            Assert.NotEmpty(openIdConfig.SigningAlgorithmsSupported);
+            Assert.NotEmpty(openIdConfig.ClaimTypesSupported);
+            Assert.NotEmpty(openIdConfig.ClaimsSupported);
+        }
     }
 }
