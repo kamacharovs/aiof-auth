@@ -7,7 +7,6 @@ namespace aiof.auth.data
         string Issuer { get; set; }
         string TokenEndpoint { get; set; }
         string TokenRefreshEndpoint { get; set; }
-        string UserInfoEndpoint { get; set; }
         IEnumerable<string> ResponseTypes { get; }
         IEnumerable<string> SubjectTypesSupported { get; }
         IEnumerable<string> SigningAlgorithmsSupported { get; }
