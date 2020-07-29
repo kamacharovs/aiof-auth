@@ -11,6 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aiof.auth.services", "aiof.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aiof.auth.tests", "aiof.auth.tests\aiof.auth.tests.csproj", "{B22FF405-EAF4-4067-AC54-D24C251ABF61}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C0500938-79F0-4C91-9792-0B5DE574203E}"
+	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
+		Dockerfile = Dockerfile
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

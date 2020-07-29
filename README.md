@@ -34,6 +34,48 @@ Response
 }
 ```
 
+### Endpoints
+
+Below are descriptions and examples of the important available endpoints
+
+#### /auth/.well-known/openid-configuration
+
+HttpMethod: `GET`
+Relative endpoint: `/auth/.well-known/openid-configuration`
+
+Response
+
+```json
+{
+  "issuer": "aiof:auth",
+  "token_endpoint": "http://localhost:5000/auth/token",
+  "token_refresh_endpoint": "http://localhost:5000/auth/token/refresh",
+  "response_types_supported": [
+    "code token"
+  ],
+  "subject_types_supported": [
+    "public",
+    "pairwise"
+  ],
+  "token_endpoint_auth_signing_alg_values_supported": [
+    "RS256"
+  ],
+  "claim_types_supported": [
+    "normal"
+  ],
+  "claims_supported": [
+    "sub",
+    "iss",
+    "public_key",
+    "given_name",
+    "family_name",
+    "name",
+    "email",
+    "slug"
+  ]
+}
+```
+
 ## Documentation
 
 Overall documentation for the AIOF Auth Microservice
