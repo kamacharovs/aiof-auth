@@ -21,8 +21,7 @@ namespace aiof.auth.tests
         public ControllersTests()
         {
             _authController = new AuthController(
-                Helper.GetRequiredService<IAuthRepository>(),
-                Helper.GetRequiredService<IClientRepository>()
+                Helper.GetRequiredService<IAuthRepository>()
             ) ?? throw new ArgumentNullException(nameof(AuthController));
         }
 
