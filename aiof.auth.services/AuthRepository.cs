@@ -193,5 +193,19 @@ namespace aiof.auth.services
                 .Identity
                 .IsAuthenticated;
         }
+
+        public IOpenIdConfig GetOpenIdConfig(
+            string host,
+            bool isHttps)
+        {
+            var protocol = isHttps ? "https" : "http";
+
+            return new OpenIdConfig
+            {
+                Issuer = _envConfig.JwtIssuer,
+                TokenEndpoint = $"{protocol}://{host}/auth/token",
+                TokenRefreshEndpoint = $"{protocol}://{host}/auth/token/refresh"
+            };
+        }
     }
 }

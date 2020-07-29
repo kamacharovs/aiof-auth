@@ -8,7 +8,7 @@ namespace aiof.auth.data
     /// <summary>
     /// OpenId configuration from https://openid.net/specs/openid-connect-discovery-1_0.html
     /// </summary>
-    public class OpenIdConfig
+    public class OpenIdConfig : IOpenIdConfig
     {
         [JsonPropertyName("issuer")]
         public string Issuer { get; set; }
@@ -18,6 +18,9 @@ namespace aiof.auth.data
 
         [JsonPropertyName("token_refresh_endpoint")]
         public string TokenRefreshEndpoint { get; set; }
+
+        [JsonPropertyName("userinfo_endpoint")]
+        public string UserInfoEndpoint { get; set; }
 
         [JsonPropertyName("response_types_supported")]
         public IEnumerable<string> ResponseTypes { get; } = new List<string> { "code token" };

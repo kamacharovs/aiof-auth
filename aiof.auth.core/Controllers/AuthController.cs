@@ -63,5 +63,15 @@ namespace aiof.auth.core.Controllers
         {
             return Ok(AiofClaims.All);
         }
+
+        [FeatureGate(FeatureFlags.OpenId)]
+        [HttpGet]
+        [Route(".well-known/openid-configuration")]
+        public IActionResult GetOpenIdConfig()
+        {
+            return Ok(_repo.GetOpenIdConfig(
+                HttpContext.Request.Host.ToString(),
+                HttpContext.Request.IsHttps));
+        }
     }
 }
