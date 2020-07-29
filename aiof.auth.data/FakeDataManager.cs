@@ -195,6 +195,7 @@ namespace aiof.auth.data
 
         public IEnumerable<object[]> GetFakeUsersData(
             bool id = false,
+            bool publicKey = false,
             bool password = false,
             bool firstName = false,
             bool lastName = false,
@@ -224,6 +225,12 @@ namespace aiof.auth.data
                 {
                     new object[] { fakeUsers[0].Id },
                     new object[] { fakeUsers[1].Id }
+                };
+            else if (publicKey)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].PublicKey },
+                    new object[] { fakeUsers[1].PublicKey }
                 };
             else
                 return null;

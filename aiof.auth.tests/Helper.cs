@@ -93,6 +93,13 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> UsersPublicKey()
+        {
+            return _Fake.GetFakeUsersData(
+                publicKey: true
+            );
+        }
+
         public static IEnumerable<object[]> UsersUsernamePassword()
         {
             return _Fake.GetFakeUsersData(
