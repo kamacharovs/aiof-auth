@@ -54,9 +54,11 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData("Username")]
-        [InlineData("Email")]
-        [InlineData("Password")]
+        [InlineData(nameof(User.Username))]
+        [InlineData(nameof(User.Password))]
+        [InlineData(nameof(User.Email))]
+        [InlineData(nameof(Client.Name))]
+        [InlineData(nameof(Client.Slug))]
         public void ToSnakeCase_With_NoUpperCase(string str)
         {
             var snakeCaseStr = str.ToSnakeCase();
@@ -65,9 +67,11 @@ namespace aiof.auth.tests
             Assert.DoesNotContain(snakeCaseStr, char.IsUpper);
         }
         [Theory]
-        [InlineData("PublicKey")]
-        [InlineData("CreatedAt")]
-        [InlineData("ClientRefreshToken")]
+        [InlineData(nameof(User.PublicKey))]
+        [InlineData(nameof(User.FirstName))]
+        [InlineData(nameof(User.LastName))]
+        [InlineData(nameof(Client.PrimaryApiKey))]
+        [InlineData(nameof(Client.SecondaryApiKey))]
         public void ToSnakeCase_With_Underscore(string str)
         {
             var snakeCaseStr = str.ToSnakeCase();
