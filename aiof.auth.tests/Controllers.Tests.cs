@@ -27,7 +27,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientsApiKey), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
         public async Task GetTokenAsync_Client_ApiKey(string apiKey)
         {
             var resp = await _authController.GetTokenAsync(

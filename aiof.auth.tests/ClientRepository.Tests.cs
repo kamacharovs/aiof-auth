@@ -20,7 +20,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientsId), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
         public async Task GetClientAsync_By_Id(int id)
         {
             var client = await _repo.GetClientAsync(id);
@@ -32,7 +32,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientsApiKey), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
         public async Task GetClientAsync_By_ApiKey(string apiKey)
         {
             var client = await _repo.GetClientAsync(apiKey);
@@ -43,7 +43,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientDtos), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.ClientDtos), MemberType = typeof(Helper))]
         public async Task AddClientAsync_Valid(string name, string slug, bool enabled)
         {
             var client = await _repo.AddClientAsync(new ClientDto
@@ -64,11 +64,11 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType = typeof(Helper))]
         public async Task RevokeTokenAsync(int clientId, string token)
         {
             var clientRefreshTokenBefore = await _repo.GetClientRefreshTokenAsync(
-                clientId, 
+                clientId,
                 token,
                 asNoTracking: true);
 

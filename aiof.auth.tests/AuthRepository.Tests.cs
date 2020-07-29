@@ -26,7 +26,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersId), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
         public async Task GenerateToken_With_Valid_User(int id)
         {
             var user = await _userRepo.GetUserAsync(id);
@@ -38,7 +38,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersId), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
         public async Task ValidateToken_With_Valid_User(int id)
         {
             var user = await _userRepo.GetUserAsync(id);
@@ -59,11 +59,11 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType = typeof(Helper))]
         public async Task Auth_User_With_Username_Password(string username, string password)
         {
-            var req = new TokenRequest 
-            { 
+            var req = new TokenRequest
+            {
                 Username = username,
                 Password = password
             };
@@ -76,7 +76,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientsApiKey), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
         public async Task Auth_Client_With_ApiKey(string apiKey)
         {
             var req = new TokenRequest { ApiKey = apiKey };
@@ -90,7 +90,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientRefreshToken), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.ClientRefreshToken), MemberType = typeof(Helper))]
         public async Task Auth_Client_With_RefreshToken(string refreshToken)
         {
             var req = new TokenRequest { Token = refreshToken };
