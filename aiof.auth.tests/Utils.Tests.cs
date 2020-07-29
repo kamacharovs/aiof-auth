@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 using Xunit;
 
@@ -50,6 +51,30 @@ namespace aiof.auth.tests
 
             Assert.NotNull(clientApiKey.PrimaryApiKey);
             Assert.NotNull(clientApiKey.SecondaryApiKey);
+        }
+
+        [Theory]
+        [InlineData("Username")]
+        [InlineData("Email")]
+        [InlineData("Password")]
+        public void ToSnakeCase_With_NoUpperCase(string str)
+        {
+            var snakeCaseStr = str.ToSnakeCase();
+
+            Assert.NotNull(snakeCaseStr);
+            Assert.DoesNotContain(snakeCaseStr, char.IsUpper);
+        }
+        [Theory]
+        [InlineData("PublicKey")]
+        [InlineData("CreatedAt")]
+        [InlineData("ClientRefreshToken")]
+        public void ToSnakeCase_With_Underscore(string str)
+        {
+            var snakeCaseStr = str.ToSnakeCase();
+
+            Assert.NotNull(snakeCaseStr);
+            Assert.DoesNotContain(snakeCaseStr, char.IsUpper);
+            Assert.Contains('_', snakeCaseStr);
         }
     }
 }
