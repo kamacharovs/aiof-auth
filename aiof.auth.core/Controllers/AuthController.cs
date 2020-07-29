@@ -20,7 +20,7 @@ namespace aiof.auth.core.Controllers
     {
         private readonly IAuthRepository _repo;
 
-        public AuthController(IAuthRepository repo, IClientRepository clientRepo)
+        public AuthController(IAuthRepository repo)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
