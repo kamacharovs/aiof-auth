@@ -195,14 +195,25 @@ namespace aiof.auth.data
 
         public IEnumerable<object[]> GetFakeUsersData(
             bool id = false,
-            bool username = false,
-            bool password = false
-        )
+            bool password = false,
+            bool firstName = false,
+            bool lastName = false,
+            bool email = false,
+            bool username = false)
         {
             var fakeUsers = GetFakeUsers()
                 .ToArray();
 
-            if (username && password)
+            if (firstName
+                && lastName
+                && email
+                && username)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].FirstName, fakeUsers[0].LastName, fakeUsers[0].Email, fakeUsers[0].Username },
+                    new object[] { fakeUsers[1].FirstName, fakeUsers[1].LastName, fakeUsers[1].Email, fakeUsers[1].Username }
+                };
+            else if (username && password)
                 return new List<object[]>
                 {
                     new object[] { fakeUsers[0].Username, "pass1234" },
@@ -218,9 +229,9 @@ namespace aiof.auth.data
                 return null;
         }
 
-        public IEnumerable<object[]> GetFakeUserDtosData()
+        public IEnumerable<object[]> GetFakeUserDtosData(int n = 3)
         {
-            var fakeUserDtos = GetRandomFakeUserDtos(3);
+            var fakeUserDtos = GetRandomFakeUserDtos(n);
             var fakeUserDtosList = new List<object[]>();
 
             foreach (var fakeUserDto in fakeUserDtos)
