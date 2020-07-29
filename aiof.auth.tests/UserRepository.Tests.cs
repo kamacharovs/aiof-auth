@@ -30,7 +30,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.UsersDto), MemberType=typeof(Helper))]
-        public async Task GetUserAsync_By_UserDto_DoesntExist(
+        public async Task GetUserAsync_By_UserDto_NotFound(
             string firstName,
             string lastName,
             string email,
@@ -49,6 +49,14 @@ namespace aiof.auth.tests
             var user = await _repo.GetUserAsync(userDto);
 
             Assert.Null(user);
+
+            var user2 = await _repo.GetUserAsync(
+                firstName,
+                lastName,
+                email,
+                username);
+
+            Assert.Null(user2);
         }
 
         [Theory]
