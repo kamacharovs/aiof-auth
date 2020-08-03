@@ -165,83 +165,134 @@ namespace aiof.auth.data
                 && lastName
                 && email
                 && username)
-                return new List<object[]>
+                foreach (var fakeUser in fakeUsers)
                 {
-                    new object[] { fakeUsers[0].FirstName, fakeUsers[0].LastName, fakeUsers[0].Email, fakeUsers[0].Username },
-                    new object[] { fakeUsers[1].FirstName, fakeUsers[1].LastName, fakeUsers[1].Email, fakeUsers[1].Username }
-                };
-            else if (username && password)
+                    toReturn.Add(new object[] 
+                    { 
+                        fakeUser.FirstName, 
+                        fakeUser.LastName, 
+                        fakeUser.Email, 
+                        fakeUser.Username
+                    });
+                }
+            else if (username 
+                && password)
                 return new List<object[]>
                 {
                     new object[] { fakeUsers[0].Username, "pass1234" },
                     new object[] { fakeUsers[1].Username, "password123" }
                 };
             else if (id)
-                return new List<object[]>
+                foreach (var fakeUserId in fakeUsers.Select(x => x.Id))
                 {
-                    new object[] { fakeUsers[0].Id },
-                    new object[] { fakeUsers[1].Id }
-                };
+                    toReturn.Add(new object[] 
+                    { 
+                        fakeUserId
+                    });
+                }
             else if (publicKey)
-                return new List<object[]>
+                foreach (var fakeUserPublicKey in fakeUsers.Select(x => x.PublicKey))
                 {
-                    new object[] { fakeUsers[0].PublicKey },
-                    new object[] { fakeUsers[1].PublicKey }
-                };
-            else
-                return null;
+                    toReturn.Add(new object[] 
+                    { 
+                        fakeUserPublicKey
+                    });
+                }
+
+            return toReturn;
         }
 
         public IEnumerable<object[]> GetFakeClientsData(
             bool id = false,
-            bool apiKey = false
-        )
+            bool apiKey = false)
         {
             var fakeClients = GetFakeClients()
                 .ToArray();
 
-            if (id && apiKey)
-                return new List<object[]>
-                {
-                    new object[] { fakeClients[0].Id, fakeClients[0].PrimaryApiKey },
-                    new object[] { fakeClients[1].Id, fakeClients[1].PrimaryApiKey }
-                };
+            var toReturn = new List<object[]>();
+
+            if (id 
+                && apiKey)
+            {
+                foreach (var fakeClient in fakeClients)
+                    toReturn.Add(new object[]
+                    {
+                        fakeClient.Id,
+                        fakeClient.PrimaryApiKey
+                    });
+            }
             else if (id)
-                return new List<object[]>
-                {
-                    new object[] { fakeClients[0].Id },
-                    new object[] { fakeClients[1].Id }
-                };
+            {
+                foreach (var fakeClientId in fakeClients.Select(x => x.Id))
+                    toReturn.Add(new object[]
+                    {
+                        fakeClientId
+                    });
+            }
             else if (apiKey)
-                return new List<object[]>
-                {
-                    new object[] { fakeClients[0].PrimaryApiKey },
-                    new object[] { fakeClients[1].PrimaryApiKey }
-                }; 
-            else
-                return null;
+            {
+                foreach (var fakeClientPrimaryApiKey in fakeClients.Where(x => x.Enabled).Select(x => x.PrimaryApiKey))
+                    toReturn.Add(new object[]
+                    {
+                        fakeClientPrimaryApiKey
+                    });
+            }
+            
+            return toReturn;
         }
 
         public IEnumerable<object[]> GetFakeClientRefreshTokensData(
             bool clientId = false,
-            bool token = false
-        )
+            bool token = false,
+            bool revoked = false)
         {
             var clientRefreshTokens = GetFakeClientRefreshTokens()
                 .ToArray();
 
-            if (clientId && token)
-                return new List<object[]>
-                {
-                    new object[] { clientRefreshTokens[0].ClientId, clientRefreshTokens[0].Token }
-                };
-            else if (token)
-                return new List<object[]>
-                {
-                    new object[] { clientRefreshTokens[0].Token }
-                };
-            else
-                return null;
+            var toReturn = new List<object[]>();
+
+            if (clientId 
+                && token
+                && !revoked)
+            {
+                foreach (var clientRt in clientRefreshTokens.Where(x => x.Revoked == null))
+                    toReturn.Add(new object[]
+                    {
+                        clientRt.ClientId,
+                        clientRt.Token
+                    });
+            }
+            else if (clientId 
+                && token
+                && revoked)
+            {
+                foreach (var clientRt in clientRefreshTokens.Where(x => x.Revoked != null))
+                    toReturn.Add(new object[]
+                    {
+                        clientRt.ClientId,
+                        clientRt.Token
+                    });
+            }
+            else if (token
+                && !revoked)
+            {
+                foreach (var clientRtToken in clientRefreshTokens.Where(x => x.Revoked == null).Select(x => x.Token))
+                    toReturn.Add(new object[]
+                    {
+                        clientRtToken
+                    });
+            }
+            else if (token
+                && revoked)
+            {
+                foreach (var clientRtToken in clientRefreshTokens.Where(x => x.Revoked != null).Select(x => x.Token))
+                    toReturn.Add(new object[]
+                    {
+                        clientRtToken
+                    });
+            }
+            
+            return toReturn;
         }
 
         public IEnumerable<object[]> GetFakeClaimsData()
@@ -249,17 +300,17 @@ namespace aiof.auth.data
             var fakeClaims = GetFakeClaims()
                 .ToArray();
 
-            var claims = new List<object[]>();
+            var toReturn = new List<object[]>();
 
-            for (int i = 0; i < fakeClaims.Count(); i++)
-                claims.Add(new object[]
+            foreach (var fakeClaim in fakeClaims)
+                toReturn.Add(new object[]
                     { 
-                        fakeClaims[i].Id,
-                        fakeClaims[i].PublicKey, 
-                        fakeClaims[i].Name 
+                        fakeClaim.Id,
+                        fakeClaim.PublicKey, 
+                        fakeClaim.Name 
                     });
             
-            return claims;
+            return toReturn;
         }
 
         public string HashedPassword => "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA="; //pass1234
