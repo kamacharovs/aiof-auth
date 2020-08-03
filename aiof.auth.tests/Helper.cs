@@ -79,7 +79,7 @@ namespace aiof.auth.tests
             return services.BuildServiceProvider();
         }
 
-        #region Unit test data
+        #region Unit Tests
         static FakeDataManager _Fake
             => Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
 
@@ -152,7 +152,7 @@ namespace aiof.auth.tests
                 .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
                 .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
                 .RuleFor(x => x.Password, f => _Fake.HashedPassword)
-                .Generate(3);
+                .Generate(RandomGenerations);
 
             var toReturn = new List<object[]>();
 
@@ -179,7 +179,7 @@ namespace aiof.auth.tests
                 .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
                 .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
                 .RuleFor(x => x.Password, f => _Fake.HashedPassword)
-                .Generate(3);
+                .Generate(RandomGenerations);
         }
         public static IEnumerable<object[]> RandomUserDtos()
         {
@@ -207,7 +207,7 @@ namespace aiof.auth.tests
                 .RuleFor(x => x.Name, f => f.Random.String())
                 .RuleFor(x => x.Slug, f => f.Internet.DomainName().ToLower())
                 .RuleFor(x => x.Enabled, f => true)
-                .Generate(3);
+                .Generate(RandomGenerations);
         }
         public static IEnumerable<object[]> RandomClientDtos()
         {
@@ -230,6 +230,8 @@ namespace aiof.auth.tests
         public static string ExpiredJwtToken =>
             _Fake.ExpiredJwtToken;
 
+
+        public const int RandomGenerations = 3;
         public const string Category = nameof(Category);
         public const string UnitTest = nameof(UnitTest);
         public const string IntegrationTest = nameof(IntegrationTest);
