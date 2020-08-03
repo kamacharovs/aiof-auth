@@ -44,7 +44,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersDto), MemberType = typeof(Helper))]
+        [MemberData(nameof(Helper.RandomUserDtos), MemberType = typeof(Helper))]
         public async Task GetUserAsync_By_UserDto_NotFound(
             string firstName,
             string lastName,
@@ -75,7 +75,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersDto), MemberType = typeof(Helper))]
+        [MemberData(nameof(Helper.RandomUserDtos), MemberType = typeof(Helper))]
         public async Task AddUserAsync_Valid(
             string firstName,
             string lastName,

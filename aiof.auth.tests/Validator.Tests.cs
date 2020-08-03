@@ -30,7 +30,7 @@ namespace aiof.auth.tests
         [InlineData("Testing@92")]
         public void UserDto_ValidatePassword_Valid(string password)
         {
-            var userDto = Helper.RandomUserDtos(1).First();
+            var userDto = Helper.FakerUserDtos().First();
 
             userDto.Password = password;
 
@@ -42,7 +42,7 @@ namespace aiof.auth.tests
         [InlineData("")]
         public void UserDto_ValidatePassword_Invalid(string password)
         {
-            var userDto = Helper.RandomUserDtos(1).First();
+            var userDto = Helper.FakerUserDtos().First();
 
             userDto.Password = password;
 

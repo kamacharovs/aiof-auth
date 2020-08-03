@@ -43,8 +43,11 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientDtos), MemberType = typeof(Helper))]
-        public async Task AddClientAsync_Valid(string name, string slug, bool enabled)
+        [MemberData(nameof(Helper.RandomClientDtos), MemberType = typeof(Helper))]
+        public async Task AddClientAsync_Valid(
+            string name, 
+            string slug, 
+            bool enabled)
         {
             var client = await _repo.AddClientAsync(new ClientDto
             {
@@ -65,7 +68,9 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType = typeof(Helper))]
-        public async Task RevokeTokenAsync(int clientId, string token)
+        public async Task RevokeTokenAsync(
+            int clientId, 
+            string token)
         {
             var clientRefreshTokenBefore = await _repo.GetClientRefreshTokenAsync(
                 clientId,

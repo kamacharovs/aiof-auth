@@ -9,6 +9,7 @@ using Microsoft.FeatureManagement;
 
 using AutoMapper;
 using FluentValidation;
+using Bogus;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -82,11 +83,6 @@ namespace aiof.auth.tests
         static FakeDataManager _Fake
             => Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
 
-        public static IEnumerable<UserDto> RandomUserDtos(int n)
-        {
-            return _Fake.GetRandomFakeUserDtos(n);
-        }
-
         public static IEnumerable<object[]> UsersId()
         {
             return _Fake.GetFakeUsersData(
@@ -109,11 +105,6 @@ namespace aiof.auth.tests
             );
         }
 
-        public static IEnumerable<object[]> UsersDto()
-        {
-            return _Fake.GetFakeUserDtosData();
-        }
-
         public static IEnumerable<object[]> ClientsId()
         {
             return _Fake.GetFakeClientsData(
@@ -126,11 +117,6 @@ namespace aiof.auth.tests
             return _Fake.GetFakeClientsData(
                 apiKey: true
             );
-        }
-
-        public static IEnumerable<object[]> ClientDtos()
-        {
-            return _Fake.GetFakeClientsDtoData();
         }
 
         public static IEnumerable<object[]> ClientRefreshClientIdToken()
@@ -156,6 +142,89 @@ namespace aiof.auth.tests
                 new object[] { 64 },
                 new object[] { 128 }
             };
+        }
+
+        public static IEnumerable<object[]> RandomUsers()
+        {
+            var fakeUsers = new Faker<User>()
+                .RuleFor(x => x.FirstName, f => f.Name.FirstName())
+                .RuleFor(x => x.LastName, f => f.Name.LastName())
+                .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
+                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
+                .RuleFor(x => x.Password, f => _Fake.HashedPassword)
+                .Generate(3);
+
+            var toReturn = new List<object[]>();
+
+            foreach (var fakeUser in fakeUsers)
+            {
+                toReturn.Add(new object[] 
+                { 
+                    fakeUser.FirstName, 
+                    fakeUser.LastName, 
+                    fakeUser.Email, 
+                    fakeUser.Username,
+                    fakeUser.Password
+                });
+            }
+
+            return toReturn;
+        }
+
+        public static IEnumerable<UserDto> FakerUserDtos()
+        {
+            return new Faker<UserDto>()
+                .RuleFor(x => x.FirstName, f => f.Name.FirstName())
+                .RuleFor(x => x.LastName, f => f.Name.LastName())
+                .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
+                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
+                .RuleFor(x => x.Password, f => _Fake.HashedPassword)
+                .Generate(3);
+        }
+        public static IEnumerable<object[]> RandomUserDtos()
+        {
+            var fakeUserDtos = FakerUserDtos();
+            var toReturn = new List<object[]>();
+
+            foreach (var fakeUserDto in fakeUserDtos)
+            {
+                toReturn.Add(new object[] 
+                { 
+                    fakeUserDto.FirstName, 
+                    fakeUserDto.LastName, 
+                    fakeUserDto.Email, 
+                    fakeUserDto.Username,
+                    fakeUserDto.Password
+                });
+            }
+
+            return toReturn;
+        }
+
+        public static IEnumerable<ClientDto> FakerClientDtos()
+        {
+            return new Faker<ClientDto>()
+                .RuleFor(x => x.Name, f => f.Random.String())
+                .RuleFor(x => x.Slug, f => f.Internet.DomainName().ToLower())
+                .RuleFor(x => x.Enabled, f => true)
+                .Generate(3);
+        }
+        public static IEnumerable<object[]> RandomClientDtos()
+        {
+            var fakeClientDtos = FakerClientDtos();
+            var toReturn = new List<object[]>();
+
+            foreach (var fakeClientDto in fakeClientDtos)
+            {
+                toReturn.Add(new object[] 
+                { 
+                    fakeClientDto.Name, 
+                    fakeClientDto.Slug, 
+                    fakeClientDto.Enabled
+                });
+            }
+
+            return toReturn;
         }
 
         public static string ExpiredJwtToken =>

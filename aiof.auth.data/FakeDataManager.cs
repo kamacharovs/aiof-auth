@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using Bogus;
-
 namespace aiof.auth.data
 {
     public class FakeDataManager
@@ -149,50 +147,6 @@ namespace aiof.auth.data
             };
         }
 
-        public User GetRandomFakeUser()
-        {
-            return new Faker<User>()
-                .RuleFor(x => x.Id, f => f.Random.Int(5, 20))
-                .RuleFor(x => x.PublicKey, f => Guid.NewGuid())
-                .RuleFor(x => x.FirstName, f => f.Name.FirstName())
-                .RuleFor(x => x.LastName, f => f.Name.LastName())
-                .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
-                .RuleFor(x => x.Password, f => HashedPassword)
-                .Generate();
-        }
-        public IEnumerable<UserDto> GetRandomFakeUserDtos(int n)
-        {
-            return new Faker<UserDto>()
-                .RuleFor(x => x.FirstName, f => f.Name.FirstName())
-                .RuleFor(x => x.LastName, f => f.Name.LastName())
-                .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
-                .RuleFor(x => x.Password, f => HashedPassword)
-                .Generate(n);
-        }
-
-        public Client GetRandomFakeClient()
-        {
-            return new Faker<Client>()
-                .RuleFor(x => x.Id, f => f.Random.Int(5, 20))
-                .RuleFor(x => x.PublicKey, f => Guid.NewGuid())
-                .RuleFor(x => x.Name, f => f.Name.FullName())
-                .RuleFor(x => x.Slug, f => f.Random.String())
-                .RuleFor(x => x.Enabled, f => true)
-                .RuleFor(x => x.PrimaryApiKey, f => f.Random.String())
-                .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
-                .Generate();
-        }
-        public IEnumerable<ClientDto> GetRandomFakeClientDtos(int n)
-        {
-            return new Faker<ClientDto>()
-                .RuleFor(x => x.Name, f => f.Random.String())
-                .RuleFor(x => x.Slug, f => f.Internet.DomainName().ToLower())
-                .RuleFor(x => x.Enabled, f => true)
-                .Generate(n);
-        }
-
         public IEnumerable<object[]> GetFakeUsersData(
             bool id = false,
             bool publicKey = false,
@@ -204,6 +158,8 @@ namespace aiof.auth.data
         {
             var fakeUsers = GetFakeUsers()
                 .ToArray();
+
+            var toReturn = new List<object[]>();
 
             if (firstName
                 && lastName
@@ -236,26 +192,6 @@ namespace aiof.auth.data
                 return null;
         }
 
-        public IEnumerable<object[]> GetFakeUserDtosData(int n = 3)
-        {
-            var fakeUserDtos = GetRandomFakeUserDtos(n);
-            var fakeUserDtosList = new List<object[]>();
-
-            foreach (var fakeUserDto in fakeUserDtos)
-            {
-                fakeUserDtosList.Add(new object[]
-                {
-                    fakeUserDto.FirstName,
-                    fakeUserDto.LastName,
-                    fakeUserDto.Email,
-                    fakeUserDto.Username,
-                    fakeUserDto.Password
-                });
-            }
-
-            return fakeUserDtosList;
-        }
-
         public IEnumerable<object[]> GetFakeClientsData(
             bool id = false,
             bool apiKey = false
@@ -284,19 +220,6 @@ namespace aiof.auth.data
                 }; 
             else
                 return null;
-        }
-
-        public IEnumerable<object[]> GetFakeClientsDtoData()
-        {
-            var clientDtos = GetRandomFakeClientDtos(3)
-                .ToArray();
-
-            return new List<object[]>
-            {
-                new object[] { clientDtos[0].Name, clientDtos[0].Slug, clientDtos[0].Enabled },
-                new object[] { clientDtos[1].Name, clientDtos[1].Slug, clientDtos[1].Enabled },
-                new object[] { clientDtos[2].Name, clientDtos[2].Slug, clientDtos[2].Enabled }
-            };
         }
 
         public IEnumerable<object[]> GetFakeClientRefreshTokensData(
