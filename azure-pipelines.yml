@@ -32,14 +32,14 @@ stages:
       inputs:
         command: test
         projects: $(projectFileTest)
-        arguments: -c $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+        arguments: -c $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.cobertura.xml
         publishTestResults: true
 
     - task: PublishCodeCoverageResults@1
-      displayName: publish test code coverage report
+      displayName: publish test code coverage
       inputs:
         codeCoverageTool: Cobertura
-        summaryFileLocation: $(Build.SourcesDirectory)/**/.cobertura.xml
+        summaryFileLocation: $(Build.SourcesDirectory)/TestResults/Coverage/coverage.cobertura.xml
 
     - task: DotNetCoreCLI@2
       displayName: publish
