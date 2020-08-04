@@ -2,11 +2,20 @@
 
 All in one finance authentication API. Generates JWT for entities such as users and clients
 
+## Tests
+
+Unit tests are ran on each pipeline build. The pipelines are built with `Azure DevOps` from the `azure-pipelines.yml` file
+
+Additionally, there are test result coverage reports done by [Coverlet](https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core?view=azure-devops#collect-code-coverage-metrics-with-coverlet). An example of a pipeline build with unit test coverage report can be found below
+
+- [#20200804.10](https://gkamacharov.visualstudio.com/gkama-cicd/_build/results?buildId=681&view=codecoverage-tab)
+
 ## Request
 
 A request for a token is done through the `ITokenRequest<T>` object. The end user/entity will sent a HTTP Post method call to the `/auth/token` endpoint and either provide an `ApiKey` or a `Username` and `Password`. Then, you will receive a typical `ITokenResponse` where the access token is provided
 
 Current supported entities are:
+
 - `User`
 - `Client`
 
