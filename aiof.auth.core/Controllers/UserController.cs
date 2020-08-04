@@ -49,5 +49,13 @@ namespace aiof.auth.core.Controllers
         {
             return Ok(await _repo.AddUserAsync(userDto));
         }
+
+        [HttpGet]
+        [Route("hash/{password}")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public IActionResult HashPassword([FromRoute]string password)
+        {
+            return Ok(_repo.Hash(password));
+        }
     }
 }
