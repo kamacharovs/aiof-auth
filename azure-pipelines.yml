@@ -32,7 +32,8 @@ stages:
       inputs:
         command: test
         projects: $(projectFileTest)
-        publishTestResults: false
+        arguments: --collect "Code coverage"'
+        publishTestResults: true
 
     - task: DotNetCoreCLI@2
       displayName: publish
