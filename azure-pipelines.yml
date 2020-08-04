@@ -5,7 +5,7 @@ resources:
 - repo: self
 
 variables:
-  configuration: release
+  buildConfiguration: release
   targetFramework: netcoreapp3.1
   projectFile: aiof.auth.core/aiof.auth.core.csproj
   projectFileTest: aiof.auth.tests/aiof.auth.tests.csproj
@@ -25,21 +25,27 @@ stages:
       inputs:
         command: build
         projects: $(projectFile)
-        arguments: -c $(configuration) -f $(targetFramework)
+        arguments: -c $(buildConfiguration) -f $(targetFramework)
 
     - task: DotNetCoreCLI@2
       displayName: test
       inputs:
         command: test
         projects: $(projectFileTest)
-        arguments: --collect "Code coverage"'
+        arguments: -c $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
         publishTestResults: true
+
+    - task: PublishCodeCoverageResults@1
+      displayName: publish test code coverage report
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: $(Build.SourcesDirectory)/**/coverage.cobertura.xml
 
     - task: DotNetCoreCLI@2
       displayName: publish
       inputs:
         command: publish
-        arguments: -c $(configuration) -o app/publish -f $(targetFramework)
+        arguments: -c $(buildConfiguration) -o app/publish -f $(targetFramework)
         zipAfterPublish: false
 
     - task: Docker@2
