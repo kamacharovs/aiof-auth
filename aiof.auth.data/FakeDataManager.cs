@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using Bogus;
-
 namespace aiof.auth.data
 {
     public class FakeDataManager
@@ -55,8 +53,7 @@ namespace aiof.auth.data
                     Email = "jessie@test.com",
                     Username = "jbro",
                     Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
-                },
-                GetRandomFakeUser()
+                }
             };
         }
 
@@ -150,158 +147,152 @@ namespace aiof.auth.data
             };
         }
 
-        public User GetRandomFakeUser()
-        {
-            return new Faker<User>()
-                .RuleFor(x => x.Id, f => f.Random.Int(5, 20))
-                .RuleFor(x => x.PublicKey, f => Guid.NewGuid())
-                .RuleFor(x => x.FirstName, f => f.Name.FirstName())
-                .RuleFor(x => x.LastName, f => f.Name.LastName())
-                .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
-                .RuleFor(x => x.Password, f => HashedPassword)
-                .Generate();
-        }
-        public IEnumerable<UserDto> GetRandomFakeUserDtos(int n)
-        {
-            return new Faker<UserDto>()
-                .RuleFor(x => x.FirstName, f => f.Name.FirstName())
-                .RuleFor(x => x.LastName, f => f.Name.LastName())
-                .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
-                .RuleFor(x => x.Password, f => HashedPassword)
-                .Generate(n);
-        }
-
-        public Client GetRandomFakeClient()
-        {
-            return new Faker<Client>()
-                .RuleFor(x => x.Id, f => f.Random.Int(5, 20))
-                .RuleFor(x => x.PublicKey, f => Guid.NewGuid())
-                .RuleFor(x => x.Name, f => f.Name.FullName())
-                .RuleFor(x => x.Slug, f => f.Random.String())
-                .RuleFor(x => x.Enabled, f => true)
-                .RuleFor(x => x.PrimaryApiKey, f => f.Random.String())
-                .RuleFor(x => x.SecondaryApiKey, f => f.Random.String())
-                .Generate();
-        }
-        public IEnumerable<ClientDto> GetRandomFakeClientDtos(int n)
-        {
-            return new Faker<ClientDto>()
-                .RuleFor(x => x.Name, f => f.Random.String())
-                .RuleFor(x => x.Slug, f => f.Internet.DomainName().ToLower())
-                .RuleFor(x => x.Enabled, f => true)
-                .Generate(n);
-        }
-
         public IEnumerable<object[]> GetFakeUsersData(
             bool id = false,
-            bool username = false,
-            bool password = false
-        )
+            bool publicKey = false,
+            bool password = false,
+            bool firstName = false,
+            bool lastName = false,
+            bool email = false,
+            bool username = false)
         {
             var fakeUsers = GetFakeUsers()
                 .ToArray();
 
-            if (username && password)
+            var toReturn = new List<object[]>();
+
+            if (firstName
+                && lastName
+                && email
+                && username)
+                foreach (var fakeUser in fakeUsers)
+                {
+                    toReturn.Add(new object[] 
+                    { 
+                        fakeUser.FirstName, 
+                        fakeUser.LastName, 
+                        fakeUser.Email, 
+                        fakeUser.Username
+                    });
+                }
+            else if (username 
+                && password)
                 return new List<object[]>
                 {
                     new object[] { fakeUsers[0].Username, "pass1234" },
                     new object[] { fakeUsers[1].Username, "password123" }
                 };
             else if (id)
-                return new List<object[]>
+                foreach (var fakeUserId in fakeUsers.Select(x => x.Id))
                 {
-                    new object[] { fakeUsers[0].Id },
-                    new object[] { fakeUsers[1].Id }
-                };
-            else
-                return null;
-        }
-
-        public IEnumerable<object[]> GetFakeUserDtosData()
-        {
-            var fakeUserDtos = GetRandomFakeUserDtos(3);
-            var fakeUserDtosList = new List<object[]>();
-
-            foreach (var fakeUserDto in fakeUserDtos)
-            {
-                fakeUserDtosList.Add(new object[]
+                    toReturn.Add(new object[] 
+                    { 
+                        fakeUserId
+                    });
+                }
+            else if (publicKey)
+                foreach (var fakeUserPublicKey in fakeUsers.Select(x => x.PublicKey))
                 {
-                    fakeUserDto.FirstName,
-                    fakeUserDto.LastName,
-                    fakeUserDto.Email,
-                    fakeUserDto.Username,
-                    fakeUserDto.Password
-                });
-            }
+                    toReturn.Add(new object[] 
+                    { 
+                        fakeUserPublicKey
+                    });
+                }
 
-            return fakeUserDtosList;
+            return toReturn;
         }
 
         public IEnumerable<object[]> GetFakeClientsData(
             bool id = false,
-            bool apiKey = false
-        )
+            bool apiKey = false)
         {
             var fakeClients = GetFakeClients()
                 .ToArray();
 
-            if (id && apiKey)
-                return new List<object[]>
-                {
-                    new object[] { fakeClients[0].Id, fakeClients[0].PrimaryApiKey },
-                    new object[] { fakeClients[1].Id, fakeClients[1].PrimaryApiKey }
-                };
-            else if (id)
-                return new List<object[]>
-                {
-                    new object[] { fakeClients[0].Id },
-                    new object[] { fakeClients[1].Id }
-                };
-            else if (apiKey)
-                return new List<object[]>
-                {
-                    new object[] { fakeClients[0].PrimaryApiKey },
-                    new object[] { fakeClients[1].PrimaryApiKey }
-                }; 
-            else
-                return null;
-        }
+            var toReturn = new List<object[]>();
 
-        public IEnumerable<object[]> GetFakeClientsDtoData()
-        {
-            var clientDtos = GetRandomFakeClientDtos(3)
-                .ToArray();
-
-            return new List<object[]>
+            if (id 
+                && apiKey)
             {
-                new object[] { clientDtos[0].Name, clientDtos[0].Slug, clientDtos[0].Enabled },
-                new object[] { clientDtos[1].Name, clientDtos[1].Slug, clientDtos[1].Enabled },
-                new object[] { clientDtos[2].Name, clientDtos[2].Slug, clientDtos[2].Enabled }
-            };
+                foreach (var fakeClient in fakeClients)
+                    toReturn.Add(new object[]
+                    {
+                        fakeClient.Id,
+                        fakeClient.PrimaryApiKey
+                    });
+            }
+            else if (id)
+            {
+                foreach (var fakeClientId in fakeClients.Select(x => x.Id))
+                    toReturn.Add(new object[]
+                    {
+                        fakeClientId
+                    });
+            }
+            else if (apiKey)
+            {
+                foreach (var fakeClientPrimaryApiKey in fakeClients.Where(x => x.Enabled).Select(x => x.PrimaryApiKey))
+                    toReturn.Add(new object[]
+                    {
+                        fakeClientPrimaryApiKey
+                    });
+            }
+            
+            return toReturn;
         }
 
         public IEnumerable<object[]> GetFakeClientRefreshTokensData(
             bool clientId = false,
-            bool token = false
-        )
+            bool token = false,
+            bool revoked = false)
         {
             var clientRefreshTokens = GetFakeClientRefreshTokens()
                 .ToArray();
 
-            if (clientId && token)
-                return new List<object[]>
-                {
-                    new object[] { clientRefreshTokens[0].ClientId, clientRefreshTokens[0].Token }
-                };
-            else if (token)
-                return new List<object[]>
-                {
-                    new object[] { clientRefreshTokens[0].Token }
-                };
-            else
-                return null;
+            var toReturn = new List<object[]>();
+
+            if (clientId 
+                && token
+                && !revoked)
+            {
+                foreach (var clientRt in clientRefreshTokens.Where(x => x.Revoked == null))
+                    toReturn.Add(new object[]
+                    {
+                        clientRt.ClientId,
+                        clientRt.Token
+                    });
+            }
+            else if (clientId 
+                && token
+                && revoked)
+            {
+                foreach (var clientRt in clientRefreshTokens.Where(x => x.Revoked != null))
+                    toReturn.Add(new object[]
+                    {
+                        clientRt.ClientId,
+                        clientRt.Token
+                    });
+            }
+            else if (token
+                && !revoked)
+            {
+                foreach (var clientRtToken in clientRefreshTokens.Where(x => x.Revoked == null).Select(x => x.Token))
+                    toReturn.Add(new object[]
+                    {
+                        clientRtToken
+                    });
+            }
+            else if (token
+                && revoked)
+            {
+                foreach (var clientRtToken in clientRefreshTokens.Where(x => x.Revoked != null).Select(x => x.Token))
+                    toReturn.Add(new object[]
+                    {
+                        clientRtToken
+                    });
+            }
+            
+            return toReturn;
         }
 
         public IEnumerable<object[]> GetFakeClaimsData()
@@ -309,17 +300,17 @@ namespace aiof.auth.data
             var fakeClaims = GetFakeClaims()
                 .ToArray();
 
-            var claims = new List<object[]>();
+            var toReturn = new List<object[]>();
 
-            for (int i = 0; i < fakeClaims.Count(); i++)
-                claims.Add(new object[]
+            foreach (var fakeClaim in fakeClaims)
+                toReturn.Add(new object[]
                     { 
-                        fakeClaims[i].Id,
-                        fakeClaims[i].PublicKey, 
-                        fakeClaims[i].Name 
+                        fakeClaim.Id,
+                        fakeClaim.PublicKey, 
+                        fakeClaim.Name 
                     });
             
-            return claims;
+            return toReturn;
         }
 
         public string HashedPassword => "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA="; //pass1234

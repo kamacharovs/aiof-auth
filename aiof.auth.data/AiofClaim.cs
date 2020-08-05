@@ -12,6 +12,9 @@ namespace aiof.auth.data
 
     public static class AiofClaims
     {
+        public const string Sub = "sub";
+        public const string Iss = "iss";
+
         public const string PublicKey = "public_key";
         public const string GivenName = "given_name";
         public const string FamilyName = "family_name";
@@ -22,6 +25,8 @@ namespace aiof.auth.data
         public static IEnumerable<string> All
             => new List<string>
             {
+                Sub,
+                Iss,
                 PublicKey,
                 GivenName,
                 FamilyName,
