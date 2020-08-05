@@ -20,7 +20,7 @@ namespace aiof.auth.data
             _featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
         }
 
-        public string DatabaseConString => _config.GetConnectionString(Keys.Database);
+        public string PostgreSQLConString => _config[Keys.PostgreSQL];
 
         public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"] ?? throw new KeyNotFoundException());
         public int JwtRefreshExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.RefreshExpires}"] ?? throw new KeyNotFoundException());

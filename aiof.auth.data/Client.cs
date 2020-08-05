@@ -1,12 +1,13 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace aiof.auth.data
 {
     public class Client : IClient,
         IPublicKeyId, IApiKey
     {
-        public int Id { get; set; }
-        public Guid PublicKey { get; set; } = Guid.NewGuid();
+        [JsonIgnore] public int Id { get; set; }
+        [JsonIgnore] public Guid PublicKey { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public string Slug { get; set; }
         public bool Enabled { get; set; } = true;
