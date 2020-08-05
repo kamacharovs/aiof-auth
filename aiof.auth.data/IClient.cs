@@ -1,11 +1,12 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace aiof.auth.data
 {
     public interface IClient
     {
-        int Id { get; set; }
-        Guid PublicKey { get; set; }
+        [JsonIgnore] int Id { get; set; }
+        [JsonIgnore] Guid PublicKey { get; set; }
         string Name { get; set; }
         string Slug { get; set; }
         bool Enabled { get; set; }

@@ -24,6 +24,9 @@ namespace aiof.auth.core.Controllers
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
 
+        /// <summary>
+        /// Get an existing <see cref="IUser"/> by Id
+        /// </summary>
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,7 +35,10 @@ namespace aiof.auth.core.Controllers
         {
             return Ok(await _repo.GetUserAsync(id));
         }
-
+        
+        /// <summary>
+        /// Get an existing <see cref="IUser"/> by Username and Password
+        /// </summary>
         [HttpGet]
         [Route("{username}/{password}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,6 +48,9 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetUserAsync(username, password));
         }
 
+        /// <summary>
+        /// Create a <see cref="IUser"/>
+        /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
@@ -50,6 +59,9 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.AddUserAsync(userDto));
         }
 
+        /// <summary>
+        /// Hash a password
+        /// </summary>
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
