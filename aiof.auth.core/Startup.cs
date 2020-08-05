@@ -55,6 +55,7 @@ namespace aiof.auth.core
             services.AddLogging();
             services.AddHealthChecks();
             services.AddFeatureManagement();
+            services.AddSwaggerGen();
 
             services.AddControllers();
             services.AddMvcCore()
@@ -78,6 +79,7 @@ namespace aiof.auth.core
 
             app.UseAuthExceptionMiddleware();
             app.UseHealthChecks("/health");
+            app.UseSwagger();
 
             app.UseRouting();
             app.UseAuthorization();
