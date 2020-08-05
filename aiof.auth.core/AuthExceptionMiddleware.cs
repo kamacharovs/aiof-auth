@@ -74,6 +74,7 @@ namespace aiof.auth.core
             if (e is AuthException ae)
             {
                 problem.Status = ae.StatusCode;
+                problem.Title = ae.Message;
         
                 if (e is AuthValidationException ave)
                 {
