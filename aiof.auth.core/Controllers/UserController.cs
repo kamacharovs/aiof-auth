@@ -11,6 +11,9 @@ using aiof.auth.services;
 
 namespace aiof.auth.core.Controllers
 {
+    /// <summary>
+    /// Everything aiof user
+    /// </summary>
     [ApiController]
     [Route("user")]
     [Produces("application/json")]

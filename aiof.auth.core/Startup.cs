@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
+using Microsoft.OpenApi.Models;
 
 using AutoMapper;
 using FluentValidation;
@@ -55,7 +56,26 @@ namespace aiof.auth.core
             services.AddLogging();
             services.AddHealthChecks();
             services.AddFeatureManagement();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(x =>
+            {
+                x.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "aiof.auth",
+                    Version = "v1",
+                    Description = "Aiof authentication microservice",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Georgi Kamacharov",
+                        Email = "gkamacharov@aiof.com",
+                        Url = new Uri("https://github.com/gkama")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "MIT",
+                        Url = new Uri("https://github.com/kamacharovs/aiof-auth/blob/master/LICENSE"),
+                    }
+                });
+            });
 
             services.AddControllers();
             services.AddMvcCore()

@@ -12,6 +12,9 @@ using aiof.auth.services;
 
 namespace aiof.auth.core.Controllers
 {
+    /// <summary>
+    /// Everything aiof authentication
+    /// </summary>
     [ApiController]
     [Route("auth")]
     [Produces("application/json")]
