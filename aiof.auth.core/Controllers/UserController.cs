@@ -63,8 +63,10 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Hash a password
+        /// Hash a Password
         /// </summary>
+        /// <param name="password"></param>
+        /// <returns><see cref="string"/></returns>
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
