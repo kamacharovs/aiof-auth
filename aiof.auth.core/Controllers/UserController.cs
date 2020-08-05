@@ -56,15 +56,17 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddUserAsync([FromBody]UserDto userDto)
         {
-            return Ok(await _repo.AddUserAsync(userDto));
+            return Created(nameof(User), await _repo.AddUserAsync(userDto));
         }
 
         /// <summary>
-        /// Hash a password
+        /// Hash a Password
         /// </summary>
+        /// <param name="password"></param>
+        /// <returns><see cref="string"/></returns>
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]

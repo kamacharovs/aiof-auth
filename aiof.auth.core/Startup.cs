@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.IO;
 using System.Text.Json;
 
 using Microsoft.AspNetCore.Builder;
@@ -58,7 +58,7 @@ namespace aiof.auth.core
             services.AddFeatureManagement();
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new OpenApiInfo
+                x.SwaggerDoc("v1.0.0", new OpenApiInfo
                 {
                     Title = "aiof.auth",
                     Version = "v1",
@@ -75,6 +75,7 @@ namespace aiof.auth.core
                         Url = new Uri("https://github.com/kamacharovs/aiof-auth/blob/master/LICENSE"),
                     }
                 });
+                x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
             });
 
             services.AddControllers();

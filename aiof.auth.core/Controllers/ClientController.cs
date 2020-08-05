@@ -91,10 +91,10 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IClient), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddClientAsync([FromBody]ClientDto clientDto)
         {
-            return Ok(await _repo.AddClientAsync(clientDto));
+            return Created(nameof(User), await _repo.AddClientAsync(clientDto));
         }
     }
 }
