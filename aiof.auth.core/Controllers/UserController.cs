@@ -54,8 +54,6 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Create a User
         /// </summary>
-        /// <response code="201">Returns the newly created User</response>
-        /// <response code="400">If validations fail</response> 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
@@ -67,8 +65,6 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Hash a Password
         /// </summary>
-        /// <param name="password"></param>
-        /// <returns><see cref="string"/></returns>
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
