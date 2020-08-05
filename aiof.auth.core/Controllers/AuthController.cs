@@ -25,6 +25,9 @@ namespace aiof.auth.core.Controllers
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
 
+        /// <summary>
+        /// Generate a JWT for <see cref="IUser"/>, <see cref="IClient"/>
+        /// </summary>
         [HttpPost]
         [Route("token")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -35,6 +38,9 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetTokenAsync(req));
         }
 
+        /// <summary>
+        /// Generate a refresh JWT for <see cref="IClient"/>
+        /// </summary>
         [FeatureGate(FeatureFlags.RefreshToken)]
         [HttpPost]
         [Route("token/refresh")]
@@ -46,6 +52,9 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetTokenAsync(req));
         }
 
+        /// <summary>
+        /// Revoke an existing <see cref="IClient"/> refresh token
+        /// </summary>
         [HttpPut]
         [Route("token/revoke")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -56,6 +65,9 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.RevokeTokenAsync(request.ClientId, request.Token));
         }
 
+        /// <summary>
+        /// Get all available claims for JWT
+        /// </summary>
         [HttpGet]
         [Route("claims")]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
@@ -64,6 +76,9 @@ namespace aiof.auth.core.Controllers
             return Ok(AiofClaims.All);
         }
 
+        /// <summary>
+        /// Get OpenId Configuration for JWT creation
+        /// </summary>
         [FeatureGate(FeatureFlags.OpenId)]
         [HttpGet]
         [Route(".well-known/openid-configuration")]
