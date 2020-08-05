@@ -58,7 +58,7 @@ namespace aiof.auth.core
             services.AddFeatureManagement();
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new OpenApiInfo
+                x.SwaggerDoc("v1.0.0", new OpenApiInfo
                 {
                     Title = "aiof.auth",
                     Version = "v1",
