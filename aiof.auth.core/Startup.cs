@@ -61,7 +61,7 @@ namespace aiof.auth.core
                 x.SwaggerDoc("v1.0.0", new OpenApiInfo
                 {
                     Title = "aiof.auth",
-                    Version = "v1",
+                    Version = "v1.0.0",
                     Description = "Aiof authentication microservice",
                     Contact = new OpenApiContact
                     {
