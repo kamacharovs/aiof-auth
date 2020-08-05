@@ -37,16 +37,14 @@ namespace aiof.auth.core
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<FakeDataManager>();
-            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
-            
-            services.AddAutoMapper(typeof(AutoMappingProfile).Assembly);
-            
+            services.AddScoped<FakeDataManager>();          
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
             services.AddScoped<AbstractValidator<User>, UserValidator>();
             services.AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>();
             services.AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>();
             services.AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
+            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
+            services.AddAutoMapper(typeof(AutoMappingProfile).Assembly);
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
