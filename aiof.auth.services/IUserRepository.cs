@@ -16,7 +16,7 @@ namespace aiof.auth.services
             string email,
             string username);
         Task<IUser> GetUserAsync(UserDto userDto);
-        Task<bool> IsUsernameUnique(string username);
+        Task<bool> DoesUsernameExistAsync(string username);
         Task<IUser> AddUserAsync(UserDto userDto);
         Task<IUser> UpdatePasswordAsync(
             string username, 
