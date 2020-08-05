@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
@@ -18,10 +19,41 @@ namespace aiof.auth.data
 
     public class UserDto
     {
+        /// <summary>
+        /// First name
+        /// </summary>
+        [Required]
+        [MaxLength(200)]
         public string FirstName { get; set; }
+
+        /// <summary>
+        /// Last name
+        /// </summary>
+        [Required]
+        [MaxLength(200)]
         public string LastName { get; set; }
+
+        /// <summary>
+        /// Email address
+        /// </summary>
+        [Required]
+        [EmailAddress]
+        [MaxLength(200)]
         public string Email { get; set; }
+
+        /// <summary>
+        /// Unique username
+        /// </summary>
+        [Required]
+        [MaxLength(200)]
         public string Username { get; set; }
+
+        /// <summary>
+        /// Password
+        /// </summary>
+        [JsonIgnore]
+        [Required]
+        [MaxLength(100)]
         public string Password { get; set; }
     }
 }

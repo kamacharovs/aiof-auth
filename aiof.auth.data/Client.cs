@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
@@ -18,8 +19,23 @@ namespace aiof.auth.data
 
     public class ClientDto
     {
+        /// <summary>
+        /// Name
+        /// </summary>
+        [Required]
+        [MaxLength(200)]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Slug
+        /// </summary>
+        [Required]
+        [MaxLength(50)]
         public string Slug { get; set; }
+
+        /// <summary>
+        /// Enabled or not
+        /// </summary>
         public bool Enabled { get; set; } = true;
     }
 }
