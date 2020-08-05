@@ -92,9 +92,9 @@ namespace aiof.auth.data
                 e.HasIndex(x => x.Name)
                     .IsUnique();
 
-                e.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd().IsRequired();
-                e.Property(x => x.PublicKey).HasColumnName("public_key").IsRequired();
-                e.Property(x => x.Name).HasColumnName("name").HasMaxLength(200).IsRequired();
+                e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
+                e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Name).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
             });
         }
     }

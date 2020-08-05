@@ -20,7 +20,7 @@ namespace aiof.auth.core.Controllers
     {
         private readonly IAuthRepository _repo;
 
-        public AuthController(IAuthRepository repo, IClientRepository clientRepo)
+        public AuthController(IAuthRepository repo)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
@@ -62,6 +62,16 @@ namespace aiof.auth.core.Controllers
         public IActionResult GetClaims()
         {
             return Ok(AiofClaims.All);
+        }
+
+        [FeatureGate(FeatureFlags.OpenId)]
+        [HttpGet]
+        [Route(".well-known/openid-configuration")]
+        public IActionResult GetOpenIdConfig()
+        {
+            return Ok(_repo.GetOpenIdConfig(
+                HttpContext.Request.Host.ToString(),
+                HttpContext.Request.IsHttps));
         }
     }
 }

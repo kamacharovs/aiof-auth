@@ -23,5 +23,8 @@ namespace aiof.auth.services
             int? expiresIn = null);
         ITokenResult ValidateToken(string token);
         bool IsAuthenticated(string token);
+        IOpenIdConfig GetOpenIdConfig(
+             string host,
+             bool isHttps);
     }
 }

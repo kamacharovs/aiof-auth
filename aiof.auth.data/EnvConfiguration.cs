@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Configuration;
@@ -21,16 +22,16 @@ namespace aiof.auth.data
 
         public string DatabaseConString => _config.GetConnectionString(Keys.Database);
 
-        public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"]);
-        public int JwtRefreshExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.RefreshExpires}"]);
-        public string JwtType => _config[$"{Keys.Jwt}:{Keys.Type}"];
-        public string JwtIssuer => _config[$"{Keys.Jwt}:{Keys.Issuer}"];
-        public string JwtAudience => _config[$"{Keys.Jwt}:{Keys.Audience}"];
-        public string JwtSecret => _config[$"{Keys.Jwt}:{Keys.Secret}"];
+        public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"] ?? throw new KeyNotFoundException());
+        public int JwtRefreshExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.RefreshExpires}"] ?? throw new KeyNotFoundException());
+        public string JwtType => _config[$"{Keys.Jwt}:{Keys.Type}"] ?? throw new KeyNotFoundException();
+        public string JwtIssuer => _config[$"{Keys.Jwt}:{Keys.Issuer}"] ?? throw new KeyNotFoundException();
+        public string JwtAudience => _config[$"{Keys.Jwt}:{Keys.Audience}"] ?? throw new KeyNotFoundException();
+        public string JwtSecret => _config[$"{Keys.Jwt}:{Keys.Secret}"] ?? throw new KeyNotFoundException();
 
-        public int HashIterations => int.Parse(_config[$"{Keys.Hash}:{Keys.Iterations}"]);
-        public int HashSaltSize => int.Parse(_config[$"{Keys.Hash}:{Keys.SaltSize}"]);
-        public int HashKeySize => int.Parse(_config[$"{Keys.Hash}:{Keys.KeySize}"]);
+        public int HashIterations => int.Parse(_config[$"{Keys.Hash}:{Keys.Iterations}"] ?? throw new KeyNotFoundException());
+        public int HashSaltSize => int.Parse(_config[$"{Keys.Hash}:{Keys.SaltSize}"] ?? throw new KeyNotFoundException());
+        public int HashKeySize => int.Parse(_config[$"{Keys.Hash}:{Keys.KeySize}"] ?? throw new KeyNotFoundException());
 
         public async Task<bool> IsEnabledAsync(FeatureFlags featureFlag)
         {
@@ -40,6 +41,7 @@ namespace aiof.auth.data
 
     public enum FeatureFlags
     {
-        RefreshToken
+        RefreshToken,
+        OpenId
     }
 }

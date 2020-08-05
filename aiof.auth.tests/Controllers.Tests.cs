@@ -21,13 +21,12 @@ namespace aiof.auth.tests
         public ControllersTests()
         {
             _authController = new AuthController(
-                Helper.GetRequiredService<IAuthRepository>(),
-                Helper.GetRequiredService<IClientRepository>()
+                Helper.GetRequiredService<IAuthRepository>()
             ) ?? throw new ArgumentNullException(nameof(AuthController));
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientsApiKey), MemberType=typeof(Helper))]
+        [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
         public async Task GetTokenAsync_Client_ApiKey(string apiKey)
         {
             var resp = await _authController.GetTokenAsync(
