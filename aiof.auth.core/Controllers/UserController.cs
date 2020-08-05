@@ -54,6 +54,8 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Create a User
         /// </summary>
+        /// <response code="201">Returns the newly created User</response>
+        /// <response code="400">If validations fail</response> 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
