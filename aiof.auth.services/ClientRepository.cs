@@ -104,8 +104,6 @@ namespace aiof.auth.services
             if (!validation.IsValid)
                 throw new AuthValidationException(validation.Errors);
 
-            //TODO: check if slug is unique
-
             var client = _mapper.Map<Client>(clientDto)
                 .GenerateApiKeys();
 

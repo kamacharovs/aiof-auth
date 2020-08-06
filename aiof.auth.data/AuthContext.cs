@@ -41,10 +41,7 @@ namespace aiof.auth.data
                 e.ToTable("client");
 
                 e.HasKey(x => x.Id);
-
-                e.HasIndex(x => x.Slug)
-                    .IsUnique();
-
+                
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Name).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
