@@ -50,30 +50,26 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData("test client", "test-client-slug")]
-        [InlineData("Client 1", "client-1-slug")]
-        public void ClientDto_Validate_Valid(string name, string slug)
+        [InlineData("test client")]
+        [InlineData("Client 1")]
+        public void ClientDto_Validate_Valid(string name)
         {
             var clientDto = new ClientDto
             {
-                Name = name,
-                Slug = slug
+                Name = name
             };
 
             Assert.True(_clientDtoValidator.Validate(clientDto).IsValid);
         }
 
         [Theory]
-        [InlineData("", "test-client-slug")]
-        [InlineData(null, "test-client-slug")]
-        [InlineData("Client 1", "")]
-        [InlineData("Client 1", null)]
-        public void ClientDto_Validate_Invalid(string name, string slug)
+        [InlineData("")]
+        [InlineData(null)]
+        public void ClientDto_Validate_Invalid(string name)
         {
             var clientDto = new ClientDto
             {
-                Name = name,
-                Slug = slug
+                Name = name
             };
 
             Assert.False(_clientDtoValidator.Validate(clientDto).IsValid);
@@ -82,7 +78,10 @@ namespace aiof.auth.tests
         [Theory]
         [InlineData("test", "test", null)]
         [InlineData(null, null, "test")]
-        public void TokenRequest_Valid(string username, string password, string apiKey)
+        public void TokenRequest_Valid(
+            string username, 
+            string password, 
+            string apiKey)
         {
             var validation = _tokenRequestValidator
                 .Validate(new TokenRequest
@@ -102,7 +101,10 @@ namespace aiof.auth.tests
         [InlineData("username", null, "apikey")]
         [InlineData(null, "pass", "apikey")]
         [InlineData(null, null, null)]
-        public void TokenRequest_Invalid(string username, string password, string apiKey)
+        public void TokenRequest_Invalid(
+            string username, 
+            string password, 
+            string apiKey)
         {
             var validation = _tokenRequestValidator
                 .Validate(new TokenRequest

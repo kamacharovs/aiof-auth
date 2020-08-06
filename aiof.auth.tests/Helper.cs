@@ -212,7 +212,6 @@ namespace aiof.auth.tests
         {
             return new Faker<ClientDto>()
                 .RuleFor(x => x.Name, f => f.Random.String())
-                .RuleFor(x => x.Slug, f => f.Internet.DomainName().ToLower())
                 .RuleFor(x => x.Enabled, f => true)
                 .Generate(RandomGenerations);
         }
@@ -226,7 +225,6 @@ namespace aiof.auth.tests
                 toReturn.Add(new object[] 
                 { 
                     fakeClientDto.Name, 
-                    fakeClientDto.Slug, 
                     fakeClientDto.Enabled
                 });
             }

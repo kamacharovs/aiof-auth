@@ -23,10 +23,6 @@ namespace aiof.auth.data
         [MaxLength(200)]
         public string Name { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string Slug { get; set; }
-
         public bool Enabled { get; set; } = true;
     }
 }
