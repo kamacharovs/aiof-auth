@@ -13,10 +13,6 @@ namespace aiof.auth.data
             RuleFor(x => x.Name)
                 .NotNull()
                 .NotEmpty();
-
-            RuleFor(x => x.Slug)
-                .NotNull()
-                .NotEmpty();
         }
     }
 }

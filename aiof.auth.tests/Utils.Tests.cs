@@ -80,5 +80,17 @@ namespace aiof.auth.tests
             Assert.DoesNotContain(snakeCaseStr, char.IsUpper);
             Assert.Contains('_', snakeCaseStr);
         }
+
+        [Theory]
+        [MemberData(nameof(Helper.ClientsName), MemberType = typeof(Helper))]
+        public void ToHyphenCase(string str)
+        {
+            var hypenCase = str.ToHyphenCase();
+
+            Assert.NotNull(hypenCase);
+
+            if (str.Contains(' '))
+                Assert.Contains('-', hypenCase.ToCharArray());
+        }
     }
 }

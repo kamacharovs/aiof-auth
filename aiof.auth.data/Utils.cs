@@ -44,6 +44,12 @@ namespace aiof.auth.data
             return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
         }
 
+        public static string ToHyphenCase(
+            [NotNull] this string str)
+        {
+            return str.Replace(' ', '-').ToLower();
+        }
+
         public static PropertyBuilder HasSnakeCaseColumnName(
             [NotNull] this PropertyBuilder propertyBuilder)
         {

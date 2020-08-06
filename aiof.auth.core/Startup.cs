@@ -78,6 +78,7 @@ namespace aiof.auth.core
 
             services.AddControllers();
             services.AddMvcCore()
+                .AddApiExplorer()
                 .AddJsonOptions(o =>
                 {
                     o.JsonSerializerOptions.WriteIndented = true;
