@@ -112,6 +112,13 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> ClientsName()
+        {
+            return _Fake.GetFakeClientsData(
+                name: true
+            );
+        }
+
         public static IEnumerable<object[]> ClientsApiKey()
         {
             return _Fake.GetFakeClientsData(
