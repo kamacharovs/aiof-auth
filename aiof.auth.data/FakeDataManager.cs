@@ -127,23 +127,42 @@ namespace aiof.auth.data
                 new AiofClaim
                 {
                     Id = 1,
-                    Name = AiofClaims.GivenName
+                    Name = AiofClaims.Sub
                 },
                 new AiofClaim
                 {
                     Id = 2,
-                    Name = AiofClaims.FamilyName
-                },
-                new AiofClaim
+                    Name = AiofClaims.Iss
+                },new AiofClaim
                 {
                     Id = 3,
-                    Name = AiofClaims.Name
+                    Name = AiofClaims.PublicKey
                 },
                 new AiofClaim
                 {
                     Id = 4,
+                    Name = AiofClaims.GivenName
+                },
+                new AiofClaim
+                {
+                    Id = 5,
+                    Name = AiofClaims.FamilyName
+                },
+                new AiofClaim
+                {
+                    Id = 6,
+                    Name = AiofClaims.Name
+                },
+                new AiofClaim
+                {
+                    Id = 7,
                     Name = AiofClaims.Email
-                }
+                },
+                new AiofClaim
+                {
+                    Id = 8,
+                    Name = AiofClaims.Slug
+                },
             };
         }
 
