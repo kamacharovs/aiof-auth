@@ -60,7 +60,7 @@ namespace aiof.auth.services
         {
             return await GetEntityPublicKeyIdQuery<T>(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new AuthNotFoundException($"Entity='{typeof(T).Name}' with Id='{id}' was not found.");
+                ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
         }
 
         public async Task<T> GetEntityAsync<T>(int id, bool asNoTracking = true)
@@ -68,7 +68,7 @@ namespace aiof.auth.services
         {
             return await GetEntityQuery<T>(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new AuthNotFoundException($"Entity='{typeof(T).Name}' with Id='{id}' was not found.");
+                ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
         }
 
         public async Task<T> GetEntityAsync<T>(Guid publicKey)
@@ -76,7 +76,7 @@ namespace aiof.auth.services
         {
             return await GetEntityPublicKeyIdQuery<T>()
                 .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
-                ?? throw new AuthNotFoundException($"Entity='{typeof(T).Name}' with PublicId='{publicKey}' was not found.");
+                ?? throw new AuthNotFoundException($"{typeof(T).Name} with PublicId='{publicKey}' was not found");
         }
 
         public async Task<T> GetEntityAsync<T>(string apiKey)
@@ -85,7 +85,7 @@ namespace aiof.auth.services
             return await GetEntityApiKeyQuery<T>()
                 .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
                     || x.SecondaryApiKey == apiKey)
-                ?? throw new AuthNotFoundException($"Entity='{typeof(T).Name}' with ApiKey='{apiKey}' was not found.");
+                ?? throw new AuthNotFoundException($"{typeof(T).Name} with ApiKey='{apiKey}' was not found");
         }
 
         public async Task DeleteEntityAsync<T>(int id)
@@ -101,7 +101,7 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Deleted {typeof(T).Name}. EntityJson='{entityJson}'");
+            _logger.LogInformation($"Deleted {typeof(T).Name}. {typeof(T).Name}Json='{entityJson}'");
         }
 
         public async Task<T> RegenerateKeysAync<T>(int id)
