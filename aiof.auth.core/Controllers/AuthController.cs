@@ -18,7 +18,7 @@ namespace aiof.auth.core.Controllers
     [ApiController]
     [Route("auth")]
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;

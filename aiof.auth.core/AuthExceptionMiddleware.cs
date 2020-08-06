@@ -17,14 +17,17 @@ namespace aiof.auth.core
 {
     public class AuthExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _env;
+        private readonly RequestDelegate _next;
 
-        private const string _defaultMessage = "An unexpected error has occurred.";
-        private const string _defaultValidationMessage = "A validation error has occurred. Please see details.";
+        private const string _defaultMessage = "An unexpected error has occurred";
+        private const string _defaultValidationMessage = "One or more validation errors have occurred";
 
-        public AuthExceptionMiddleware(RequestDelegate next, ILogger<AuthExceptionMiddleware> logger, IWebHostEnvironment env)
+        public AuthExceptionMiddleware(
+            ILogger<AuthExceptionMiddleware> logger, 
+            IWebHostEnvironment env,
+            RequestDelegate next)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -60,35 +63,31 @@ namespace aiof.auth.core
             var canViewSensitiveInfo = _env
                 .IsDevelopment();
             
-            var problem = new ProblemDetails()
+            var problem = new AuthProblemDetail()
             {
-                Title = canViewSensitiveInfo
+                Message = canViewSensitiveInfo
                     ? e.Message
                     : _defaultMessage,
-                Detail = canViewSensitiveInfo
-                    ? e.Demystify().ToString()
-                    : null,
-                Instance = $"aiof:auth:error:{id}"
+                Code = StatusCodes.Status500InternalServerError,
+                TraceId = $"aiof:auth:error:{id}"
             };
 
             if (e is AuthException ae)
             {
-                problem.Status = ae.StatusCode;
-                problem.Title = ae.Message;
+                problem.Code = ae.StatusCode;
+                problem.Message = ae.Message;
         
                 if (e is AuthValidationException ave)
                 {
-                    problem.Title = _defaultValidationMessage;
-                    problem.Detail = string.Join(' ', ave.Errors);
+                    problem.Message = _defaultValidationMessage;
+                    problem.Errors = ave.Errors;
                 }
             }
-            else
-                problem.Status = StatusCodes.Status500InternalServerError;
 
             var problemjson = JsonSerializer
-                .Serialize(problem);
+                .Serialize(problem, new JsonSerializerOptions { IgnoreNullValues = true });
 
-            httpContext.Response.StatusCode = problem.Status ?? StatusCodes.Status500InternalServerError;
+            httpContext.Response.StatusCode = problem.Code;
             httpContext.Response.ContentType = "application/problem+json";
 
             await httpContext.Response
