@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
+    /// <summary>
+    /// Response for authentication. The required fields are TokenType, ExpiresIn and AccessToken. RefreshToken is optional
+    /// </summary>
     public interface ITokenResponse
     {
         [Required]
@@ -13,7 +16,7 @@ namespace aiof.auth.data
         
         [Required]
         string AccessToken { get; set; }
-        
+
         string RefreshToken { get; set; }
     }
 }
