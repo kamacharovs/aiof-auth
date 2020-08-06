@@ -204,6 +204,7 @@ namespace aiof.auth.data
 
         public IEnumerable<object[]> GetFakeClientsData(
             bool id = false,
+            bool name = false,
             bool apiKey = false)
         {
             var fakeClients = GetFakeClients()
@@ -227,6 +228,14 @@ namespace aiof.auth.data
                     toReturn.Add(new object[]
                     {
                         fakeClientId
+                    });
+            }
+            else if (name)
+            {
+                foreach (var fakeClientName in fakeClients.Select(x => x.Name))
+                    toReturn.Add(new object[]
+                    {
+                        fakeClientName
                     });
             }
             else if (apiKey)

@@ -29,7 +29,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Generate a JWT for <see cref="IUser"/>, <see cref="IClient"/>
+        /// Generate a JWT for User, Client
         /// </summary>
         [HttpPost]
         [Route("token")]
@@ -42,7 +42,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Generate a refresh JWT for <see cref="IClient"/>
+        /// Generate a refresh JWT for Client
         /// </summary>
         [FeatureGate(FeatureFlags.RefreshToken)]
         [HttpPost]
@@ -56,7 +56,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Revoke an existing <see cref="IClient"/> refresh token
+        /// Revoke an existing Client refresh token
         /// </summary>
         [HttpPut]
         [Route("token/revoke")]

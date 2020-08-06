@@ -28,7 +28,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Get an existing <see cref="IUser"/> by Id
+        /// Get an existing User by Id
         /// </summary>
         [HttpGet]
         [Route("{id}")]
@@ -40,7 +40,7 @@ namespace aiof.auth.core.Controllers
         }
         
         /// <summary>
-        /// Get an existing <see cref="IUser"/> by Username and Password
+        /// Get an existing User by Username and Password
         /// </summary>
         [HttpGet]
         [Route("{username}/{password}")]
@@ -52,7 +52,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Create a <see cref="IUser"/>
+        /// Create a User
         /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -65,8 +65,6 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Hash a Password
         /// </summary>
-        /// <param name="password"></param>
-        /// <returns><see cref="string"/></returns>
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]

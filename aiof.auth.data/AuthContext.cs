@@ -33,7 +33,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Email).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
                 e.Property(x => x.Username).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
                 e.Property(x => x.Password).HasSnakeCaseColumnName().HasMaxLength(100).IsRequired();
-                e.Property(x => x.Created).HasColumnType("date").HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
             });
 
             modelBuilder.Entity<Client>(e =>
@@ -41,10 +41,7 @@ namespace aiof.auth.data
                 e.ToTable("client");
 
                 e.HasKey(x => x.Id);
-
-                e.HasIndex(x => x.Slug)
-                    .IsUnique();
-
+                
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Name).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
@@ -52,7 +49,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Enabled).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.PrimaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
-                e.Property(x => x.Created).HasColumnType("date").HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
             });
 
             modelBuilder.Entity<ClientRefreshToken>(e =>
@@ -65,9 +62,9 @@ namespace aiof.auth.data
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.ClientId).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Token).HasSnakeCaseColumnName().HasMaxLength(100).IsRequired();
-                e.Property(x => x.Created).HasColumnType("date").HasSnakeCaseColumnName().IsRequired();
-                e.Property(x => x.Expires).HasColumnType("date").HasSnakeCaseColumnName().IsRequired();
-                e.Property(x => x.Revoked).HasColumnType("date").HasSnakeCaseColumnName();
+                e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Expires).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Revoked).HasColumnType("timestamp").HasSnakeCaseColumnName();
 
                 e.HasOne(x => x.Client)
                     .WithMany()
