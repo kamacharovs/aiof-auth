@@ -11,6 +11,9 @@ using aiof.auth.services;
 
 namespace aiof.auth.core.Controllers
 {
+    /// <summary>
+    /// Everything aiof user
+    /// </summary>
     [ApiController]
     [Route("user")]
     [Produces("application/json")]
@@ -24,6 +27,9 @@ namespace aiof.auth.core.Controllers
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
 
+        /// <summary>
+        /// Get an existing User by Id
+        /// </summary>
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,7 +38,10 @@ namespace aiof.auth.core.Controllers
         {
             return Ok(await _repo.GetUserAsync(id));
         }
-
+        
+        /// <summary>
+        /// Get an existing User by Username and Password
+        /// </summary>
         [HttpGet]
         [Route("{username}/{password}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,14 +51,20 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetUserAsync(username, password));
         }
 
+        /// <summary>
+        /// Create a User
+        /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddUserAsync([FromBody]UserDto userDto)
         {
-            return Ok(await _repo.AddUserAsync(userDto));
+            return Created(nameof(User), await _repo.AddUserAsync(userDto));
         }
 
+        /// <summary>
+        /// Hash a Password
+        /// </summary>
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]

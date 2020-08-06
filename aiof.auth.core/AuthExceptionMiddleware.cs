@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -12,8 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
-
-using FluentValidation.Results;
 
 using aiof.auth.data;
 
@@ -78,6 +74,7 @@ namespace aiof.auth.core
             if (e is AuthException ae)
             {
                 problem.Status = ae.StatusCode;
+                problem.Title = ae.Message;
         
                 if (e is AuthValidationException ave)
                 {
