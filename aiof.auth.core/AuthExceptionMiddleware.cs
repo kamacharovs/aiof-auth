@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
@@ -52,13 +49,21 @@ namespace aiof.auth.core
                     ? Guid.NewGuid().ToString()
                     : httpContext.TraceIdentifier;
 
-                _logger.LogError(e, $"an exception was thrown during the request. {id}");
+                _logger.LogError(
+                    e, 
+                    $"an exception was thrown during the request. {id}");
 
-                await WriteExceptionResponseAsync(httpContext, e, id);
+                await WriteExceptionResponseAsync(
+                    httpContext, 
+                    e, 
+                    id);
             }
         }
 
-        private async Task WriteExceptionResponseAsync(HttpContext httpContext, Exception e, string id)
+        private async Task WriteExceptionResponseAsync(
+            HttpContext httpContext, 
+            Exception e, 
+            string id)
         {
             var canViewSensitiveInfo = _env
                 .IsDevelopment();
@@ -87,21 +92,12 @@ namespace aiof.auth.core
             var problemjson = JsonSerializer
                 .Serialize(problem, new JsonSerializerOptions { IgnoreNullValues = true });
 
-            httpContext.Response.StatusCode = problem.Code;
+            httpContext.Response.StatusCode = problem.Code ?? StatusCodes.Status500InternalServerError;
             httpContext.Response.ContentType = "application/problem+json";
 
             await httpContext.Response
                 .WriteAsync(problemjson);
         }
-    }
-
-    public class AuthProblemDetails : ProblemDetails
-    {
-        public AuthProblemDetails()
-            : base() 
-        { }
-
-        public IEnumerable<string> Errors { get; set; }
     }
 
     public static partial class HttpStatusCodeExceptionMiddlewareExtensions

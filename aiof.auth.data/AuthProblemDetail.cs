@@ -9,7 +9,7 @@ namespace aiof.auth.data
     {
         [JsonPropertyName("code")]
         [Required]
-        public int Code { get; set; }
+        public int? Code { get; set; }
         
         [JsonPropertyName("message")]
         [Required]
