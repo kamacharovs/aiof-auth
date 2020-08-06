@@ -36,7 +36,6 @@ namespace aiof.auth.data
         [MaxLength(200)]
         public string Username { get; set; }
 
-        [JsonIgnore]
         [Required]
         [MaxLength(100)]
         public string Password { get; set; }
