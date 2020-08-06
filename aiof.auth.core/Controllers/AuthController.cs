@@ -18,7 +18,7 @@ namespace aiof.auth.core.Controllers
     [ApiController]
     [Route("auth")]
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
@@ -33,8 +33,8 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPost]
         [Route("token")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest req)
         {
@@ -47,8 +47,8 @@ namespace aiof.auth.core.Controllers
         [FeatureGate(FeatureFlags.RefreshToken)]
         [HttpPost]
         [Route("token/refresh")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshTokenAsync([FromBody]TokenRequest req)
         {
@@ -60,8 +60,8 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPut]
         [Route("token/revoke")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
         {
