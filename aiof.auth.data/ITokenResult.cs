@@ -6,6 +6,6 @@ namespace aiof.auth.data
     public interface ITokenResult
     {
         ClaimsPrincipal Principal { get; set; }
-        TokenResultStatus Status { get; set; }
+        string Status { get; set; }
     }
 }

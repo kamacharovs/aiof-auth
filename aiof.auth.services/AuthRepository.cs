@@ -178,14 +178,14 @@ namespace aiof.auth.services
                 return new TokenResult
                 {
                     Principal = result,
-                    Status = TokenResultStatus.Valid
+                    Status = TokenResultStatus.Valid.ToString()
                 };
             }
             catch (SecurityTokenExpiredException)
             {
                 return new TokenResult
                 {
-                    Status = TokenResultStatus.Expired
+                    Status = TokenResultStatus.Expired.ToString()
                 };
             }
         }

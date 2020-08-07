@@ -55,7 +55,7 @@ namespace aiof.auth.tests
         {
             var validation = _repo.ValidateToken(Helper.ExpiredJwtToken);
 
-            Assert.Equal(TokenResultStatus.Expired, validation.Status);
+            Assert.Equal(TokenResultStatus.Expired.ToString(), validation.Status);
         }
 
         [Theory]
