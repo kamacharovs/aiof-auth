@@ -43,6 +43,18 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
+        /// Validate a JWT
+        /// </summary>
+        [HttpPost]
+        [Route("token/validate")]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
+        public IActionResult ValidateToken([FromBody]ValidationRequest req)
+        {
+            return Ok(_repo.ValidateToken(req));
+        }
+
+        /// <summary>
         /// Generate a refresh JWT for Client
         /// </summary>
         [FeatureGate(FeatureFlags.RefreshToken)]

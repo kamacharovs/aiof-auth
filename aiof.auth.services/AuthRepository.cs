@@ -189,6 +189,10 @@ namespace aiof.auth.services
                 };
             }
         }
+        public ITokenResult ValidateToken(IValidationRequest request)
+        {
+            return ValidateToken(request.AccessToken);
+        }
         public bool IsAuthenticated(string token)
         {
             return ValidateToken(token)

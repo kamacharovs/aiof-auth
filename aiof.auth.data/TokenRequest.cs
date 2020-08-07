@@ -63,6 +63,16 @@ namespace aiof.auth.data
         public string Token { get; set; }
     }
 
+    /// <summary>
+    /// Request to validate an access token
+    /// </summary>
+    public class ValidationRequest : IValidationRequest
+    {
+        [JsonPropertyName("access_token")]
+        [Required]
+        public string AccessToken { get; set; }
+    }
+
     public enum TokenRequestType
     {
         Client = 1,

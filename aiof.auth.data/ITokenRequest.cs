@@ -27,4 +27,9 @@ namespace aiof.auth.data
         int ClientId { get; set; }
         string Token { get; set; }
     }
+
+    public interface  IValidationRequest 
+    {
+        string AccessToken { get; set; }
+    }
 }
