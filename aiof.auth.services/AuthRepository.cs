@@ -177,28 +177,19 @@ namespace aiof.auth.services
 
                 return new TokenResult
                 {
-                    Principal = result,
+                    IsAuthenticated = result.Identity.IsAuthenticated,
                     Status = TokenResultStatus.Valid.ToString()
                 };
             }
             catch (SecurityTokenExpiredException)
             {
-                return new TokenResult
-                {
-                    Status = TokenResultStatus.Expired.ToString()
-                };
+                throw new AuthFriendlyException(HttpStatusCode.Unauthorized,
+                    $"Invalid or expired token");
             }
         }
         public ITokenResult ValidateToken(IValidationRequest request)
         {
             return ValidateToken(request.AccessToken);
-        }
-        public bool IsAuthenticated(string token)
-        {
-            return ValidateToken(token)
-                .Principal
-                .Identity
-                .IsAuthenticated;
         }
 
         public JsonWebKey GetPublicJsonWebKey()

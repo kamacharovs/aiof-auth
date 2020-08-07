@@ -1,11 +1,11 @@
 using System;
-using System.Security.Claims;
+using System.Security.Principal;
 
 namespace aiof.auth.data
 {
     public interface ITokenResult
     {
-        ClaimsPrincipal Principal { get; set; }
+        bool IsAuthenticated { get; set; }
         string Status { get; set; }
     }
 }

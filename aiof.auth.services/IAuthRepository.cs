@@ -25,7 +25,6 @@ namespace aiof.auth.services
             int? expiresIn = null);
         ITokenResult ValidateToken(string token);
         ITokenResult ValidateToken(IValidationRequest request);
-        bool IsAuthenticated(string token);
         JsonWebKey GetPublicJsonWebKey();
         IOpenIdConfig GetOpenIdConfig(
              string host,
