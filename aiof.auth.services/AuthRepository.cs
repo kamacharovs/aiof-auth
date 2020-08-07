@@ -197,6 +197,17 @@ namespace aiof.auth.services
                 .IsAuthenticated;
         }
 
+        public JsonWebKey GetPublicJsonWebKey()
+        {
+            var key = Encoding.ASCII.GetBytes(_key);
+            var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(new SymmetricSecurityKey(key));
+            
+            jwk.Use = AiofClaims.Sig;
+            jwk.Alg = "RS256";
+
+            return jwk;
+        }
+
         public IOpenIdConfig GetOpenIdConfig(
             string host,
             bool isHttps)

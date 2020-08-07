@@ -19,6 +19,9 @@ namespace aiof.auth.data
         [JsonPropertyName("token_refresh_endpoint")]
         public string TokenRefreshEndpoint { get; set; }
 
+        [JsonPropertyName("jwks_uri")]
+        public string JsonWebKeySetUri { get; set; }
+
         [JsonPropertyName("response_types_supported")]
         public IEnumerable<string> ResponseTypes { get; } = new List<string> 
         { 
@@ -32,10 +35,11 @@ namespace aiof.auth.data
             "pairwise" 
         };
 
-        [JsonPropertyName("token_endpoint_auth_signing_alg_values_supported")]
+        [JsonPropertyName("id_token_signing_alg_values_supported")]
         public IEnumerable<string> SigningAlgorithmsSupported { get; } = new List<string> 
         { 
-            "HS256" 
+            "HS256",
+            "RS256"
         };
 
         [JsonPropertyName("claim_types_supported")]

@@ -16,6 +16,7 @@ namespace aiof.auth.data
     {
         public const string Sub = "sub";
         public const string Iss = "iss";
+        public const string Sig = "sig";
 
         public const string PublicKey = "public_key";
         public const string GivenName = "given_name";

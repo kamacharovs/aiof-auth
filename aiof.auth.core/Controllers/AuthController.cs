@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.FeatureManagement.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -77,6 +78,15 @@ namespace aiof.auth.core.Controllers
         public IActionResult GetClaims()
         {
             return Ok(AiofClaims.All);
+        }
+
+        [FeatureGate(FeatureFlags.OpenId)]
+        [HttpGet]
+        [Route("jwks")]
+        [ProducesResponseType(typeof(JsonWebKey), StatusCodes.Status200OK)]
+        public IActionResult GetJwks()
+        {
+            return Ok(_repo.GetPublicJsonWebKey());
         }
 
         /// <summary>

@@ -3,6 +3,8 @@ using System.Security.Claims;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Microsoft.IdentityModel.Tokens;
+
 using aiof.auth.data;
 
 namespace aiof.auth.services
@@ -23,6 +25,7 @@ namespace aiof.auth.services
             int? expiresIn = null);
         ITokenResult ValidateToken(string token);
         bool IsAuthenticated(string token);
+        JsonWebKey GetPublicJsonWebKey();
         IOpenIdConfig GetOpenIdConfig(
              string host,
              bool isHttps);
