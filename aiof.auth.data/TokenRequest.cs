@@ -59,7 +59,9 @@ namespace aiof.auth.data
         [Required]
         public int ClientId { get; set; }
 
+        [JsonPropertyName("refresh_token")]
         [Required]
+        [MaxLength(128)]
         public string Token { get; set; }
     }
 
