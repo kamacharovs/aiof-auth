@@ -170,7 +170,10 @@ namespace aiof.auth.services
                 };
 
                 var handler = new JwtSecurityTokenHandler();
-                var result = handler.ValidateToken(token, tokenParams, out var securityToken);
+                var result = handler.ValidateToken(
+                    token, 
+                    tokenParams, 
+                    out var securityToken);
 
                 return new TokenResult
                 {

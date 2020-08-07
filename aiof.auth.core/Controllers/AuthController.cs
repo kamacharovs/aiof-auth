@@ -84,7 +84,7 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [FeatureGate(FeatureFlags.OpenId)]
         [HttpGet]
-        [Route(".well-known/openid-configuration.json")]
+        [Route(".well-known/openid-configuration")]
         [ProducesResponseType(typeof(IOpenIdConfig), StatusCodes.Status200OK)]
         public IActionResult GetOpenIdConfig()
         {

@@ -35,7 +35,7 @@ namespace aiof.auth.data
         [JsonPropertyName("token_endpoint_auth_signing_alg_values_supported")]
         public IEnumerable<string> SigningAlgorithmsSupported { get; } = new List<string> 
         { 
-            "RS256" 
+            "HS256" 
         };
 
         [JsonPropertyName("claim_types_supported")]
