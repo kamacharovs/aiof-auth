@@ -201,7 +201,7 @@ namespace aiof.auth.services
         {
             var key = Encoding.ASCII.GetBytes(_key);
             var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(new SymmetricSecurityKey(key));
-            
+
             jwk.Use = AiofClaims.Sig;
             jwk.Alg = "RS256";
 
@@ -218,7 +218,8 @@ namespace aiof.auth.services
             {
                 Issuer = _envConfig.JwtIssuer,
                 TokenEndpoint = $"{protocol}://{host}/auth/token",
-                TokenRefreshEndpoint = $"{protocol}://{host}/auth/token/refresh"
+                TokenRefreshEndpoint = $"{protocol}://{host}/auth/token/refresh",
+                JsonWebKeyEndpoint = $"{protocol}://{host}/auth/jwks"
             };
         }
     }

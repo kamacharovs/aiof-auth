@@ -80,6 +80,9 @@ namespace aiof.auth.core.Controllers
             return Ok(AiofClaims.All);
         }
 
+        /// <summary>
+        /// Get JWKS for JWT creation
+        /// </summary>
         [FeatureGate(FeatureFlags.OpenId)]
         [HttpGet]
         [Route("jwks")]

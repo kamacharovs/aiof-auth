@@ -20,7 +20,7 @@ namespace aiof.auth.data
         public string TokenRefreshEndpoint { get; set; }
 
         [JsonPropertyName("jwks_uri")]
-        public string JsonWebKeySetUri { get; set; }
+        public string JsonWebKeyEndpoint{ get; set; }
 
         [JsonPropertyName("response_types_supported")]
         public IEnumerable<string> ResponseTypes { get; } = new List<string> 
