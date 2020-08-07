@@ -20,16 +20,29 @@ namespace aiof.auth.data
         public string TokenRefreshEndpoint { get; set; }
 
         [JsonPropertyName("response_types_supported")]
-        public IEnumerable<string> ResponseTypes { get; } = new List<string> { "code token" };
+        public IEnumerable<string> ResponseTypes { get; } = new List<string> 
+        { 
+            "code token" 
+        };
 
         [JsonPropertyName("subject_types_supported")]
-        public IEnumerable<string> SubjectTypesSupported { get; } = new List<string> { "public", "pairwise" };
+        public IEnumerable<string> SubjectTypesSupported { get; } = new List<string> 
+        { 
+            "public", 
+            "pairwise" 
+        };
 
         [JsonPropertyName("token_endpoint_auth_signing_alg_values_supported")]
-        public IEnumerable<string> SigningAlgorithmsSupported { get; } = new List<string> { "RS256" };
+        public IEnumerable<string> SigningAlgorithmsSupported { get; } = new List<string> 
+        { 
+            "RS256" 
+        };
 
         [JsonPropertyName("claim_types_supported")]
-        public IEnumerable<string> ClaimTypesSupported { get; } = new List<string> { "normal" };
+        public IEnumerable<string> ClaimTypesSupported { get; } = new List<string> 
+        { 
+            "normal" 
+        };
 
         [JsonPropertyName("claims_supported")]
         public IEnumerable<string> ClaimsSupported { get; } = AiofClaims.All;
