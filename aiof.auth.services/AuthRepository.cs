@@ -170,28 +170,37 @@ namespace aiof.auth.services
                 };
 
                 var handler = new JwtSecurityTokenHandler();
-                var result = handler.ValidateToken(token, tokenParams, out var securityToken);
+                var result = handler.ValidateToken(
+                    token, 
+                    tokenParams, 
+                    out var securityToken);
 
                 return new TokenResult
                 {
-                    Principal = result,
-                    Status = TokenResultStatus.Valid
+                    IsAuthenticated = result.Identity.IsAuthenticated,
+                    Status = TokenResultStatus.Valid.ToString()
                 };
             }
             catch (SecurityTokenExpiredException)
             {
-                return new TokenResult
-                {
-                    Status = TokenResultStatus.Expired
-                };
+                throw new AuthFriendlyException(HttpStatusCode.Unauthorized,
+                    $"Invalid or expired token");
             }
         }
-        public bool IsAuthenticated(string token)
+        public ITokenResult ValidateToken(IValidationRequest request)
         {
-            return ValidateToken(token)
-                .Principal
-                .Identity
-                .IsAuthenticated;
+            return ValidateToken(request.AccessToken);
+        }
+
+        public JsonWebKey GetPublicJsonWebKey()
+        {
+            var key = Encoding.ASCII.GetBytes(_key);
+            var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(new SymmetricSecurityKey(key));
+
+            jwk.Use = AiofClaims.Sig;
+            jwk.Alg = "RS256";
+
+            return jwk;
         }
 
         public IOpenIdConfig GetOpenIdConfig(
@@ -204,7 +213,8 @@ namespace aiof.auth.services
             {
                 Issuer = _envConfig.JwtIssuer,
                 TokenEndpoint = $"{protocol}://{host}/auth/token",
-                TokenRefreshEndpoint = $"{protocol}://{host}/auth/token/refresh"
+                TokenRefreshEndpoint = $"{protocol}://{host}/auth/token/refresh",
+                JsonWebKeyEndpoint = $"{protocol}://{host}/auth/jwks"
             };
         }
     }

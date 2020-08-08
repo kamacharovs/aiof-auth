@@ -27,3 +27,5 @@ The authentication microservice is built to additionally leverage the following 
 ### JWT
 
 - [IANA JSON Web Token (JWT)](https://www.iana.org/assignments/jwt/jwt.xhtml)
+- [OpenID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0.html)
+- [Configure Applications with OpenID Connect Discovery](https://auth0.com/docs/protocols/oidc/openid-connect-discovery)

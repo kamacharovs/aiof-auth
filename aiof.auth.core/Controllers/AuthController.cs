@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.FeatureManagement.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -18,7 +19,7 @@ namespace aiof.auth.core.Controllers
     [ApiController]
     [Route("auth")]
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
@@ -33,12 +34,24 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPost]
         [Route("token")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest req)
         {
             return Ok(await _repo.GetTokenAsync(req));
+        }
+
+        /// <summary>
+        /// Validate a JWT
+        /// </summary>
+        [HttpPost]
+        [Route("token/validate")]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
+        public IActionResult ValidateToken([FromBody]ValidationRequest req)
+        {
+            return Ok(_repo.ValidateToken(req));
         }
 
         /// <summary>
@@ -47,8 +60,8 @@ namespace aiof.auth.core.Controllers
         [FeatureGate(FeatureFlags.RefreshToken)]
         [HttpPost]
         [Route("token/refresh")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshTokenAsync([FromBody]TokenRequest req)
         {
@@ -60,8 +73,8 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPut]
         [Route("token/revoke")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
         {
@@ -77,6 +90,18 @@ namespace aiof.auth.core.Controllers
         public IActionResult GetClaims()
         {
             return Ok(AiofClaims.All);
+        }
+
+        /// <summary>
+        /// Get JWKS for JWT creation
+        /// </summary>
+        [FeatureGate(FeatureFlags.OpenId)]
+        [HttpGet]
+        [Route("jwks")]
+        [ProducesResponseType(typeof(JsonWebKey), StatusCodes.Status200OK)]
+        public IActionResult GetJwks()
+        {
+            return Ok(_repo.GetPublicJsonWebKey());
         }
 
         /// <summary>
