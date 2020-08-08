@@ -8,7 +8,7 @@ namespace aiof.auth.data
     {
         public TokenRequestValidator()
         {
-            ValidatorOptions.Global.CascadeMode = CascadeMode.StopOnFirstFailure;
+            ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
             // Either Username, Password is provided or ApiKey
             RuleFor(x => x)

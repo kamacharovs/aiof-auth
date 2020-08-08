@@ -73,14 +73,15 @@ namespace aiof.auth.services
             }
         }
 
-        public async Task<object> RevokeTokenAsync(int clientId, string token)
+        public async Task<IRevokeResponse> RevokeTokenAsync(int clientId, string token)
         {
             var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
             
-            return new {
-                clientId = clientRefresh.ClientId,
-                token = clientRefresh.Token,
-                revoked = clientRefresh.Revoked
+            return new RevokeResponse
+            {
+                ClientId = clientRefresh.ClientId,
+                Token = clientRefresh.Token,
+                Revoked = clientRefresh.Revoked
             };
         }
 

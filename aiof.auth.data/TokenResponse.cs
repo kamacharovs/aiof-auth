@@ -21,4 +21,21 @@ namespace aiof.auth.data
         [JsonPropertyName("refresh_token")]
         public string RefreshToken { get; set; }
     }
+
+    /// <summary>
+    /// Response to revoke a Client refresh token
+    /// </summary>
+    public class RevokeResponse : IRevokeResponse
+    {
+        [Required]
+        public int ClientId { get; set; }
+
+        [JsonPropertyName("refresh_token")]
+        [Required]
+        [MaxLength(128)]
+        public string Token { get; set; }
+
+        [Required]
+        public DateTime? Revoked { get; set; }
+    }
 }
