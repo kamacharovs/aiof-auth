@@ -101,7 +101,7 @@ namespace aiof.auth.services
                 userDto.Username);
         }
 
-        public async Task<bool> IsUsernameUnique(string username)
+        public async Task<bool> DoesUsernameExistAsync(string username)
         {
             return await GetUsersQuery()
                 .AnyAsync(x => x.Username == username);
@@ -113,6 +113,9 @@ namespace aiof.auth.services
 
             if (!validation.IsValid)
                 throw new AuthValidationException(validation.Errors);
+            else if (await DoesUsernameExistAsync(userDto.Username))
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"{nameof(User)} with Username='{userDto.Username}' already exists");
 
             var user = await GetUserAsync(userDto) == null
                 ? _mapper.Map<User>(userDto)

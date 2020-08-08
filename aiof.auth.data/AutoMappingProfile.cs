@@ -19,7 +19,7 @@ namespace aiof.auth.data
 
             CreateMap<ClientDto, Client>()
                 .ForMember(x => x.Name, o => o.Condition(s => s.Name != null))
-                .ForMember(x => x.Slug, o => o.Condition(s => s.Slug != null))
+                .ForMember(x => x.Slug, o => o.MapFrom(x => x.Name.ToHyphenCase()))
                 .ForMember(x => x.Enabled, o => o.MapFrom(x => x.Enabled));
 
             CreateMap<Client, ClientRefreshToken>()

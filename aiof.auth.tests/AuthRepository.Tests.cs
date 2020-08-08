@@ -47,15 +47,13 @@ namespace aiof.auth.tests
             var tokenValidation = _repo.ValidateToken(token.AccessToken);
 
             Assert.NotNull(tokenValidation);
-            Assert.True(tokenValidation.Principal.Identity.IsAuthenticated);
+            Assert.True(tokenValidation.IsAuthenticated);
         }
 
         [Fact]
         public void ValidateToken_Expired()
         {
-            var validation = _repo.ValidateToken(Helper.ExpiredJwtToken);
-
-            Assert.Equal(TokenResultStatus.Expired, validation.Status);
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(Helper.ExpiredJwtToken));
         }
 
         [Theory]

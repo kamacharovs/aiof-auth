@@ -6,16 +6,20 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.FeatureManagement.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 using aiof.auth.data;
 using aiof.auth.services;
 
 namespace aiof.auth.core.Controllers
 {
+    /// <summary>
+    /// Everything aiof authentication
+    /// </summary>
     [ApiController]
     [Route("auth")]
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
@@ -25,37 +29,61 @@ namespace aiof.auth.core.Controllers
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
 
+        /// <summary>
+        /// Generate a JWT for User, Client
+        /// </summary>
         [HttpPost]
         [Route("token")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest req)
         {
             return Ok(await _repo.GetTokenAsync(req));
         }
 
+        /// <summary>
+        /// Validate a JWT
+        /// </summary>
+        [HttpPost]
+        [Route("token/validate")]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
+        public IActionResult ValidateToken([FromBody]ValidationRequest req)
+        {
+            return Ok(_repo.ValidateToken(req));
+        }
+
+        /// <summary>
+        /// Generate a refresh JWT for Client
+        /// </summary>
         [FeatureGate(FeatureFlags.RefreshToken)]
         [HttpPost]
         [Route("token/refresh")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshTokenAsync([FromBody]TokenRequest req)
         {
             return Ok(await _repo.GetTokenAsync(req));
         }
 
+        /// <summary>
+        /// Revoke an existing Client refresh token
+        /// </summary>
         [HttpPut]
         [Route("token/revoke")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
         {
             return Ok(await _repo.RevokeTokenAsync(request.ClientId, request.Token));
         }
 
+        /// <summary>
+        /// Get all available claims for JWT
+        /// </summary>
         [HttpGet]
         [Route("claims")]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
@@ -64,9 +92,25 @@ namespace aiof.auth.core.Controllers
             return Ok(AiofClaims.All);
         }
 
+        /// <summary>
+        /// Get JWKS for JWT creation
+        /// </summary>
+        [FeatureGate(FeatureFlags.OpenId)]
+        [HttpGet]
+        [Route("jwks")]
+        [ProducesResponseType(typeof(JsonWebKey), StatusCodes.Status200OK)]
+        public IActionResult GetJwks()
+        {
+            return Ok(_repo.GetPublicJsonWebKey());
+        }
+
+        /// <summary>
+        /// Get OpenId Configuration for JWT creation
+        /// </summary>
         [FeatureGate(FeatureFlags.OpenId)]
         [HttpGet]
         [Route(".well-known/openid-configuration")]
+        [ProducesResponseType(typeof(IOpenIdConfig), StatusCodes.Status200OK)]
         public IActionResult GetOpenIdConfig()
         {
             return Ok(_repo.GetOpenIdConfig(

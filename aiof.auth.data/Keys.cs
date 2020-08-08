@@ -4,7 +4,7 @@ namespace aiof.auth.data
 {
     public static class Keys
     {
-        public const string Database = nameof(Database);
+        public const string PostgreSQL = nameof(PostgreSQL);
 
         public const string Jwt = nameof(Jwt);
         public const string Expires = nameof(Expires);

@@ -46,13 +46,11 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.RandomClientDtos), MemberType = typeof(Helper))]
         public async Task AddClientAsync_Valid(
             string name, 
-            string slug, 
             bool enabled)
         {
             var client = await _repo.AddClientAsync(new ClientDto
             {
                 Name = name,
-                Slug = slug,
                 Enabled = enabled
             });
 
@@ -60,7 +58,6 @@ namespace aiof.auth.tests
             Assert.NotEqual(0, client.Id);
             Assert.NotEqual(Guid.Empty, client.PublicKey);
             Assert.Equal(name, client.Name);
-            Assert.Equal(slug, client.Slug);
             Assert.Equal(enabled, client.Enabled);
             Assert.NotNull(client.PrimaryApiKey);
             Assert.NotNull(client.SecondaryApiKey);
