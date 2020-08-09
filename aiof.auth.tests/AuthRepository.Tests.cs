@@ -113,6 +113,23 @@ namespace aiof.auth.tests
             Assert.True(validation.IsAuthenticated);
             Assert.Equal(TokenResultStatus.Valid.ToString(), validation.Status);
         }
+        [Fact]
+        public void ValidateToken_Expired_ThrowsUnauthorized()
+        {
+            var token = Helper.ExpiredJwtToken;
+            var validationReq = new ValidationRequest { AccessToken = token };
+
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(validationReq));
+        }
+
+        [Fact]
+        public void GetPublicJsonWebKey_Valid()
+        {
+            var jwk = _repo.GetPublicJsonWebKey();
+
+            Assert.NotNull(jwk);
+            Assert.Equal(AiofClaims.Sig, jwk.Use);
+        }
 
         [Theory]
         [InlineData("testhost", true)]
