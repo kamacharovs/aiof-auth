@@ -49,10 +49,7 @@ namespace aiof.auth.services
 
         public async Task<ITokenResponse> GetTokenAsync(ITokenRequest request)
         {
-            var validation = _tokenRequestValidator.Validate(request as TokenRequest);
-
-            if (!validation.IsValid)
-                throw new AuthValidationException(validation.Errors);
+            await _tokenRequestValidator.ValidateAndThrowAsync(request as TokenRequest);
 
             switch (request.Type)
             {

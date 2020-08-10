@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
+
+using FluentValidation;
 
 using aiof.auth.data;
 
@@ -87,6 +90,11 @@ namespace aiof.auth.core
                     problem.Message = _defaultValidationMessage;
                     problem.Errors = ave.Errors;
                 }
+            }
+            else if (e is ValidationException ve)
+            {
+                problem.Message = _defaultValidationMessage;
+                problem.Errors = ve.Errors.Select(x => x.ErrorMessage);
             }
 
             var problemjson = JsonSerializer

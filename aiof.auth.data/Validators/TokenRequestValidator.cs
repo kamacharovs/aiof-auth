@@ -17,7 +17,7 @@ namespace aiof.auth.data
             RuleFor(x => x)
                 .Must(x => 
                 {
-                    if (!string.IsNullOrWhiteSpace(x.Username)
+                    if (!string.IsNullOrWhiteSpace(x.Username)  //TODO: fix validation logic
                         && !string.IsNullOrWhiteSpace(x.Password)
                         && string.IsNullOrWhiteSpace(x.Token)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
