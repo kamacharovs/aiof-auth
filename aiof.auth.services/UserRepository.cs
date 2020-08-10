@@ -58,9 +58,7 @@ namespace aiof.auth.services
         }
         public async Task<IUser> GetUserAsync(Guid publicKey)
         {
-            return await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
-                ?? throw new AuthNotFoundException();
+            return await base.GetEntityPublicKeyIdAsync<User>(publicKey);
         }
         public async Task<IUser> GetUserAsync(
             string username, 

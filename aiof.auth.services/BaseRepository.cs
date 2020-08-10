@@ -101,7 +101,7 @@ namespace aiof.auth.services
                 ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
         }
 
-        public async Task<T> GetEntityAsync<T>(Guid publicKey)
+        public async Task<T> GetEntityPublicKeyIdAsync<T>(Guid publicKey)
             where T : class, IPublicKeyId
         {
             return await GetEntityPublicKeyIdQuery<T>()
