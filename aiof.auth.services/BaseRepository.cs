@@ -73,16 +73,16 @@ namespace aiof.auth.services
         public async Task<T> GetEntityAsync<T>(int id, bool asNoTracking = true)
             where T : class, IPublicKeyId, IApiKey
         {
-            return await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
+            return (await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
                 ? await _cache.GetOrCreateAsync(Keys.Client(id), async x =>
-                    { 
-                        x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
-
-                        return await GetEntityQuery<T>(asNoTracking)
-                            .FirstOrDefaultAsync(x => x.Id == id);
-                    })
+                  {
+                      x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
+                      
+                      return await GetEntityQuery<T>(asNoTracking)
+                        .FirstOrDefaultAsync(x => x.Id == id);
+                  })
                 : await GetEntityQuery<T>(asNoTracking)
-                    .FirstOrDefaultAsync(x => x.Id == id)
+                    .FirstOrDefaultAsync(x => x.Id == id))
                 ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
         }
 
@@ -97,9 +97,18 @@ namespace aiof.auth.services
         public async Task<T> GetEntityAsync<T>(string apiKey)
             where T : class, IApiKey
         {
-            return await GetEntityApiKeyQuery<T>()
-                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
-                    || x.SecondaryApiKey == apiKey)
+            return (await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
+                ? await _cache.GetOrCreateAsync(Keys.Client(apiKey), async x =>
+                  {
+                      x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
+                      
+                      return await GetEntityApiKeyQuery<T>()
+                        .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
+                            || x.SecondaryApiKey == apiKey);
+                  })
+                : await GetEntityApiKeyQuery<T>()
+                    .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
+                        || x.SecondaryApiKey == apiKey))
                 ?? throw new AuthNotFoundException($"{typeof(T).Name} with ApiKey='{apiKey}' was not found");
         }
 
