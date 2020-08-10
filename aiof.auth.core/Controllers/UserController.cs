@@ -18,7 +18,7 @@ namespace aiof.auth.core.Controllers
     [Route("user")]
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
-    [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
@@ -33,7 +33,7 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserAsync([FromRoute]int id)
         {
@@ -45,7 +45,7 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{username}/{password}")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserUsernamePasswordAsync([FromRoute]string username, string password)
         {
@@ -56,7 +56,7 @@ namespace aiof.auth.core.Controllers
         /// Create a User
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddUserAsync([FromBody]UserDto userDto)
         {

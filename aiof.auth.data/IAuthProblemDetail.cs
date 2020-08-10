@@ -5,21 +5,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
-    public class AuthProblemDetail : IAuthProblemDetail
+    public interface IAuthProblemDetail
     {
         [JsonPropertyName("code")]
         [Required]
-        public int? Code { get; set; }
+        int? Code { get; set; }
         
         [JsonPropertyName("message")]
         [Required]
-        public string Message { get; set; }
+        string Message { get; set; }
 
         [JsonPropertyName("traceId")]
         [Required]
-        public string TraceId { get; set; }
+        string TraceId { get; set; }
 
         [JsonPropertyName("errors")]
-        public IEnumerable<string> Errors { get; set; }
+        IEnumerable<string> Errors { get; set; }
     }
 }

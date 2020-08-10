@@ -20,7 +20,7 @@ namespace aiof.auth.core.Controllers
     [Route("auth")]
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
-    [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
@@ -35,8 +35,8 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPost]
         [Route("token")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest req)
         {
@@ -48,7 +48,7 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPost]
         [Route("token/validate")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
         public IActionResult ValidateToken([FromBody]ValidationRequest req)
         {
@@ -61,8 +61,8 @@ namespace aiof.auth.core.Controllers
         [FeatureGate(FeatureFlags.RefreshToken)]
         [HttpPost]
         [Route("token/refresh")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshTokenAsync([FromBody]TokenRequest req)
         {
@@ -74,8 +74,8 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpPut]
         [Route("token/revoke")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
         {
