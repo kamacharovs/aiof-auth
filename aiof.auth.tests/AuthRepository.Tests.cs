@@ -38,25 +38,6 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
-        public async Task ValidateToken_With_Valid_User(int id)
-        {
-            var user = await _userRepo.GetUserAsync(id);
-
-            var token = _repo.GenerateJwtToken(user);
-            var tokenValidation = _repo.ValidateToken(token.AccessToken);
-
-            Assert.NotNull(tokenValidation);
-            Assert.True(tokenValidation.IsAuthenticated);
-        }
-
-        [Fact]
-        public void ValidateToken_Expired()
-        {
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(Helper.ExpiredJwtToken));
-        }
-
-        [Theory]
         [MemberData(nameof(Helper.UsersUsernamePassword), MemberType = typeof(Helper))]
         public async Task Auth_User_With_Username_Password(string username, string password)
         {
@@ -98,6 +79,47 @@ namespace aiof.auth.tests
             Assert.NotNull(token.AccessToken);
             Assert.Equal(_envConfig.JwtRefreshExpires, token.ExpiresIn);
             Assert.Equal(_envConfig.JwtType, token.TokenType);
+        }
+
+        [Fact]
+        public async Task Auth_With_EmptyCredentials_Throws_AuthValidationException()
+        {
+            var req = new TokenRequest { };
+
+            await Assert.ThrowsAsync<AuthValidationException>(() => _repo.GetTokenAsync(req));
+        }
+        
+        [Theory]
+        [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
+        public async Task ValidateToken_With_Valid_User(int id)
+        {
+            var user = await _userRepo.GetUserAsync(id);
+
+            var token = _repo.GenerateJwtToken(user);
+            var tokenValidation = _repo.ValidateToken(token.AccessToken);
+
+            Assert.NotNull(tokenValidation);
+            Assert.True(tokenValidation.IsAuthenticated);
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType = typeof(Helper))]
+        public async Task RevokeTokenAsync(
+            int clientId, 
+            string token)
+        {
+            var revokedTokenResp = await _repo.RevokeTokenAsync(clientId, token);
+
+            Assert.NotNull(revokedTokenResp);
+            Assert.Equal(clientId, revokedTokenResp.ClientId);
+            Assert.Equal(token, revokedTokenResp.Token);
+            Assert.NotNull(revokedTokenResp.Revoked);
+        }
+
+        [Fact]
+        public void ValidateToken_Expired()
+        {
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(Helper.ExpiredJwtToken));
         }
 
         [Theory]
