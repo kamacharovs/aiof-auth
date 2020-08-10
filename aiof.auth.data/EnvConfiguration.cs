@@ -42,6 +42,7 @@ namespace aiof.auth.data
     public enum FeatureFlags
     {
         RefreshToken,
-        OpenId
+        OpenId,
+        MemCache
     }
 }
