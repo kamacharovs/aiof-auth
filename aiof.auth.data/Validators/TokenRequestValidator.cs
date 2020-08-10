@@ -10,6 +10,9 @@ namespace aiof.auth.data
         {
             ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
+            RuleFor(x => x)
+                .NotNull();
+
             // Either Username, Password is provided, ApiKey is provided or RefreshToken
             RuleFor(x => x)
                 .Must(x => 

@@ -11,6 +11,9 @@ namespace aiof.auth.data
         {
             ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
+            RuleFor(x => x)
+                .NotNull();
+
             RuleFor(x => x.FirstName)
                 .NotNull()
                 .NotEmpty();
