@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Xunit;
+using FluentValidation;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -86,7 +87,7 @@ namespace aiof.auth.tests
         {
             var req = new TokenRequest { };
 
-            await Assert.ThrowsAsync<AuthValidationException>(() => _repo.GetTokenAsync(req));
+            await Assert.ThrowsAsync<ValidationException>(() => _repo.GetTokenAsync(req));
         }
         
         [Theory]

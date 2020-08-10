@@ -84,12 +84,6 @@ namespace aiof.auth.core
             {
                 problem.Code = ae.StatusCode;
                 problem.Message = ae.Message;
-        
-                if (e is AuthValidationException ave)
-                {
-                    problem.Message = _defaultValidationMessage;
-                    problem.Errors = ave.Errors;
-                }
             }
             else if (e is ValidationException ve)
             {

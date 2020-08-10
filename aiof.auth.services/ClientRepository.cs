@@ -101,10 +101,7 @@ namespace aiof.auth.services
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
         {
-            var validation = _clientDtoValidator.Validate(clientDto);
-
-            if (!validation.IsValid)
-                throw new AuthValidationException(validation.Errors);
+            await _clientDtoValidator.ValidateAndThrowAsync(clientDto);
 
             var client = _mapper.Map<Client>(clientDto)
                 .GenerateApiKeys();
