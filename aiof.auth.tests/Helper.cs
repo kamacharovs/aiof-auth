@@ -22,7 +22,8 @@ namespace aiof.auth.tests
         public static Dictionary<string, string> ConfigurationDict
             => new Dictionary<string, string>()
         {
-            { "ConnectionStrings:Database", "" },
+            { "MemCache:Ttl", "900" },
+            { "PostgreSQL", "" },
             { "FeatureManagement:RefreshToken", "false" },
             { "FeatureManagement:OpenId", "false" },
             { "Jwt:Expires", "15" },

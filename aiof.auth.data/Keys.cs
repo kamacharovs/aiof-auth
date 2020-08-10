@@ -4,6 +4,9 @@ namespace aiof.auth.data
 {
     public static class Keys
     {
+        public const string MemCache = nameof(MemCache);
+        public const string Ttl = nameof(Ttl);
+        
         public const string PostgreSQL = nameof(PostgreSQL);
 
         public const string Jwt = nameof(Jwt);

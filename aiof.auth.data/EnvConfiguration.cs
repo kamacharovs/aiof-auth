@@ -20,6 +20,8 @@ namespace aiof.auth.data
             _featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
         }
 
+        public int MemCacheTtl => int.Parse(_config[$"{Keys.MemCache}:{Keys.Ttl}"] ?? throw new KeyNotFoundException());
+
         public string PostgreSQLConString => _config[Keys.PostgreSQL];
 
         public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"] ?? throw new KeyNotFoundException());
