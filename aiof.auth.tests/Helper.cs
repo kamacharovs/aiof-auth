@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching;
 using Microsoft.FeatureManagement;
 
 using AutoMapper;
@@ -75,6 +76,7 @@ namespace aiof.auth.tests
 
             services.AddLogging();
             services.AddFeatureManagement();
+            services.AddMemoryCache();
 
             return services.BuildServiceProvider();
         }

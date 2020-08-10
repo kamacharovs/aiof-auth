@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 
 using FluentValidation;
@@ -19,6 +20,7 @@ namespace aiof.auth.services
     public class AuthRepository : IAuthRepository
     {
         private readonly ILogger<AuthRepository> _logger;
+        private readonly IMemoryCache _cache;
         private readonly IEnvConfiguration _envConfig;
         private readonly IUserRepository _userRepo;
         private readonly IClientRepository _clientRepo;
@@ -31,12 +33,14 @@ namespace aiof.auth.services
 
         public AuthRepository(
             ILogger<AuthRepository> logger,
+            IMemoryCache cache,
             IEnvConfiguration envConfig,
             IUserRepository userRepo,
             IClientRepository clientRepo,
             AbstractValidator<TokenRequest> tokenRequestValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _userRepo = userRepo ?? throw new ArgumentNullException(nameof(userRepo));
             _clientRepo = clientRepo ?? throw new ArgumentNullException(nameof(clientRepo));
