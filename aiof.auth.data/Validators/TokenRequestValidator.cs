@@ -10,7 +10,7 @@ namespace aiof.auth.data
         {
             ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
-            // Either Username, Password is provided or ApiKey
+            // Either Username, Password is provided, ApiKey is provided or RefreshToken
             RuleFor(x => x)
                 .Must(x => 
                 {
@@ -40,7 +40,8 @@ namespace aiof.auth.data
                     }
 
                     return false;
-                });
+                })
+                .WithMessage("Invalid token request. Please provide the following: a Username/Password, ApiKey or Token");;
         }
     }
 }
