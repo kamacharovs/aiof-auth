@@ -44,7 +44,7 @@ namespace aiof.auth.data
 
                     return false;
                 })
-                .WithMessage("Invalid token request. Please provide the following: a Username/Password, ApiKey or Token");;
+                .WithMessage("Invalid token request. Please provide the following: a Username/Password, ApiKey or Token");
         }
     }
 }
