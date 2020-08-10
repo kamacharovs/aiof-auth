@@ -18,7 +18,8 @@ namespace aiof.auth.core.Controllers
     /// </summary>
     [ApiController]
     [Route("auth")]
-    [Produces("application/json")]
+    [Produces(Keys.ApplicationJson)]
+    [Consumes(Keys.ApplicationJson)]
     [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class AuthController : ControllerBase
     {
@@ -75,7 +76,7 @@ namespace aiof.auth.core.Controllers
         [Route("token/revoke")]
         [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
         {
             return Ok(await _repo.RevokeTokenAsync(request.ClientId, request.Token));

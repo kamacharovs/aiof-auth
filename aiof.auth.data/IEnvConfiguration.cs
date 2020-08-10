@@ -5,6 +5,8 @@ namespace aiof.auth.data
 {
     public interface IEnvConfiguration
     {
+        int MemCacheTtl { get; }
+
         string PostgreSQLConString { get; }
 
         int JwtExpires { get; }

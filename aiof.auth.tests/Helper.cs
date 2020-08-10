@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching;
 using Microsoft.FeatureManagement;
 
 using AutoMapper;
@@ -21,7 +22,8 @@ namespace aiof.auth.tests
         public static Dictionary<string, string> ConfigurationDict
             => new Dictionary<string, string>()
         {
-            { "ConnectionStrings:Database", "" },
+            { "MemCache:Ttl", "900" },
+            { "PostgreSQL", "" },
             { "FeatureManagement:RefreshToken", "false" },
             { "FeatureManagement:OpenId", "false" },
             { "Jwt:Expires", "15" },
@@ -75,6 +77,7 @@ namespace aiof.auth.tests
 
             services.AddLogging();
             services.AddFeatureManagement();
+            services.AddMemoryCache();
 
             return services.BuildServiceProvider();
         }

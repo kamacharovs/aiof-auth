@@ -101,6 +101,37 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
+        public async Task ValidateToken_IsAuthenticated(string apiKey)
+        {
+            var tokenReq = new TokenRequest { ApiKey = apiKey };
+            var token = await _repo.GetTokenAsync(tokenReq);
+            var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
+            var validation = _repo.ValidateToken(validationReq);
+
+            Assert.NotNull(validation);
+            Assert.True(validation.IsAuthenticated);
+            Assert.Equal(TokenResultStatus.Valid.ToString(), validation.Status);
+        }
+        [Fact]
+        public void ValidateToken_Expired_ThrowsUnauthorized()
+        {
+            var token = Helper.ExpiredJwtToken;
+            var validationReq = new ValidationRequest { AccessToken = token };
+
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(validationReq));
+        }
+
+        [Fact]
+        public void GetPublicJsonWebKey_Valid()
+        {
+            var jwk = _repo.GetPublicJsonWebKey();
+
+            Assert.NotNull(jwk);
+            Assert.Equal(AiofClaims.Sig, jwk.Use);
+        }
+
+        [Theory]
         [InlineData("testhost", true)]
         [InlineData("aiof-auth", true)]
         [InlineData("aiof-auth-dev", true)]

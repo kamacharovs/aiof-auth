@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Caching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
@@ -54,6 +55,7 @@ namespace aiof.auth.core
             services.AddLogging();
             services.AddHealthChecks();
             services.AddFeatureManagement();
+            services.AddMemoryCache();
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1.0.0", new OpenApiInfo

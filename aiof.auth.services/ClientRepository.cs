@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 using AutoMapper;
 using FluentValidation;
@@ -26,11 +27,12 @@ namespace aiof.auth.services
 
         public ClientRepository(
             ILogger<ClientRepository> logger,
+            IMemoryCache cache,
             IMapper mapper,
             IEnvConfiguration envConfig,
             AuthContext context,
             AbstractValidator<ClientDto> clientDtoValidator)
-            : base(logger, context)
+            : base(logger, cache, envConfig, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

@@ -8,7 +8,7 @@ namespace aiof.auth.data
     {
         public ClientDtoValidator()
         {
-            ValidatorOptions.Global.CascadeMode = CascadeMode.StopOnFirstFailure;
+            ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.Name)
                 .NotNull()
