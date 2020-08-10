@@ -37,7 +37,7 @@ namespace aiof.auth.data
 
         public async Task<bool> IsEnabledAsync(FeatureFlags featureFlag)
         {
-            return await _featureManager.IsEnabledAsync(nameof(featureFlag));
+            return await _featureManager.IsEnabledAsync(featureFlag.ToString());
         }
     }
 

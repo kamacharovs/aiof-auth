@@ -93,8 +93,7 @@ namespace aiof.auth.services
         {
             return GenerateJwtToken(
                 client: client,
-                expiresIn: _envConfig.JwtRefreshExpires
-            );
+                expiresIn: _envConfig.JwtRefreshExpires);
         }
 
         public ITokenResponse GenerateJwtToken(IUser user)
