@@ -4,6 +4,8 @@ namespace aiof.auth.data
 {
     public static class Keys
     {
+        public const string ApplicationJson = "application/json";
+
         public const string MemCache = nameof(MemCache);
         public const string Ttl = nameof(Ttl);
 

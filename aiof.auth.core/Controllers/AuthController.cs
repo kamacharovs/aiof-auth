@@ -18,7 +18,8 @@ namespace aiof.auth.core.Controllers
     /// </summary>
     [ApiController]
     [Route("auth")]
-    [Produces("application/json")]
+    [Produces(Keys.ApplicationJson)]
+    [Consumes(Keys.ApplicationJson)]
     [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class AuthController : ControllerBase
     {
