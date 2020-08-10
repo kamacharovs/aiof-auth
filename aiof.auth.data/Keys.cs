@@ -27,7 +27,20 @@ namespace aiof.auth.data
         ///
         public static string User(string username)
         {
-            return $"user.{username}";
+            return $"user.username.{username}";
+        }
+        public static string User(int id)
+        {
+            return $"user.id.{id}";
+        }
+
+        public static string Client(int id)
+        {
+            return $"client.id.{id}";
+        }
+        public static string Client(string apiKey)
+        {
+            return $"client.apikey.{apiKey}";
         }
     }
 }
