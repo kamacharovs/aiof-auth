@@ -25,6 +25,17 @@ namespace aiof.auth.data
         ///
         /// Caching keys
         ///
+        public static string Base<T>(int id)
+            where T : IPublicKeyId
+        {
+            return $"{typeof(T).Name.ToLower()}.id.{id}";
+        }
+        public static string Base<T>(string apiKey)
+            where T : IApiKey
+        {
+            return $"{typeof(T).Name.ToLower()}.apikey.{apiKey}";
+        }
+
         public static string User(string username)
         {
             return $"user.username.{username}";

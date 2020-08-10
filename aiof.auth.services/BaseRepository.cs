@@ -74,7 +74,7 @@ namespace aiof.auth.services
             where T : class, IPublicKeyId, IApiKey
         {
             return (await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
-                ? await _cache.GetOrCreateAsync(Keys.Client(id), async x =>
+                ? await _cache.GetOrCreateAsync(Keys.Base<T>(id), async x =>
                   {
                       x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
                       
@@ -82,6 +82,21 @@ namespace aiof.auth.services
                         .FirstOrDefaultAsync(x => x.Id == id);
                   })
                 : await GetEntityQuery<T>(asNoTracking)
+                    .FirstOrDefaultAsync(x => x.Id == id))
+                ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
+        }
+        public async Task<T> GetEntityPublicKeyIdAsync<T>(int id, bool asNoTracking = true)
+            where T : class, IPublicKeyId
+        {
+            return (await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
+                ? await _cache.GetOrCreateAsync(Keys.Base<T>(id), async x =>
+                  {
+                      x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
+                      
+                      return await GetEntityPublicKeyIdQuery<T>(asNoTracking)
+                        .FirstOrDefaultAsync(x => x.Id == id);
+                  })
+                : await GetEntityPublicKeyIdQuery<T>(asNoTracking)
                     .FirstOrDefaultAsync(x => x.Id == id))
                 ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
         }
@@ -98,7 +113,7 @@ namespace aiof.auth.services
             where T : class, IApiKey
         {
             return (await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
-                ? await _cache.GetOrCreateAsync(Keys.Client(apiKey), async x =>
+                ? await _cache.GetOrCreateAsync(Keys.Base<T>(apiKey), async x =>
                   {
                       x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
                       

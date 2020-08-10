@@ -15,10 +15,9 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository, IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
-        private readonly IMemoryCache _cache;
         private readonly IEnvConfiguration _envConfig;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
@@ -33,9 +32,9 @@ namespace aiof.auth.services
             AuthContext context,
             AbstractValidator<UserDto> userDtoValidator,
             AbstractValidator<User> userValidator)
+            : base(logger, cache, envConfig, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -55,9 +54,7 @@ namespace aiof.auth.services
 
         public async Task<IUser> GetUserAsync(int id)
         {
-            return await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new AuthNotFoundException();
+            return await base.GetEntityPublicKeyIdAsync<User>(id);
         }
         public async Task<IUser> GetUserAsync(Guid publicKey)
         {
@@ -77,14 +74,7 @@ namespace aiof.auth.services
             string username, 
             string password)
         {
-            var user = await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
-                ? await _cache.GetOrCreateAsync(Keys.User(username), async x => 
-                    {
-                        x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
-
-                        return await GetUserAsync(username);
-                    })
-                : await GetUserAsync(username);
+            var user = await GetUserAsync(username);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
