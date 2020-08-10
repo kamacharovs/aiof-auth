@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 using AutoMapper;
 using FluentValidation;
@@ -17,6 +18,7 @@ namespace aiof.auth.services
     public class UserRepository : IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
+        private readonly IMemoryCache _cache;
         private readonly IEnvConfiguration _envConfig;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
@@ -25,6 +27,7 @@ namespace aiof.auth.services
 
         public UserRepository(
             ILogger<UserRepository> logger,
+            IMemoryCache cache,
             IEnvConfiguration envConfig,
             IMapper mapper,
             AuthContext context,
@@ -32,6 +35,7 @@ namespace aiof.auth.services
             AbstractValidator<User> userValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -69,9 +73,18 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.Username == username)
                 ?? throw new AuthNotFoundException($"User with Username='{username}' was not found.");
         }
-        public async Task<IUser> GetUserAsync(string username, string password)
+        public async Task<IUser> GetUserAsync(
+            string username, 
+            string password)
         {
-            var user = await GetUserAsync(username);
+            var user = await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
+                ? await _cache.GetOrCreateAsync(Keys.User(username), async x => 
+                    {
+                        x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
+
+                        return await GetUserAsync(username);
+                    })
+                : await GetUserAsync(username);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,

@@ -6,7 +6,7 @@ namespace aiof.auth.data
     {
         public const string MemCache = nameof(MemCache);
         public const string Ttl = nameof(Ttl);
-        
+
         public const string PostgreSQL = nameof(PostgreSQL);
 
         public const string Jwt = nameof(Jwt);
@@ -21,5 +21,13 @@ namespace aiof.auth.data
         public const string Iterations = nameof(Iterations);
         public const string SaltSize = nameof(SaltSize);
         public const string KeySize = nameof(KeySize);
+
+        ///
+        /// Caching keys
+        ///
+        public static string User(string username)
+        {
+            return $"user.{username}";
+        }
     }
 }
