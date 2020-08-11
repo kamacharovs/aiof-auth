@@ -34,6 +34,9 @@ namespace aiof.auth.data
         public const string Iterations = nameof(Iterations);
         public const string SaltSize = nameof(SaltSize);
         public const string KeySize = nameof(KeySize);
+        public const string HashIterations = nameof(Hash) + ":" + nameof(Iterations);
+        public const string HashSaltSize = nameof(Hash) + ":" + nameof(SaltSize);
+        public const string HashKeySize = nameof(Hash) + ":" + nameof(KeySize);
 
         public const string OpenApi = nameof(OpenApi);
         public const string Version = nameof(Version);

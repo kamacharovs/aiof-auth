@@ -33,9 +33,9 @@ namespace aiof.auth.data
         public string JwtPrivateKey => _config[Keys.JwtPrivateKey] ?? throw new KeyNotFoundException();
         public string JwtPublicKey => _config[Keys.JwtPublicKey] ?? throw new KeyNotFoundException();
 
-        public int HashIterations => int.Parse(_config[$"{Keys.Hash}:{Keys.Iterations}"] ?? throw new KeyNotFoundException());
-        public int HashSaltSize => int.Parse(_config[$"{Keys.Hash}:{Keys.SaltSize}"] ?? throw new KeyNotFoundException());
-        public int HashKeySize => int.Parse(_config[$"{Keys.Hash}:{Keys.KeySize}"] ?? throw new KeyNotFoundException());
+        public int HashIterations => int.Parse(_config[Keys.HashIterations] ?? throw new KeyNotFoundException());
+        public int HashSaltSize => int.Parse(_config[Keys.HashSaltSize] ?? throw new KeyNotFoundException());
+        public int HashKeySize => int.Parse(_config[Keys.HashKeySize] ?? throw new KeyNotFoundException());
 
         public async Task<bool> IsEnabledAsync(FeatureFlags featureFlag)
         {
