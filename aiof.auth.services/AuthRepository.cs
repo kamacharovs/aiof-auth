@@ -154,8 +154,16 @@ namespace aiof.auth.services
 
         public SigningCredentials GetRSA256SigningCredentials()
         {
-            
-            return null;
+            var privateRsa = RSA.Create();
+            var publicRsa = RSA.Create();
+
+            privateRsa.FromXmlString(_envConfig.JwtPrivateKey);
+            publicRsa.FromXmlString(_envConfig.JwtPublicKey);
+
+            var privateKey = new RsaSecurityKey(privateRsa);
+            var publicKey = new RsaSecurityKey(publicRsa);
+
+            return new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);;
         }
 
         public ITokenResult ValidateToken(string token)
