@@ -20,11 +20,11 @@ namespace aiof.auth.services
             IClient client, 
             string refreshToken = null,
             int? expiresIn = null);
-        ITokenResponse GenerateJwtToken(
+        ITokenResponse GenerateJwtToken<T>(
             IEnumerable<Claim> claims, 
-            IPublicKeyId entity = null,
             string refreshToken = null, 
-            int? expiresIn = null);
+            int? expiresIn = null)
+            where T : IPublicKeyId;
         ITokenResult ValidateToken(string token);
         ITokenResult ValidateToken(IValidationRequest request);
         JsonWebKey GetPublicJsonWebKey();

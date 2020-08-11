@@ -25,6 +25,7 @@ namespace aiof.auth.services
         private readonly IClientRepository _clientRepo;
         private readonly AbstractValidator<TokenRequest> _tokenRequestValidator;
 
+        private readonly string _key;
         private readonly string _issuer;
         private readonly string _audience;
 
@@ -42,6 +43,7 @@ namespace aiof.auth.services
             _clientRepo = clientRepo ?? throw new ArgumentNullException(nameof(clientRepo));
             _tokenRequestValidator = tokenRequestValidator ?? throw new ArgumentNullException(nameof(tokenRequestValidator));
 
+            _key = _envConfig.JwtSecret ?? throw new ArgumentNullException(nameof(_envConfig.JwtSecret));
             _issuer = _envConfig.JwtIssuer ?? throw new ArgumentNullException(nameof(_envConfig.JwtIssuer));
             _audience = _envConfig.JwtAudience ?? throw new ArgumentNullException(nameof(_envConfig.JwtAudience));
         }
@@ -70,11 +72,11 @@ namespace aiof.auth.services
         }
 
         public async Task<IRevokeResponse> RevokeTokenAsync(
-            int clientId, 
+            int clientId,
             string token)
         {
             var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
-            
+
             return new RevokeResponse
             {
                 ClientId = clientRefresh.ClientId,
@@ -92,37 +94,35 @@ namespace aiof.auth.services
 
         public ITokenResponse GenerateJwtToken(IUser user)
         {
-            return GenerateJwtToken(new Claim[]
+            return GenerateJwtToken<User>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
                     new Claim(AiofClaims.GivenName, user.FirstName),
                     new Claim(AiofClaims.FamilyName, user.LastName),
                     new Claim(AiofClaims.Email, user.Email)
-                },
-                entity: user as IPublicKeyId);
+                });
         }
 
         public ITokenResponse GenerateJwtToken(
-            IClient client, 
+            IClient client,
             string refreshToken = null,
             int? expiresIn = null)
         {
-            return GenerateJwtToken(new Claim[]
+            return GenerateJwtToken<Client>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
                     new Claim(AiofClaims.Name, client.Name),
                     new Claim(AiofClaims.Slug, client.Slug)
                 },
-                client as IPublicKeyId,
                 refreshToken,
                 expiresIn);
         }
 
-        public ITokenResponse GenerateJwtToken(
-            IEnumerable<Claim> claims, 
-            IPublicKeyId entity = null,
-            string refreshToken = null, 
+        public ITokenResponse GenerateJwtToken<T>(
+            IEnumerable<Claim> claims,
+            string refreshToken = null,
             int? expiresIn = null)
+            where T : IPublicKeyId
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var expires = expiresIn ?? _envConfig.JwtExpires;
@@ -132,14 +132,11 @@ namespace aiof.auth.services
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
                 Audience = _audience,
-                SigningCredentials = new SigningCredentials(
-                    GetRsaKey(RsaKeyType.Private),
-                    SecurityAlgorithms.RsaSha256)
+                SigningCredentials = GetSigningCredentials<T>()
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            if (entity != null)
-                _logger.LogInformation($"Created JWT for {entity.GetType().Name} with Id='{entity.Id}' and PublicKey='{entity.PublicKey}'");
+            _logger.LogInformation($"Created JWT for {typeof(T).Name}");// with Id='{T.Id}' and PublicKey='{T.PublicKey}'");
 
             return new TokenResponse
             {
@@ -149,10 +146,46 @@ namespace aiof.auth.services
             };
         }
 
-        public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)
+        public SigningCredentials GetSigningCredentials<T>()    //NEW
+            where T : IPublicKeyId
+        {
+            var algType = GetAlgType<T>();
+
+            switch (algType)
+            {
+                case AlgType.RS256:
+                    return new SigningCredentials(
+                        GetRsaKey(RsaKeyType.Private),
+                        SecurityAlgorithms.RsaSha256);
+                case AlgType.HS256:
+                    var key = Encoding.ASCII.GetBytes(_key);
+                    return new SigningCredentials(
+                        new SymmetricSecurityKey(key),
+                        SecurityAlgorithms.HmacSha256Signature);
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid alg type");
+            }
+        }
+
+        public AlgType GetAlgType<T>()    //NEW
+            where T : IPublicKeyId
+        {
+            switch (typeof(T).Name)
+            {
+                case nameof(User):
+                    return _envConfig.JwtAlgorithmUser.ToEnum();
+                case nameof(Client):
+                    return _envConfig.JwtAlgorithmClient.ToEnum();
+                default:
+                    return _envConfig.JwtAlgorithmDefault.ToEnum();
+            }
+        }
+
+        public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)    //NEW
         {
             var rsa = RSA.Create();
-            
+
             if (rsaKeyType == RsaKeyType.Public)
                 rsa.FromXmlString(_envConfig.JwtPublicKey);
             else if (rsaKeyType == RsaKeyType.Private)
@@ -179,8 +212,8 @@ namespace aiof.auth.services
 
                 var handler = new JwtSecurityTokenHandler();
                 var result = handler.ValidateToken(
-                    token, 
-                    tokenParams, 
+                    token,
+                    tokenParams,
                     out var securityToken);
 
                 return new TokenResult
