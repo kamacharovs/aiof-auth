@@ -21,6 +21,8 @@ namespace aiof.auth.data
         public const string Secret = nameof(Secret);
         public const string PrivateKey = nameof(PrivateKey);
         public const string PublicKey = nameof(PublicKey);
+        public const string Algorithm = nameof(Algorithm);
+        public const string Default = nameof(Default);
         public const string JwtExpires = nameof(Jwt) + ":" + nameof(Expires);
         public const string JwtRefreshExpires = nameof(Jwt) + ":" + nameof(RefreshExpires);
         public const string JwtType = nameof(Jwt) + ":" + nameof(Type);
@@ -29,6 +31,9 @@ namespace aiof.auth.data
         public const string JwtSecret = nameof(Jwt) + ":" + nameof(Secret);
         public const string JwtPrivateKey = nameof(Jwt) + ":" + nameof(PrivateKey);
         public const string JwtPublicKey = nameof(Jwt) + ":" + nameof(PublicKey);
+        public const string JwtAlgorithmDefault = nameof(Jwt) + ":" + nameof(Algorithm) + ":" + nameof(Default);
+        public const string JwtAlgorithmUser = nameof(Jwt) + ":" + nameof(Algorithm) + ":" + nameof(User);
+        public const string JwtAlgorithmClient = nameof(Jwt) + ":" + nameof(Algorithm) + ":" + nameof(Client);
 
         public const string Hash = nameof(Hash);
         public const string Iterations = nameof(Iterations);

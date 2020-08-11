@@ -32,6 +32,9 @@ namespace aiof.auth.data
         public string JwtSecret => _config[Keys.JwtSecret] ?? throw new KeyNotFoundException();
         public string JwtPrivateKey => _config[Keys.JwtPrivateKey] ?? throw new KeyNotFoundException();
         public string JwtPublicKey => _config[Keys.JwtPublicKey] ?? throw new KeyNotFoundException();
+        public string JwtAlgorithmDefault => _config[Keys.JwtAlgorithmDefault] ?? throw new KeyNotFoundException();
+        public string JwtAlgorithmUser => _config[Keys.JwtAlgorithmUser] ?? throw new KeyNotFoundException();
+        public string JwtAlgorithmClient => _config[Keys.JwtAlgorithmClient] ?? throw new KeyNotFoundException();
 
         public int HashIterations => int.Parse(_config[Keys.HashIterations] ?? throw new KeyNotFoundException());
         public int HashSaltSize => int.Parse(_config[Keys.HashSaltSize] ?? throw new KeyNotFoundException());
