@@ -51,4 +51,10 @@ namespace aiof.auth.data
         [JsonPropertyName("claims_supported")]
         public IEnumerable<string> ClaimsSupported { get; } = AiofClaims.All;
     }
+
+    public static class OpenIdConfigConstants
+    {
+        public static string Use => AiofClaims.Sig;
+        public static string Alg => "RS256";
+    }
 }

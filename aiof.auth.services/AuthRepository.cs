@@ -196,8 +196,8 @@ namespace aiof.auth.services
             var key = Encoding.ASCII.GetBytes(_key);
             var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(new SymmetricSecurityKey(key));
 
-            jwk.Use = AiofClaims.Sig;
-            jwk.Alg = "RS256";
+            jwk.Use = OpenIdConfigConstants.Use;
+            jwk.Alg = OpenIdConfigConstants.Alg;
 
             return jwk;
         }
