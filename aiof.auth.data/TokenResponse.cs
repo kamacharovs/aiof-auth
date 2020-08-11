@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
+    /// <summary>
+    /// Response to JWT creation
+    /// </summary>
     public class TokenResponse : ITokenResponse
     {
         [JsonPropertyName("token_type")]

@@ -49,6 +49,7 @@ namespace aiof.auth.core.Controllers
         [HttpPost]
         [Route("token/validate")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
         public IActionResult ValidateToken([FromBody]ValidationRequest req)
         {
