@@ -132,7 +132,7 @@ namespace aiof.auth.services
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
                 Audience = _audience,
-                SigningCredentials = GetSigningCredentials<T>()
+                SigningCredentials = GetSigningCredentials()
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
@@ -144,58 +144,33 @@ namespace aiof.auth.services
                 AccessToken = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken
             };
-        }
 
-        /// <summary>
-        /// Get <see cref="SigningCredentials"/> based on the type of <typeparamref name="T"/>. 
-        /// The credentials are used to sign the JWT (Json Web Token). They are completely configurable on an Entity level; <see cref="User"/>, <see cref="Client"/>, etc.
-        /// The default signing credentials use the <see cref="SecurityAlgorithms.RsaSha256"/> algorithm
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns><see cref="SigningCredentials"/></returns>
-        public SigningCredentials GetSigningCredentials<T>()    //NEW
-            where T : class, IPublicKeyId
-        {
-            var algType = GetAlgType<T>();
-
-            switch (algType)
+            /// <summary>
+            /// Get <see cref="SigningCredentials"/> based on the type of <typeparamref name="T"/>. 
+            /// The credentials are used to sign the JWT (Json Web Token). They are completely configurable on an Entity level; <see cref="User"/>, <see cref="Client"/>, etc.
+            /// The default signing credentials use the <see cref="SecurityAlgorithms.RsaSha256"/> algorithm
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns><see cref="SigningCredentials"/></returns>
+            SigningCredentials GetSigningCredentials()
             {
-                case AlgType.RS256:
-                    return new SigningCredentials(
-                        GetRsaKey(RsaKeyType.Private),
-                        SecurityAlgorithms.RsaSha256);
-                case AlgType.HS256:
-                    var key = Encoding.ASCII.GetBytes(_key);
-                    return new SigningCredentials(
-                        new SymmetricSecurityKey(key),
-                        SecurityAlgorithms.HmacSha256Signature);
-                default:
-                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                        $"Invalid or unsupported Alg Type.");
-            }
-        }
+                var algType = GetAlgType<T>();
 
-        /// <summary>
-        /// Get <see cref="SecurityKey"/> based on the type of <typeparamref name="T"/>. 
-        /// The key is then used to validate the JWT (Json Web Token) based on the algorithm the JWT (Json Web Token) was signed with
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns><see cref="SecurityKey"/></returns>
-        public SecurityKey GetSecurityKey<T>()
-            where T : class, IPublicKeyId
-        {
-            var algType = GetAlgType<T>();
-
-            switch (algType)
-            {
-                case AlgType.RS256:
-                    return GetRsaKey(RsaKeyType.Public);
-                case AlgType.HS256:
-                    var key = Encoding.ASCII.GetBytes(_key);
-                    return new SymmetricSecurityKey(key);
-                default:
-                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                        $"Invalid or unsupported Alg Type");
+                switch (algType)
+                {
+                    case AlgType.RS256:
+                        return new SigningCredentials(
+                            GetRsaKey(RsaKeyType.Private),
+                            SecurityAlgorithms.RsaSha256);
+                    case AlgType.HS256:
+                        var key = Encoding.ASCII.GetBytes(_key);
+                        return new SigningCredentials(
+                            new SymmetricSecurityKey(key),
+                            SecurityAlgorithms.HmacSha256Signature);
+                    default:
+                        throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                            $"Invalid or unsupported Alg Type.");
+                }
             }
         }
 
@@ -269,7 +244,7 @@ namespace aiof.auth.services
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = GetSecurityKey<T>()
+                    IssuerSigningKey = GetSecurityKey()
                 };
 
                 var handler = new JwtSecurityTokenHandler();
@@ -283,6 +258,29 @@ namespace aiof.auth.services
                     IsAuthenticated = result.Identity.IsAuthenticated,
                     Status = TokenResultStatus.Valid.ToString()
                 };
+
+                /// <summary>
+                /// Get <see cref="SecurityKey"/> based on the type of <typeparamref name="T"/>. 
+                /// The key is then used to validate the JWT (Json Web Token) based on the algorithm the JWT (Json Web Token) was signed with
+                /// </summary>
+                /// <typeparam name="T"></typeparam>
+                /// <returns><see cref="SecurityKey"/></returns>
+                SecurityKey GetSecurityKey()
+                {
+                    var algType = GetAlgType<T>();
+
+                    switch (algType)
+                    {
+                        case AlgType.RS256:
+                            return GetRsaKey(RsaKeyType.Public);
+                        case AlgType.HS256:
+                            var key = Encoding.ASCII.GetBytes(_key);
+                            return new SymmetricSecurityKey(key);
+                        default:
+                            throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                                $"Invalid or unsupported Alg Type");
+                    }
+                }
             }
             catch (SecurityTokenExpiredException)
             {
