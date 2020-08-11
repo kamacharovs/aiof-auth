@@ -43,7 +43,7 @@ namespace aiof.auth.data
         }
     }
 
-    public enum RsaKey
+    public enum RsaKeyType
     {
         Private,
         Public

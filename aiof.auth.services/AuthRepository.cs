@@ -136,7 +136,7 @@ namespace aiof.auth.services
                 Issuer = _issuer,
                 Audience = _audience,
                 SigningCredentials = new SigningCredentials(
-                    GetRsaKey(RsaKey.Private),
+                    GetRsaKey(RsaKeyType.Private),
                     SecurityAlgorithms.RsaSha256)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -152,13 +152,13 @@ namespace aiof.auth.services
             };
         }
 
-        public RsaSecurityKey GetRsaKey(RsaKey rsaKey)
+        public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)
         {
             var rsa = RSA.Create();
             
-            if (rsaKey == RsaKey.Public)
+            if (rsaKeyType == RsaKeyType.Public)
                 rsa.FromXmlString(_envConfig.JwtPublicKey);
-            else if (rsaKey == RsaKey.Private)
+            else if (rsaKeyType == RsaKeyType.Private)
                 rsa.FromXmlString(_envConfig.JwtPrivateKey);
 
             return new RsaSecurityKey(rsa);
@@ -178,7 +178,7 @@ namespace aiof.auth.services
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = GetRsaKey(RsaKey.Public)
+                    IssuerSigningKey = GetRsaKey(RsaKeyType.Public)
                 };
 
                 var handler = new JwtSecurityTokenHandler();
@@ -211,7 +211,7 @@ namespace aiof.auth.services
 
         public JsonWebKey GetPublicJsonWebKey()
         {
-            var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(GetRsaKey(RsaKey.Public));
+            var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(GetRsaKey(RsaKeyType.Public));
 
             jwk.Use = OpenIdConfigConstants.Use;
             jwk.Alg = OpenIdConfigConstants.AlgRS256;
