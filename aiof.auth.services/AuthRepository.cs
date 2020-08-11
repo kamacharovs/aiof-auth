@@ -54,15 +54,15 @@ namespace aiof.auth.services
 
             switch (request.Type)
             {
-                case TokenRequestType.User:
+                case TokenType.User:
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
                     return GenerateJwtToken(user);
-                case TokenRequestType.Client:
+                case TokenType.Client:
                     var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
                     return GenerateJwtToken(
                         clientRefresh.Client,
                         clientRefresh.Token);
-                case TokenRequestType.Refresh:
+                case TokenType.Refresh:
                     var client = (await _clientRepo.GetRefreshTokenAsync(request.Token)).Client;
                     return RefreshToken(client);
                 default:
@@ -125,14 +125,10 @@ namespace aiof.auth.services
             where T : class, IPublicKeyId
         {
             var expires = expiresIn ?? _envConfig.JwtExpires;
-            var claimsIdentity = new ClaimsIdentity(claims);
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            claimsIdentity.AddClaim(new Claim(AiofClaims.Entity, typeof(T).Name));
-
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = claimsIdentity,
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
                 Audience = _audience,
@@ -269,15 +265,12 @@ namespace aiof.auth.services
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(request.AccessToken);
 
-            var entity = token.Claims.FirstOrDefault(x => x.Type == AiofClaims.Entity).Value;
+            var givenName = token.Claims.FirstOrDefault(x => x.Type == AiofClaims.GivenName);
 
-            if (entity == nameof(User))
+            if (!string.IsNullOrWhiteSpace(givenName?.Value))
                 return ValidateToken<User>(request.AccessToken);
-            else if (entity == nameof(Client))
-                return ValidateToken<Client>(request.AccessToken);
             else
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Invalid Entity type");
+                return ValidateToken<Client>(request.AccessToken);
         }
 
         public JsonWebKey GetPublicJsonWebKey()
