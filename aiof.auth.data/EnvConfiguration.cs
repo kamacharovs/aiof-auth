@@ -43,6 +43,12 @@ namespace aiof.auth.data
         }
     }
 
+    public enum AlgType
+    {
+        RS256,
+        HS256
+    }
+
     public enum RsaKeyType
     {
         Private,

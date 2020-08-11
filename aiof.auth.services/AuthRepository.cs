@@ -209,8 +209,8 @@ namespace aiof.auth.services
         {
             var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(GetRsaKey(RsaKeyType.Public));
 
-            jwk.Use = OpenIdConfigConstants.Use;
-            jwk.Alg = OpenIdConfigConstants.AlgRS256;
+            jwk.Use = AiofClaims.Sig;
+            jwk.Alg = AlgType.RS256.ToString();
 
             return jwk;
         }
