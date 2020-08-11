@@ -202,20 +202,31 @@ namespace aiof.auth.services
         /// <summary>
         /// Get algorithm <see cref="AlgType"/> of <typeparamref name="T"/> based on the type and environment configuration
         /// </summary>
+        /// <remarks>
+        /// In a case where a new entity is added, then this part should be the only part that needs to be updated.
+        /// The current supported entities are <see cref="User"/> and <see cref="Client"/>
+        /// </remarks>
         /// <typeparam name="T"></typeparam>
         /// <returns><see cref="AlgType"/></returns>
         public AlgType GetAlgType<T>()
             where T : class, IPublicKeyId
         {
+            string alg = string.Empty;
+
             switch (typeof(T).Name)
             {
                 case nameof(User):
-                    return _envConfig.JwtAlgorithmUser.ToEnum();
+                    alg = _envConfig.JwtAlgorithmUser;
+                    break;
                 case nameof(Client):
-                    return _envConfig.JwtAlgorithmClient.ToEnum();
+                    alg = _envConfig.JwtAlgorithmClient;
+                    break;
                 default:
-                    return _envConfig.JwtAlgorithmDefault.ToEnum();
+                    alg = _envConfig.JwtAlgorithmDefault;
+                    break;
             }
+
+            return alg.ToEnum();
         }
 
         /// <summary>
