@@ -32,12 +32,12 @@ The authentication microservice is built to additionally leverage the following 
 
 ### OpenSSL
 
-If you plan on using RSA256 algorithm to sign the JWT's then you need a Certificate. For this scenario we use OpenSSL to generate a private key. In order to do so follow the below steps:
+If you plan on using RSA256 algorithm to sign the JWT's then you need a Certificate. For this scenario we use OpenSSL to generate a private and public key. In order to do so follow the below steps:
 
 - Install `openssl` tools from Chocolatey by running the following command: `choco install openssl.light` (needs to only be done once)
 - Then restart PowerShell, if required
-- Navigate to a desired directory to create a Certificate
+- Navigate to a desired directory to create the `.pem` files
 - Run the command: `openssl genrsa -out private-key.pem 2048`
 - Run the command: `openssl rsa -in private-key.pem -outform PEM -pubout -out public-key.pem`
 
-A good article with detailed documentation can be found [here](https://dotnetuniversity.com/jwt-authentication-in-asp-net-core/)
+A good article with detailed documentation can be found [here](https://dotnetuniversity.com/jwt-authentication-in-asp-net-core/). Also, a `.pem` to `XML` converter tool can be found [here](https://superdry.apphb.com/tools/online-rsa-key-converter)
