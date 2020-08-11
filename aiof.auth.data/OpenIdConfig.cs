@@ -38,8 +38,8 @@ namespace aiof.auth.data
         [JsonPropertyName("id_token_signing_alg_values_supported")]
         public IEnumerable<string> SigningAlgorithmsSupported { get; } = new List<string> 
         { 
-            "HS256",
-            "RS256"
+            "RS256",
+            "HS256"
         };
 
         [JsonPropertyName("claim_types_supported")]
@@ -55,6 +55,6 @@ namespace aiof.auth.data
     public static class OpenIdConfigConstants
     {
         public static string Use => AiofClaims.Sig;
-        public static string Alg => "RS256";
+        public static string AlgRS256 => "RS256";
     }
 }

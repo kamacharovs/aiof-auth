@@ -43,6 +43,12 @@ namespace aiof.auth.data
         }
     }
 
+    public enum RsaKey
+    {
+        Private,
+        Public
+    }
+
     public enum FeatureFlags
     {
         RefreshToken,

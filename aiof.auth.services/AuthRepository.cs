@@ -136,8 +136,8 @@ namespace aiof.auth.services
                 Issuer = _issuer,
                 Audience = _audience,
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
+                    GetRsaKey(RsaKey.Private),
+                    SecurityAlgorithms.RsaSha256)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
@@ -152,18 +152,16 @@ namespace aiof.auth.services
             };
         }
 
-        public SigningCredentials GetRSA256SigningCredentials()
+        public RsaSecurityKey GetRsaKey(RsaKey rsaKey)
         {
-            var privateRsa = RSA.Create();
-            var publicRsa = RSA.Create();
+            var rsa = RSA.Create();
+            
+            if (rsaKey == RsaKey.Public)
+                rsa.FromXmlString(_envConfig.JwtPublicKey);
+            else if (rsaKey == RsaKey.Private)
+                rsa.FromXmlString(_envConfig.JwtPrivateKey);
 
-            privateRsa.FromXmlString(_envConfig.JwtPrivateKey);
-            publicRsa.FromXmlString(_envConfig.JwtPublicKey);
-
-            var privateKey = new RsaSecurityKey(privateRsa);
-            var publicKey = new RsaSecurityKey(publicRsa);
-
-            return new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);;
+            return new RsaSecurityKey(rsa);
         }
 
         public ITokenResult ValidateToken(string token)
@@ -180,7 +178,7 @@ namespace aiof.auth.services
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                    IssuerSigningKey = GetRsaKey(RsaKey.Public)
                 };
 
                 var handler = new JwtSecurityTokenHandler();
@@ -200,6 +198,11 @@ namespace aiof.auth.services
                 throw new AuthFriendlyException(HttpStatusCode.Unauthorized,
                     $"Invalid or expired token");
             }
+            catch (SecurityTokenInvalidSignatureException)
+            {
+                throw new AuthFriendlyException(HttpStatusCode.Unauthorized,
+                    $"Invalid signature");
+            }
         }
         public ITokenResult ValidateToken(IValidationRequest request)
         {
@@ -208,11 +211,10 @@ namespace aiof.auth.services
 
         public JsonWebKey GetPublicJsonWebKey()
         {
-            var key = Encoding.ASCII.GetBytes(_key);
-            var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(new SymmetricSecurityKey(key));
+            var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(GetRsaKey(RsaKey.Public));
 
             jwk.Use = OpenIdConfigConstants.Use;
-            jwk.Alg = OpenIdConfigConstants.Alg;
+            jwk.Alg = OpenIdConfigConstants.AlgRS256;
 
             return jwk;
         }
