@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Net;
@@ -149,6 +150,12 @@ namespace aiof.auth.services
                 AccessToken = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken
             };
+        }
+
+        public SigningCredentials GetRSA256SigningCredentials()
+        {
+            
+            return null;
         }
 
         public ITokenResult ValidateToken(string token)

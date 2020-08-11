@@ -18,6 +18,10 @@ namespace aiof.auth.data
         public const string Issuer = nameof(Issuer);
         public const string Audience = nameof(Audience);
         public const string Secret = nameof(Secret);
+        public const string PrivateKey = nameof(PrivateKey);
+        public const string PublicKey = nameof(PublicKey);
+        public const string JwtPrivateKey = nameof(Jwt) + ":" + nameof(PrivateKey);
+        public const string JwtPublicKey = nameof(Jwt) + ":" + nameof(PublicKey);
 
         public const string Hash = nameof(Hash);
         public const string Iterations = nameof(Iterations);
