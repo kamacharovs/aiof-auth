@@ -97,7 +97,7 @@ namespace aiof.auth.tests
             var user = await _userRepo.GetUserAsync(id);
 
             var token = _repo.GenerateJwtToken(user);
-            var tokenValidation = _repo.ValidateToken(token.AccessToken);
+            var tokenValidation = _repo.ValidateToken<User>(token.AccessToken);
 
             Assert.NotNull(tokenValidation);
             Assert.True(tokenValidation.IsAuthenticated);
@@ -120,7 +120,7 @@ namespace aiof.auth.tests
         [Fact]
         public void ValidateToken_Expired()
         {
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(Helper.ExpiredJwtToken));
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken<Client>(Helper.ExpiredJwtToken));
         }
 
         [Theory]
@@ -130,7 +130,7 @@ namespace aiof.auth.tests
             var tokenReq = new TokenRequest { ApiKey = apiKey };
             var token = await _repo.GetTokenAsync(tokenReq);
             var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
-            var validation = _repo.ValidateToken(validationReq);
+            var validation = _repo.ValidateToken<Client>(validationReq);
 
             Assert.NotNull(validation);
             Assert.True(validation.IsAuthenticated);
@@ -142,7 +142,7 @@ namespace aiof.auth.tests
             var token = Helper.ExpiredJwtToken;
             var validationReq = new ValidationRequest { AccessToken = token };
 
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(validationReq));
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken<Client>(validationReq));
         }
 
         [Fact]

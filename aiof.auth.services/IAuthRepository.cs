@@ -24,8 +24,9 @@ namespace aiof.auth.services
             IEnumerable<Claim> claims, 
             string refreshToken = null, 
             int? expiresIn = null)
-            where T : IPublicKeyId;
-        ITokenResult ValidateToken(string token);
+            where T : class, IPublicKeyId;
+        ITokenResult ValidateToken<T>(string token)
+            where T : class, IPublicKeyId;
         ITokenResult ValidateToken(IValidationRequest request);
         JsonWebKey GetPublicJsonWebKey();
         IOpenIdConfig GetOpenIdConfig(

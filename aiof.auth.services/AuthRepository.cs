@@ -122,13 +122,17 @@ namespace aiof.auth.services
             IEnumerable<Claim> claims,
             string refreshToken = null,
             int? expiresIn = null)
-            where T : IPublicKeyId
+            where T : class, IPublicKeyId
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
             var expires = expiresIn ?? _envConfig.JwtExpires;
+            var claimsIdentity = new ClaimsIdentity(claims);
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            claimsIdentity.AddClaim(new Claim(AiofClaims.Entity, typeof(T).Name));
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(claims),
+                Subject = claimsIdentity,
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
                 Audience = _audience,
@@ -147,7 +151,7 @@ namespace aiof.auth.services
         }
 
         public SigningCredentials GetSigningCredentials<T>()    //NEW
-            where T : IPublicKeyId
+            where T : class, IPublicKeyId
         {
             var algType = GetAlgType<T>();
 
@@ -164,12 +168,30 @@ namespace aiof.auth.services
                         SecurityAlgorithms.HmacSha256Signature);
                 default:
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                        $"Invalid alg type");
+                        $"Invalid or unsupported Alg Type.");
+            }
+        }
+
+        public SecurityKey GetSecurityKey<T>()  //NEW
+            where T : class, IPublicKeyId
+        {
+            var algType = GetAlgType<T>();
+
+            switch (algType)
+            {
+                case AlgType.RS256:
+                    return GetRsaKey(RsaKeyType.Public);
+                case AlgType.HS256:
+                    var key = Encoding.ASCII.GetBytes(_key);
+                    return new SymmetricSecurityKey(key);
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid or unsupported Alg Type");
             }
         }
 
         public AlgType GetAlgType<T>()    //NEW
-            where T : IPublicKeyId
+            where T : class, IPublicKeyId
         {
             switch (typeof(T).Name)
             {
@@ -186,15 +208,24 @@ namespace aiof.auth.services
         {
             var rsa = RSA.Create();
 
-            if (rsaKeyType == RsaKeyType.Public)
-                rsa.FromXmlString(_envConfig.JwtPublicKey);
-            else if (rsaKeyType == RsaKeyType.Private)
-                rsa.FromXmlString(_envConfig.JwtPrivateKey);
+            switch (rsaKeyType)
+            {
+                case RsaKeyType.Public:
+                    rsa.FromXmlString(_envConfig.JwtPublicKey);
+                    break;
+                case RsaKeyType.Private:
+                    rsa.FromXmlString(_envConfig.JwtPrivateKey);
+                    break;
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid or unsupported RSA Key Type");
+            }
 
             return new RsaSecurityKey(rsa);
         }
 
-        public ITokenResult ValidateToken(string token)
+        public ITokenResult ValidateToken<T>(string token)
+            where T : class, IPublicKeyId
         {
             try
             {
@@ -207,7 +238,7 @@ namespace aiof.auth.services
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = GetRsaKey(RsaKeyType.Public)
+                    IssuerSigningKey = GetSecurityKey<T>()
                 };
 
                 var handler = new JwtSecurityTokenHandler();
@@ -235,7 +266,18 @@ namespace aiof.auth.services
         }
         public ITokenResult ValidateToken(IValidationRequest request)
         {
-            return ValidateToken(request.AccessToken);
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(request.AccessToken);
+
+            var entity = token.Claims.FirstOrDefault(x => x.Type == AiofClaims.Entity).Value;
+
+            if (entity == nameof(User))
+                return ValidateToken<User>(request.AccessToken);
+            else if (entity == nameof(Client))
+                return ValidateToken<Client>(request.AccessToken);
+            else
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Invalid Entity type");
         }
 
         public JsonWebKey GetPublicJsonWebKey()
