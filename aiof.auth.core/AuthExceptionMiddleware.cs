@@ -87,6 +87,7 @@ namespace aiof.auth.core
             }
             else if (e is ValidationException ve)
             {
+                problem.Code = StatusCodes.Status400BadRequest;
                 problem.Message = _defaultValidationMessage;
                 problem.Errors = ve.Errors.Select(x => x.ErrorMessage);
             }
