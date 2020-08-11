@@ -51,7 +51,7 @@ namespace aiof.auth.tests
         {
             var services = new ServiceCollection();
 
-            services.AddTransient<IConfiguration>(x =>
+            services.AddScoped<IConfiguration>(x =>
             {
                 IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
                 configurationBuilder.AddInMemoryCollection(ConfigurationDict);
