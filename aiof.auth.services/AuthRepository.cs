@@ -146,6 +146,13 @@ namespace aiof.auth.services
             };
         }
 
+        /// <summary>
+        /// Get <see cref="SigningCredentials"/> based on the type of <typeparamref name="T"/>. 
+        /// The credentials are used to sign the JWT (Json Web Token). They are completely configurable on an Entity level; <see cref="User"/>, <see cref="Client"/>, etc.
+        /// The default signing credentials use the <see cref="SecurityAlgorithms.RsaSha256"/> algorithm
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns><see cref="SigningCredentials"/></returns>
         public SigningCredentials GetSigningCredentials<T>()    //NEW
             where T : class, IPublicKeyId
         {
@@ -168,7 +175,13 @@ namespace aiof.auth.services
             }
         }
 
-        public SecurityKey GetSecurityKey<T>()  //NEW
+        /// <summary>
+        /// Get <see cref="SecurityKey"/> based on the type of <typeparamref name="T"/>. 
+        /// The key is then used to validate the JWT (Json Web Token) based on the algorithm the JWT (Json Web Token) was signed with
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns><see cref="SecurityKey"/></returns>
+        public SecurityKey GetSecurityKey<T>()
             where T : class, IPublicKeyId
         {
             var algType = GetAlgType<T>();
@@ -186,7 +199,12 @@ namespace aiof.auth.services
             }
         }
 
-        public AlgType GetAlgType<T>()    //NEW
+        /// <summary>
+        /// Get algorithm <see cref="AlgType"/> of <typeparamref name="T"/> based on the type and environment configuration
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns><see cref="AlgType"/></returns>
+        public AlgType GetAlgType<T>()
             where T : class, IPublicKeyId
         {
             switch (typeof(T).Name)
@@ -200,7 +218,13 @@ namespace aiof.auth.services
             }
         }
 
-        public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)    //NEW
+        /// <summary>
+        /// Get <see cref="RsaSecurityKey"/> based on <see cref="RsaKeyType"/>. The current values are inheritted certificate signing
+        /// via a <see cref="RsaKeyType.Public"/> and <see cref="RsaKeyType.Private"/> keys
+        /// </summary>
+        /// <param name="rsaKeyType"></param>
+        /// <returns><see cref="RsaSecurityKey"/></returns>
+        public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)
         {
             var rsa = RSA.Create();
 
