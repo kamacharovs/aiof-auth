@@ -8,6 +8,7 @@ namespace aiof.auth.data
 
         public const string MemCache = nameof(MemCache);
         public const string Ttl = nameof(Ttl);
+        public const string MemCacheTtl = nameof(MemCache) + ":" + nameof(Ttl);
 
         public const string PostgreSQL = nameof(PostgreSQL);
 
@@ -20,6 +21,12 @@ namespace aiof.auth.data
         public const string Secret = nameof(Secret);
         public const string PrivateKey = nameof(PrivateKey);
         public const string PublicKey = nameof(PublicKey);
+        public const string JwtExpires = nameof(Jwt) + ":" + nameof(Expires);
+        public const string JwtRefreshExpires = nameof(Jwt) + ":" + nameof(RefreshExpires);
+        public const string JwtType = nameof(Jwt) + ":" + nameof(Type);
+        public const string JwtIssuer = nameof(Jwt) + ":" + nameof(Issuer);
+        public const string JwtAudience = nameof(Jwt) + ":" + nameof(Audience);
+        public const string JwtSecret = nameof(Jwt) + ":" + nameof(Secret);
         public const string JwtPrivateKey = nameof(Jwt) + ":" + nameof(PrivateKey);
         public const string JwtPublicKey = nameof(Jwt) + ":" + nameof(PublicKey);
 

@@ -25,7 +25,6 @@ namespace aiof.auth.services
         private readonly IClientRepository _clientRepo;
         private readonly AbstractValidator<TokenRequest> _tokenRequestValidator;
 
-        private readonly string _key;
         private readonly string _issuer;
         private readonly string _audience;
 
@@ -43,7 +42,6 @@ namespace aiof.auth.services
             _clientRepo = clientRepo ?? throw new ArgumentNullException(nameof(clientRepo));
             _tokenRequestValidator = tokenRequestValidator ?? throw new ArgumentNullException(nameof(tokenRequestValidator));
 
-            _key = _envConfig.JwtSecret ?? throw new ArgumentNullException(nameof(_envConfig.JwtSecret));
             _issuer = _envConfig.JwtIssuer ?? throw new ArgumentNullException(nameof(_envConfig.JwtIssuer));
             _audience = _envConfig.JwtAudience ?? throw new ArgumentNullException(nameof(_envConfig.JwtAudience));
         }
@@ -127,7 +125,6 @@ namespace aiof.auth.services
             int? expiresIn = null)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_key);
             var expires = expiresIn ?? _envConfig.JwtExpires;
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -168,7 +165,6 @@ namespace aiof.auth.services
         {
             try
             {
-                var key = Encoding.ASCII.GetBytes(_key);
                 var tokenParams = new TokenValidationParameters
                 {
                     RequireSignedTokens = true,
