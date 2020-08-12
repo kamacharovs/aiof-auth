@@ -8,6 +8,7 @@ namespace aiof.auth.data
 
         public const string MemCache = nameof(MemCache);
         public const string Ttl = nameof(Ttl);
+        public const string MemCacheTtl = nameof(MemCache) + ":" + nameof(Ttl);
 
         public const string PostgreSQL = nameof(PostgreSQL);
 
@@ -18,11 +19,29 @@ namespace aiof.auth.data
         public const string Issuer = nameof(Issuer);
         public const string Audience = nameof(Audience);
         public const string Secret = nameof(Secret);
+        public const string PrivateKey = nameof(PrivateKey);
+        public const string PublicKey = nameof(PublicKey);
+        public const string Algorithm = nameof(Algorithm);
+        public const string Default = nameof(Default);
+        public const string JwtExpires = nameof(Jwt) + ":" + nameof(Expires);
+        public const string JwtRefreshExpires = nameof(Jwt) + ":" + nameof(RefreshExpires);
+        public const string JwtType = nameof(Jwt) + ":" + nameof(Type);
+        public const string JwtIssuer = nameof(Jwt) + ":" + nameof(Issuer);
+        public const string JwtAudience = nameof(Jwt) + ":" + nameof(Audience);
+        public const string JwtSecret = nameof(Jwt) + ":" + nameof(Secret);
+        public const string JwtPrivateKey = nameof(Jwt) + ":" + nameof(PrivateKey);
+        public const string JwtPublicKey = nameof(Jwt) + ":" + nameof(PublicKey);
+        public const string JwtAlgorithmDefault = nameof(Jwt) + ":" + nameof(Algorithm) + ":" + nameof(Default);
+        public const string JwtAlgorithmUser = nameof(Jwt) + ":" + nameof(Algorithm) + ":" + nameof(User);
+        public const string JwtAlgorithmClient = nameof(Jwt) + ":" + nameof(Algorithm) + ":" + nameof(Client);
 
         public const string Hash = nameof(Hash);
         public const string Iterations = nameof(Iterations);
         public const string SaltSize = nameof(SaltSize);
         public const string KeySize = nameof(KeySize);
+        public const string HashIterations = nameof(Hash) + ":" + nameof(Iterations);
+        public const string HashSaltSize = nameof(Hash) + ":" + nameof(SaltSize);
+        public const string HashKeySize = nameof(Hash) + ":" + nameof(KeySize);
 
         public const string OpenApi = nameof(OpenApi);
         public const string Version = nameof(Version);

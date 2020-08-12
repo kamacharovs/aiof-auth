@@ -20,12 +20,17 @@ namespace aiof.auth.services
             IClient client, 
             string refreshToken = null,
             int? expiresIn = null);
-        ITokenResponse GenerateJwtToken(
+        ITokenResponse GenerateJwtToken<T>(
             IEnumerable<Claim> claims, 
-            IPublicKeyId entity = null,
+            IPublicKeyId entity = null, 
             string refreshToken = null, 
-            int? expiresIn = null);
-        ITokenResult ValidateToken(string token);
+            int? expiresIn = null)
+            where T : class, IPublicKeyId;
+        AlgType GetAlgType<T>()
+            where T : class, IPublicKeyId;
+        RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType);
+        ITokenResult ValidateToken<T>(string token)
+            where T : class, IPublicKeyId;
         ITokenResult ValidateToken(IValidationRequest request);
         JsonWebKey GetPublicJsonWebKey();
         IOpenIdConfig GetOpenIdConfig(

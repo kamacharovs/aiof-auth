@@ -17,12 +17,12 @@ namespace aiof.auth.data
             RuleFor(x => x)
                 .Must(x => 
                 {
-                    if (!string.IsNullOrWhiteSpace(x.Username)  //TODO: fix validation logic
+                    if (!string.IsNullOrWhiteSpace(x.Username)
                         && !string.IsNullOrWhiteSpace(x.Password)
                         && string.IsNullOrWhiteSpace(x.Token)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
                     {
-                        x.Type = TokenRequestType.User;
+                        x.Type = TokenType.User;
                         return true;
                     }
                     else if (!string.IsNullOrWhiteSpace(x.ApiKey)
@@ -30,7 +30,7 @@ namespace aiof.auth.data
                         && string.IsNullOrWhiteSpace(x.Username)
                         && string.IsNullOrWhiteSpace(x.Password))
                     {
-                        x.Type = TokenRequestType.Client;
+                        x.Type = TokenType.Client;
                         return true;
                     }
                     else if (!string.IsNullOrWhiteSpace(x.Token)
@@ -38,7 +38,7 @@ namespace aiof.auth.data
                         && string.IsNullOrWhiteSpace(x.Password)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
                     {
-                        x.Type = TokenRequestType.Refresh;
+                        x.Type = TokenType.Refresh;
                         return true;
                     }
 

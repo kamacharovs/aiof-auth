@@ -48,7 +48,7 @@ namespace aiof.auth.data
         public string Password { get; set; }
 
         [JsonIgnore]
-        public TokenRequestType Type { get; set; }
+        public TokenType Type { get; set; }
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ namespace aiof.auth.data
         public string AccessToken { get; set; }
     }
 
-    public enum TokenRequestType
+    public enum TokenType
     {
         Client = 1,
         Refresh = 2,
