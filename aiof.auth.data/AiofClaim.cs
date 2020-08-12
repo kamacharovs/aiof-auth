@@ -18,7 +18,6 @@ namespace aiof.auth.data
         public const string Iss = "iss";
         public const string Sig = "sig";
 
-        public const string Entity = "entity";
         public const string PublicKey = "public_key";
         public const string GivenName = "given_name";
         public const string FamilyName = "family_name";
@@ -31,7 +30,6 @@ namespace aiof.auth.data
             {
                 Sub,
                 Iss,
-                Entity,
                 PublicKey,
                 GivenName,
                 FamilyName,
