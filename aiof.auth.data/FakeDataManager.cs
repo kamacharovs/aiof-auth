@@ -127,23 +127,42 @@ namespace aiof.auth.data
                 new AiofClaim
                 {
                     Id = 1,
-                    Name = AiofClaims.GivenName
+                    Name = AiofClaims.Sub
                 },
                 new AiofClaim
                 {
                     Id = 2,
-                    Name = AiofClaims.FamilyName
-                },
-                new AiofClaim
+                    Name = AiofClaims.Iss
+                },new AiofClaim
                 {
                     Id = 3,
-                    Name = AiofClaims.Name
+                    Name = AiofClaims.PublicKey
                 },
                 new AiofClaim
                 {
                     Id = 4,
+                    Name = AiofClaims.GivenName
+                },
+                new AiofClaim
+                {
+                    Id = 5,
+                    Name = AiofClaims.FamilyName
+                },
+                new AiofClaim
+                {
+                    Id = 6,
+                    Name = AiofClaims.Name
+                },
+                new AiofClaim
+                {
+                    Id = 7,
                     Name = AiofClaims.Email
-                }
+                },
+                new AiofClaim
+                {
+                    Id = 8,
+                    Name = AiofClaims.Slug
+                },
             };
         }
 
@@ -323,6 +342,6 @@ namespace aiof.auth.data
         }
 
         public string HashedPassword => "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA="; //pass1234
-        public string ExpiredJwtToken => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfa2V5IjoiNTgxZjNjZTYtY2YyYS00MmE1LTgyOGYtMTU3YTJiZmFiNzYzIiwiZ2l2ZW5fbmFtZSI6Ikdlb3JnaSIsImZhbWlseV9uYW1lIjoiS2FtYWNoYXJvdiIsImVtYWlsIjoiZ2thbWFAdGVzdC5jb20iLCJuYmYiOjE1OTQ4MzY5NTksImV4cCI6MTU5NDgzNzg1OCwiaWF0IjoxNTk0ODM2OTU5LCJpc3MiOiJhaW9mOmF1dGgiLCJhdWQiOiJhaW9mOmF1dGg6YXVkaWVuY2UifQ.RYiY7lr7uVb6gBHovsV4qlpHgqa7WEmq-Uhd_8F7B1o";
+        public string ExpiredJwtToken => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfa2V5IjoiNTgxZjNjZTYtY2YyYS00MmE1LTgyOGYtMTU3YTJiZmFiNzYzIiwiZ2l2ZW5fbmFtZSI6Ikdlb3JnaSIsImZhbWlseV9uYW1lIjoiS2FtYWNoYXJvdiIsImVtYWlsIjoiZ2thbWFAdGVzdC5jb20iLCJlbnRpdHkiOiJVc2VyIiwibmJmIjoxNTk3MTc0NDQzLCJleHAiOjE1OTcxNzUzNDMsImlhdCI6MTU5NzE3NDQ0MywiaXNzIjoiYWlvZjphdXRoIiwiYXVkIjoiYWlvZjphdXRoOmF1ZGllbmNlIn0.d8-5b3ecDc4IBrFQfyr4sv1wqxh4MpOxsDExpXP8jG0";
     }
 }

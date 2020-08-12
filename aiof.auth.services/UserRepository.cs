@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 using AutoMapper;
 using FluentValidation;
@@ -14,7 +15,7 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository, IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
@@ -25,11 +26,13 @@ namespace aiof.auth.services
 
         public UserRepository(
             ILogger<UserRepository> logger,
+            IMemoryCache cache,
             IEnvConfiguration envConfig,
             IMapper mapper,
             AuthContext context,
             AbstractValidator<UserDto> userDtoValidator,
             AbstractValidator<User> userValidator)
+            : base(logger, cache, envConfig, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
@@ -51,15 +54,11 @@ namespace aiof.auth.services
 
         public async Task<IUser> GetUserAsync(int id)
         {
-            return await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new AuthNotFoundException();
+            return await base.GetEntityPublicKeyIdAsync<User>(id);
         }
         public async Task<IUser> GetUserAsync(Guid publicKey)
         {
-            return await GetUsersQuery()
-                .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
-                ?? throw new AuthNotFoundException();
+            return await base.GetEntityPublicKeyIdAsync<User>(publicKey);
         }
         public async Task<IUser> GetUserAsync(
             string username, 
@@ -69,7 +68,9 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.Username == username)
                 ?? throw new AuthNotFoundException($"User with Username='{username}' was not found.");
         }
-        public async Task<IUser> GetUserAsync(string username, string password)
+        public async Task<IUser> GetUserAsync(
+            string username, 
+            string password)
         {
             var user = await GetUserAsync(username);
 
@@ -109,13 +110,11 @@ namespace aiof.auth.services
 
         public async Task<IUser> AddUserAsync(UserDto userDto)
         {
-            var validation = _userDtoValidator.Validate(userDto);
+            await _userDtoValidator.ValidateAndThrowAsync(userDto);
 
-            if (!validation.IsValid)
-                throw new AuthValidationException(validation.Errors);
-            else if (await DoesUsernameExistAsync(userDto.Username))
+            if (await DoesUsernameExistAsync(userDto.Username))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"{nameof(User)}'s Username='{userDto.Username}' already exists");
+                    $"{nameof(User)} with Username='{userDto.Username}' already exists");
 
             var user = await GetUserAsync(userDto) == null
                 ? _mapper.Map<User>(userDto)

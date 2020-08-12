@@ -5,6 +5,8 @@ namespace aiof.auth.data
 {
     public interface IEnvConfiguration
     {
+        int MemCacheTtl { get; }
+
         string PostgreSQLConString { get; }
 
         int JwtExpires { get; }
@@ -13,6 +15,11 @@ namespace aiof.auth.data
         string JwtIssuer { get; }
         string JwtAudience { get; }
         string JwtSecret { get; }
+        string JwtPrivateKey { get; }
+        string JwtPublicKey { get; }
+        string JwtAlgorithmDefault { get; }
+        string JwtAlgorithmUser { get; }
+        string JwtAlgorithmClient { get; }
 
         int HashIterations { get; }
         int HashSaltSize { get; }

@@ -48,7 +48,7 @@ namespace aiof.auth.data
         public string Password { get; set; }
 
         [JsonIgnore]
-        public TokenRequestType Type { get; set; }
+        public TokenType Type { get; set; }
     }
 
     /// <summary>
@@ -59,11 +59,23 @@ namespace aiof.auth.data
         [Required]
         public int ClientId { get; set; }
 
+        [JsonPropertyName("refresh_token")]
         [Required]
+        [MaxLength(128)]
         public string Token { get; set; }
     }
 
-    public enum TokenRequestType
+    /// <summary>
+    /// Request to validate an access token
+    /// </summary>
+    public class ValidationRequest : IValidationRequest
+    {
+        [JsonPropertyName("access_token")]
+        [Required]
+        public string AccessToken { get; set; }
+    }
+
+    public enum TokenType
     {
         Client = 1,
         Refresh = 2,

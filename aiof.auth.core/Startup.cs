@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Caching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
@@ -54,23 +55,24 @@ namespace aiof.auth.core
             services.AddLogging();
             services.AddHealthChecks();
             services.AddFeatureManagement();
+            services.AddMemoryCache();
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1.0.0", new OpenApiInfo
+                x.SwaggerDoc(_configuration[Keys.OpenApiVersion], new OpenApiInfo
                 {
-                    Title = "aiof.auth",
-                    Version = "v1.0.0",
-                    Description = "Aiof authentication microservice",
+                    Title = _configuration[Keys.OpenApiTitle],
+                    Version = _configuration[Keys.OpenApiVersion],
+                    Description = _configuration[Keys.OpenApiDescription],
                     Contact = new OpenApiContact
                     {
-                        Name = "Georgi Kamacharov",
-                        Email = "gkamacharov@aiof.com",
-                        Url = new Uri("https://github.com/gkama")
+                        Name = _configuration[Keys.OpenApiContactName],
+                        Email = _configuration[Keys.OpenApiContactEmail],
+                        Url = new Uri(_configuration[Keys.OpenApiContactUrl])
                     },
                     License = new OpenApiLicense
                     {
-                        Name = "MIT",
-                        Url = new Uri("https://github.com/kamacharovs/aiof-auth/blob/master/LICENSE"),
+                        Name = _configuration[Keys.OpenApiLicenseName],
+                        Url = new Uri(_configuration[Keys.OpenApiLicenseUrl]),
                     }
                 });
                 x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));

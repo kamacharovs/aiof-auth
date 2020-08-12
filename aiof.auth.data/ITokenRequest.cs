@@ -19,12 +19,17 @@ namespace aiof.auth.data
         string Token { get; set; }
         string Username { get; set; }
         string Password { get; set; }
-        TokenRequestType Type { get; set; }
+        TokenType Type { get; set; }
     }
 
     public interface IRevokeRequest
     {
         int ClientId { get; set; }
         string Token { get; set; }
+    }
+
+    public interface  IValidationRequest 
+    {
+        string AccessToken { get; set; }
     }
 }

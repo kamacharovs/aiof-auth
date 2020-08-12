@@ -20,28 +20,48 @@ namespace aiof.auth.data
             _featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
         }
 
+        public int MemCacheTtl => int.Parse(_config[Keys.MemCacheTtl] ?? throw new KeyNotFoundException());
+
         public string PostgreSQLConString => _config[Keys.PostgreSQL];
 
-        public int JwtExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.Expires}"] ?? throw new KeyNotFoundException());
-        public int JwtRefreshExpires => int.Parse(_config[$"{Keys.Jwt}:{Keys.RefreshExpires}"] ?? throw new KeyNotFoundException());
-        public string JwtType => _config[$"{Keys.Jwt}:{Keys.Type}"] ?? throw new KeyNotFoundException();
-        public string JwtIssuer => _config[$"{Keys.Jwt}:{Keys.Issuer}"] ?? throw new KeyNotFoundException();
-        public string JwtAudience => _config[$"{Keys.Jwt}:{Keys.Audience}"] ?? throw new KeyNotFoundException();
-        public string JwtSecret => _config[$"{Keys.Jwt}:{Keys.Secret}"] ?? throw new KeyNotFoundException();
+        public int JwtExpires => int.Parse(_config[Keys.JwtExpires] ?? throw new KeyNotFoundException());
+        public int JwtRefreshExpires => int.Parse(_config[Keys.JwtRefreshExpires] ?? throw new KeyNotFoundException());
+        public string JwtType => _config[Keys.JwtType] ?? throw new KeyNotFoundException();
+        public string JwtIssuer => _config[Keys.JwtIssuer] ?? throw new KeyNotFoundException();
+        public string JwtAudience => _config[Keys.JwtAudience] ?? throw new KeyNotFoundException();
+        public string JwtSecret => _config[Keys.JwtSecret] ?? throw new KeyNotFoundException();
+        public string JwtPrivateKey => _config[Keys.JwtPrivateKey] ?? throw new KeyNotFoundException();
+        public string JwtPublicKey => _config[Keys.JwtPublicKey] ?? throw new KeyNotFoundException();
+        public string JwtAlgorithmDefault => _config[Keys.JwtAlgorithmDefault] ?? throw new KeyNotFoundException();
+        public string JwtAlgorithmUser => _config[Keys.JwtAlgorithmUser] ?? throw new KeyNotFoundException();
+        public string JwtAlgorithmClient => _config[Keys.JwtAlgorithmClient] ?? throw new KeyNotFoundException();
 
-        public int HashIterations => int.Parse(_config[$"{Keys.Hash}:{Keys.Iterations}"] ?? throw new KeyNotFoundException());
-        public int HashSaltSize => int.Parse(_config[$"{Keys.Hash}:{Keys.SaltSize}"] ?? throw new KeyNotFoundException());
-        public int HashKeySize => int.Parse(_config[$"{Keys.Hash}:{Keys.KeySize}"] ?? throw new KeyNotFoundException());
+        public int HashIterations => int.Parse(_config[Keys.HashIterations] ?? throw new KeyNotFoundException());
+        public int HashSaltSize => int.Parse(_config[Keys.HashSaltSize] ?? throw new KeyNotFoundException());
+        public int HashKeySize => int.Parse(_config[Keys.HashKeySize] ?? throw new KeyNotFoundException());
 
         public async Task<bool> IsEnabledAsync(FeatureFlags featureFlag)
         {
-            return await _featureManager.IsEnabledAsync(nameof(featureFlag));
+            return await _featureManager.IsEnabledAsync(featureFlag.ToString());
         }
+    }
+
+    public enum AlgType
+    {
+        RS256,
+        HS256
+    }
+
+    public enum RsaKeyType
+    {
+        Private,
+        Public
     }
 
     public enum FeatureFlags
     {
         RefreshToken,
-        OpenId
+        OpenId,
+        MemCache
     }
 }

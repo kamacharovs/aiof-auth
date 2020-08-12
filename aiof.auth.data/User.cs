@@ -28,7 +28,6 @@ namespace aiof.auth.data
         public string LastName { get; set; }
 
         [Required]
-        [EmailAddress]
         [MaxLength(200)]
         public string Email { get; set; }
 
@@ -36,7 +35,6 @@ namespace aiof.auth.data
         [MaxLength(200)]
         public string Username { get; set; }
 
-        [JsonIgnore]
         [Required]
         [MaxLength(100)]
         public string Password { get; set; }

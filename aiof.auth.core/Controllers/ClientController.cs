@@ -16,8 +16,9 @@ namespace aiof.auth.core.Controllers
     /// </summary>
     [ApiController]
     [Route("client")]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces(Keys.ApplicationJson)]
+    [Consumes(Keys.ApplicationJson)]
+    [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class ClientController : ControllerBase
     {
         private readonly IClientRepository _repo;
@@ -32,7 +33,7 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetClientAsync([FromRoute]int id)
         {
@@ -44,7 +45,7 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/disable")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
         public async Task<IActionResult> DisableClientAsync([FromRoute]int id)
         {
@@ -56,7 +57,7 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/enable")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
         public async Task<IActionResult> EnableClientAsync([FromRoute]int id)
         {
@@ -68,7 +69,7 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/regenerate/keys")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
         public async Task<IActionResult> RegenerateKeysAsync([FromRoute]int id)
         {
@@ -90,7 +91,7 @@ namespace aiof.auth.core.Controllers
         /// Create a Client
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddClientAsync([FromBody]ClientDto clientDto)
         {
