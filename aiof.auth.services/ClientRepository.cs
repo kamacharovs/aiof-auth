@@ -183,6 +183,11 @@ namespace aiof.auth.services
             return clientRefreshToken;
         }
 
+        public async Task<IClient> SoftDeleteAsync(int id)
+        {
+            return await base.SoftDeleteAsync<Client>(id);
+        }
+
         public async Task<IClient> RegenerateKeysAsync(int id)
         {
             return await base.RegenerateKeysAync<Client>(id);
