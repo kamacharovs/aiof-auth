@@ -25,6 +25,9 @@ namespace aiof.auth.services
             string refreshToken = null, 
             int? expiresIn = null)
             where T : class, IPublicKeyId;
+        AlgType GetAlgType<T>()
+            where T : class, IPublicKeyId;
+        RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType);
         ITokenResult ValidateToken<T>(string token)
             where T : class, IPublicKeyId;
         ITokenResult ValidateToken(IValidationRequest request);

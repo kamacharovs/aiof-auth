@@ -89,6 +89,37 @@ namespace aiof.auth.tests
 
             await Assert.ThrowsAsync<ValidationException>(() => _repo.GetTokenAsync(req));
         }
+
+        [Fact]
+        public void GetAlgType_User_Valid()
+        {
+            var algType = _repo.GetAlgType<User>();
+
+            Assert.Equal(AlgType.HS256, algType);
+        }
+        [Fact]
+        public void GetAlgType_Client_Valid()
+        {
+            var algType = _repo.GetAlgType<Client>();
+
+            Assert.Equal(AlgType.RS256, algType);
+        }   
+        [Fact]
+        public void GetAlgType_Default_Valid()
+        {
+            var algType = _repo.GetAlgType<ClientRefreshToken>();
+
+            Assert.Equal(AlgType.RS256, algType);
+        }
+
+        [Fact]
+        public void GetRsaKey_Public()
+        {
+            var rsaSecKey = _repo.GetRsaKey(RsaKeyType.Public);
+
+            Assert.NotNull(rsaSecKey);
+            Assert.Equal("RSA", rsaSecKey.Rsa.SignatureAlgorithm);
+        }
         
         [Theory]
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
