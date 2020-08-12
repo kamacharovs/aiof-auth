@@ -1,11 +1,14 @@
 using System;
-using System.Security.Claims;
+using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
     public interface ITokenResult
     {
-        ClaimsPrincipal Principal { get; set; }
-        TokenResultStatus Status { get; set; }
+        [Required]
+        bool IsAuthenticated { get; set; }
+        
+        [Required]
+        string Status { get; set; }
     }
 }

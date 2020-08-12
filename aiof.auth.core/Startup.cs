@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.IO;
 using System.Text.Json;
 
 using Microsoft.AspNetCore.Builder;
@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Caching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
+using Microsoft.OpenApi.Models;
 
 using AutoMapper;
 using FluentValidation;
@@ -36,29 +38,49 @@ namespace aiof.auth.core
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<FakeDataManager>();
-            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
-            
-            services.AddAutoMapper(typeof(AutoMappingProfile).Assembly);
-            
+            services.AddScoped<FakeDataManager>();          
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
             services.AddScoped<AbstractValidator<User>, UserValidator>();
             services.AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>();
             services.AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>();
             services.AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
+            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
+            services.AddAutoMapper(typeof(AutoMappingProfile).Assembly);
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
-                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration.GetConnectionString(Keys.Database)));
+                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration[Keys.PostgreSQL]));
 
             services.AddLogging();
             services.AddHealthChecks();
             services.AddFeatureManagement();
-            services.AddSwaggerGen();
+            services.AddMemoryCache();
+            services.AddSwaggerGen(x =>
+            {
+                x.SwaggerDoc(_configuration[Keys.OpenApiVersion], new OpenApiInfo
+                {
+                    Title = _configuration[Keys.OpenApiTitle],
+                    Version = _configuration[Keys.OpenApiVersion],
+                    Description = _configuration[Keys.OpenApiDescription],
+                    Contact = new OpenApiContact
+                    {
+                        Name = _configuration[Keys.OpenApiContactName],
+                        Email = _configuration[Keys.OpenApiContactEmail],
+                        Url = new Uri(_configuration[Keys.OpenApiContactUrl])
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = _configuration[Keys.OpenApiLicenseName],
+                        Url = new Uri(_configuration[Keys.OpenApiLicenseUrl]),
+                    }
+                });
+                x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+            });
 
             services.AddControllers();
             services.AddMvcCore()
+                .AddApiExplorer()
                 .AddJsonOptions(o =>
                 {
                     o.JsonSerializerOptions.WriteIndented = true;

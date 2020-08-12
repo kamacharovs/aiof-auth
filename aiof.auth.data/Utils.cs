@@ -44,6 +44,12 @@ namespace aiof.auth.data
             return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
         }
 
+        public static string ToHyphenCase(
+            [NotNull] this string str)
+        {
+            return str.Replace(' ', '-').ToLower();
+        }
+
         public static PropertyBuilder HasSnakeCaseColumnName(
             [NotNull] this PropertyBuilder propertyBuilder)
         {
@@ -54,6 +60,22 @@ namespace aiof.auth.data
                     .ToSnakeCase());
 
             return propertyBuilder;
+        }
+      
+        public static T ParseEnum<T>(string value)
+        {
+            return (T) Enum.Parse(typeof(T), value, true);
+        }
+
+        public static T ToEnum<T>(
+            [NotNull] this string value)
+        {
+            return (T) Enum.Parse(typeof(T), value, true);
+        }
+        public static AlgType ToEnum(
+            [NotNull] this string value)
+        {
+            return (AlgType) Enum.Parse(typeof(AlgType), value, true);
         }
     }
 }

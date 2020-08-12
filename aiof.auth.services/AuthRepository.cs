@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Net;
@@ -49,22 +50,19 @@ namespace aiof.auth.services
 
         public async Task<ITokenResponse> GetTokenAsync(ITokenRequest request)
         {
-            var validation = _tokenRequestValidator.Validate(request as TokenRequest);
-
-            if (!validation.IsValid)
-                throw new AuthValidationException(validation.Errors);
+            await _tokenRequestValidator.ValidateAndThrowAsync(request as TokenRequest);
 
             switch (request.Type)
             {
-                case TokenRequestType.User:
+                case TokenType.User:
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
                     return GenerateJwtToken(user);
-                case TokenRequestType.Client:
+                case TokenType.Client:
                     var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
                     return GenerateJwtToken(
                         clientRefresh.Client,
                         clientRefresh.Token);
-                case TokenRequestType.Refresh:
+                case TokenType.Refresh:
                     var client = (await _clientRepo.GetRefreshTokenAsync(request.Token)).Client;
                     return RefreshToken(client);
                 default:
@@ -73,14 +71,17 @@ namespace aiof.auth.services
             }
         }
 
-        public async Task<object> RevokeTokenAsync(int clientId, string token)
+        public async Task<IRevokeResponse> RevokeTokenAsync(
+            int clientId,
+            string token)
         {
             var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
-            
-            return new {
-                clientId = clientRefresh.ClientId,
-                token = clientRefresh.Token,
-                revoked = clientRefresh.Revoked
+
+            return new RevokeResponse
+            {
+                ClientId = clientRefresh.ClientId,
+                Token = clientRefresh.Token,
+                Revoked = clientRefresh.Revoked
             };
         }
 
@@ -88,13 +89,12 @@ namespace aiof.auth.services
         {
             return GenerateJwtToken(
                 client: client,
-                expiresIn: _envConfig.JwtRefreshExpires
-            );
+                expiresIn: _envConfig.JwtRefreshExpires);
         }
 
         public ITokenResponse GenerateJwtToken(IUser user)
         {
-            return GenerateJwtToken(new Claim[]
+            return GenerateJwtToken<User>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
                     new Claim(AiofClaims.GivenName, user.FirstName),
@@ -105,44 +105,41 @@ namespace aiof.auth.services
         }
 
         public ITokenResponse GenerateJwtToken(
-            IClient client, 
+            IClient client,
             string refreshToken = null,
             int? expiresIn = null)
         {
-            return GenerateJwtToken(new Claim[]
+            return GenerateJwtToken<Client>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
                     new Claim(AiofClaims.Name, client.Name),
                     new Claim(AiofClaims.Slug, client.Slug)
                 },
-                client as IPublicKeyId,
-                refreshToken,
-                expiresIn);
+                entity: client as IPublicKeyId,
+                refreshToken: refreshToken,
+                expiresIn: expiresIn);
         }
 
-        public ITokenResponse GenerateJwtToken(
-            IEnumerable<Claim> claims, 
+        public ITokenResponse GenerateJwtToken<T>(
+            IEnumerable<Claim> claims,
             IPublicKeyId entity = null,
-            string refreshToken = null, 
+            string refreshToken = null,
             int? expiresIn = null)
+            where T : class, IPublicKeyId
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_key);
             var expires = expiresIn ?? _envConfig.JwtExpires;
+            var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
                 Audience = _audience,
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = GetSigningCredentials()
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            if (entity != null)
-                _logger.LogInformation($"Created JWT for {entity.GetType().Name} with Id='{entity.Id}' and PublicKey='{entity.PublicKey}'");
+            _logger.LogInformation($"Created JWT for {typeof(T).Name} with Id='{entity?.Id}' and PublicKey='{entity?.PublicKey}'");
 
             return new TokenResponse
             {
@@ -150,13 +147,97 @@ namespace aiof.auth.services
                 AccessToken = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken
             };
+
+            /// <summary>
+            /// Get <see cref="SigningCredentials"/> based on the type of <typeparamref name="T"/>. 
+            /// The credentials are used to sign the JWT (Json Web Token). They are completely configurable on an Entity level; <see cref="User"/>, <see cref="Client"/>, etc.
+            /// The default signing credentials use the <see cref="SecurityAlgorithms.RsaSha256"/> algorithm
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns><see cref="SigningCredentials"/></returns>
+            SigningCredentials GetSigningCredentials()
+            {
+                var algType = GetAlgType<T>();
+
+                switch (algType)
+                {
+                    case AlgType.RS256:
+                        return new SigningCredentials(
+                            GetRsaKey(RsaKeyType.Private),
+                            SecurityAlgorithms.RsaSha256);
+                    case AlgType.HS256:
+                        var key = Encoding.ASCII.GetBytes(_key);
+                        return new SigningCredentials(
+                            new SymmetricSecurityKey(key),
+                            SecurityAlgorithms.HmacSha256Signature);
+                    default:
+                        throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                            $"Invalid or unsupported Alg Type.");
+                }
+            }
         }
 
-        public ITokenResult ValidateToken(string token)
+        /// <summary>
+        /// Get algorithm <see cref="AlgType"/> of <typeparamref name="T"/> based on the type and environment configuration
+        /// </summary>
+        /// <remarks>
+        /// In a case where a new entity is added, then this part should be the only part that needs to be updated.
+        /// The current supported entities are <see cref="User"/> and <see cref="Client"/>
+        /// </remarks>
+        /// <typeparam name="T"></typeparam>
+        /// <returns><see cref="AlgType"/></returns>
+        public AlgType GetAlgType<T>()
+            where T : class, IPublicKeyId
+        {
+            string alg = string.Empty;
+
+            switch (typeof(T).Name)
+            {
+                case nameof(User):
+                    alg = _envConfig.JwtAlgorithmUser;
+                    break;
+                case nameof(Client):
+                    alg = _envConfig.JwtAlgorithmClient;
+                    break;
+                default:
+                    alg = _envConfig.JwtAlgorithmDefault;
+                    break;
+            }
+
+            return alg.ToEnum();
+        }
+
+        /// <summary>
+        /// Get <see cref="RsaSecurityKey"/> based on <see cref="RsaKeyType"/>. The current values are inheritted certificate signing
+        /// via a <see cref="RsaKeyType.Public"/> and <see cref="RsaKeyType.Private"/> keys
+        /// </summary>
+        /// <param name="rsaKeyType"></param>
+        /// <returns><see cref="RsaSecurityKey"/></returns>
+        public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)
+        {
+            var rsa = RSA.Create();
+
+            switch (rsaKeyType)
+            {
+                case RsaKeyType.Public:
+                    rsa.FromXmlString(_envConfig.JwtPublicKey);
+                    break;
+                case RsaKeyType.Private:
+                    rsa.FromXmlString(_envConfig.JwtPrivateKey);
+                    break;
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid or unsupported RSA Key Type");
+            }
+
+            return new RsaSecurityKey(rsa);
+        }
+
+        public ITokenResult ValidateToken<T>(string token)
+            where T : class, IPublicKeyId
         {
             try
             {
-                var key = Encoding.ASCII.GetBytes(_key);
                 var tokenParams = new TokenValidationParameters
                 {
                     RequireSignedTokens = true,
@@ -166,32 +247,76 @@ namespace aiof.auth.services
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                    IssuerSigningKey = GetSecurityKey()
                 };
 
                 var handler = new JwtSecurityTokenHandler();
-                var result = handler.ValidateToken(token, tokenParams, out var securityToken);
+                var result = handler.ValidateToken(
+                    token,
+                    tokenParams,
+                    out var securityToken);
 
                 return new TokenResult
                 {
-                    Principal = result,
-                    Status = TokenResultStatus.Valid
+                    IsAuthenticated = result.Identity.IsAuthenticated,
+                    Status = TokenResultStatus.Valid.ToString()
                 };
+
+                /// <summary>
+                /// Get <see cref="SecurityKey"/> based on the type of <typeparamref name="T"/>. 
+                /// The key is then used to validate the JWT (Json Web Token) based on the algorithm the JWT (Json Web Token) was signed with
+                /// </summary>
+                /// <typeparam name="T"></typeparam>
+                /// <returns><see cref="SecurityKey"/></returns>
+                SecurityKey GetSecurityKey()
+                {
+                    var algType = GetAlgType<T>();
+
+                    switch (algType)
+                    {
+                        case AlgType.RS256:
+                            return GetRsaKey(RsaKeyType.Public);
+                        case AlgType.HS256:
+                            var key = Encoding.ASCII.GetBytes(_key);
+                            return new SymmetricSecurityKey(key);
+                        default:
+                            throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                                $"Invalid or unsupported Alg Type");
+                    }
+                }
             }
             catch (SecurityTokenExpiredException)
             {
-                return new TokenResult
-                {
-                    Status = TokenResultStatus.Expired
-                };
+                throw new AuthFriendlyException(HttpStatusCode.Unauthorized,
+                    $"Invalid or expired token");
+            }
+            catch (SecurityTokenInvalidSignatureException)
+            {
+                throw new AuthFriendlyException(HttpStatusCode.Unauthorized,
+                    $"Invalid signature");
             }
         }
-        public bool IsAuthenticated(string token)
+        public ITokenResult ValidateToken(IValidationRequest request)
         {
-            return ValidateToken(token)
-                .Principal
-                .Identity
-                .IsAuthenticated;
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(request.AccessToken);
+
+            var givenName = token.Claims.FirstOrDefault(x => x.Type == AiofClaims.GivenName);
+
+            if (!string.IsNullOrWhiteSpace(givenName?.Value))
+                return ValidateToken<User>(request.AccessToken);
+            else
+                return ValidateToken<Client>(request.AccessToken);
+        }
+
+        public JsonWebKey GetPublicJsonWebKey()
+        {
+            var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(GetRsaKey(RsaKeyType.Public));
+
+            jwk.Use = AiofClaims.Sig;
+            jwk.Alg = AlgType.RS256.ToString();
+
+            return jwk;
         }
 
         public IOpenIdConfig GetOpenIdConfig(
@@ -204,7 +329,8 @@ namespace aiof.auth.services
             {
                 Issuer = _envConfig.JwtIssuer,
                 TokenEndpoint = $"{protocol}://{host}/auth/token",
-                TokenRefreshEndpoint = $"{protocol}://{host}/auth/token/refresh"
+                TokenRefreshEndpoint = $"{protocol}://{host}/auth/token/refresh",
+                JsonWebKeyEndpoint = $"{protocol}://{host}/auth/jwks"
             };
         }
     }

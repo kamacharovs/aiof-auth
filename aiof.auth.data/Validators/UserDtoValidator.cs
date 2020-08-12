@@ -9,7 +9,10 @@ namespace aiof.auth.data
     {
         public UserDtoValidator()
         {
-            ValidatorOptions.Global.CascadeMode = CascadeMode.StopOnFirstFailure;
+            ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
+
+            RuleFor(x => x)
+                .NotNull();
 
             RuleFor(x => x.FirstName)
                 .NotNull()
