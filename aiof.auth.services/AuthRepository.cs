@@ -100,7 +100,8 @@ namespace aiof.auth.services
                     new Claim(AiofClaims.GivenName, user.FirstName),
                     new Claim(AiofClaims.FamilyName, user.LastName),
                     new Claim(AiofClaims.Email, user.Email)
-                });
+                },
+                entity: user as IPublicKeyId);
         }
 
         public ITokenResponse GenerateJwtToken(
@@ -114,12 +115,14 @@ namespace aiof.auth.services
                     new Claim(AiofClaims.Name, client.Name),
                     new Claim(AiofClaims.Slug, client.Slug)
                 },
-                refreshToken,
-                expiresIn);
+                entity: client as IPublicKeyId,
+                refreshToken: refreshToken,
+                expiresIn: expiresIn);
         }
 
         public ITokenResponse GenerateJwtToken<T>(
             IEnumerable<Claim> claims,
+            IPublicKeyId entity = null,
             string refreshToken = null,
             int? expiresIn = null)
             where T : class, IPublicKeyId
@@ -136,7 +139,7 @@ namespace aiof.auth.services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            _logger.LogInformation($"Created JWT for {typeof(T).Name}");// with Id='{T.Id}' and PublicKey='{T.PublicKey}'");
+            _logger.LogInformation($"Created JWT for {typeof(T).Name} with Id='{entity?.Id}' and PublicKey='{entity?.PublicKey}'");
 
             return new TokenResponse
             {

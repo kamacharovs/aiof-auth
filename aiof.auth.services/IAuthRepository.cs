@@ -22,6 +22,7 @@ namespace aiof.auth.services
             int? expiresIn = null);
         ITokenResponse GenerateJwtToken<T>(
             IEnumerable<Claim> claims, 
+            IPublicKeyId entity = null, 
             string refreshToken = null, 
             int? expiresIn = null)
             where T : class, IPublicKeyId;
