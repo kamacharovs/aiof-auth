@@ -1,5 +1,7 @@
 using System;
+using System.Text;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 
 using JetBrains.Annotations;
@@ -11,31 +13,36 @@ namespace aiof.auth.data
 {
     public static class Utils
     {
-        public static string GenerateApiKey(int length = 32)
+        public static string GenerateApiKey<T>(int length = 32)
+            where T : class
         {
             var key = new byte[length];
             using (var generator = RandomNumberGenerator.Create())
                 generator.GetBytes(key);
-            return Convert.ToBase64String(key);
+            var tkey = Encoding.ASCII.GetBytes(typeof(T).Name.ToLowerInvariant());
+            return $"{Convert.ToBase64String(tkey)}.{Convert.ToBase64String(key)}";
         }
 
         public static Client GenerateApiKeys(
             [NotNull] this Client client, 
             int length = 32)
         {
-            client.PrimaryApiKey = GenerateApiKey(length);
-            client.SecondaryApiKey = GenerateApiKey(length);
+            client.PrimaryApiKey = GenerateApiKey<Client>(length);
+            client.SecondaryApiKey = GenerateApiKey<Client>(length);
 
             return client;
         }
-        public static IApiKey GenerateApiKeys(
-            [NotNull] this IApiKey entity, 
-            int length = 32)
-        {
-            entity.PrimaryApiKey = GenerateApiKey(length);
-            entity.SecondaryApiKey = GenerateApiKey(length);
 
-            return entity;
+        public static Type DecodeApiKey<T>(this string apiKey)
+            where T : class
+        {
+            var apiKeyEntity = apiKey.Split('.').First();
+            
+            if (apiKeyEntity == nameof(T).ToLowerInvariant())
+                return typeof(T);
+            else
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Error");
         }
 
         public static string ToSnakeCase(

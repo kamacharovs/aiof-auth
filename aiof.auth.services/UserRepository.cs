@@ -116,7 +116,7 @@ namespace aiof.auth.services
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                     $"{nameof(User)} with Username='{userDto.Username}' already exists");
 
-            var user = await GetUserAsync(userDto) == null
+            var user = await GetUserAsync(userDto) is null
                 ? _mapper.Map<User>(userDto)
                 : throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                     $"User with FirstName='{userDto.FirstName}', " +

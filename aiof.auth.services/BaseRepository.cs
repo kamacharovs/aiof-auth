@@ -168,8 +168,8 @@ namespace aiof.auth.services
         {
             var entity = await GetEntityAsync<T>(id, asNoTracking: false);
 
-            entity.PrimaryApiKey = Utils.GenerateApiKey();
-            entity.SecondaryApiKey = Utils.GenerateApiKey();
+            entity.PrimaryApiKey = Utils.GenerateApiKey<T>();
+            entity.SecondaryApiKey = Utils.GenerateApiKey<T>();
 
             await _context.SaveChangesAsync();
 

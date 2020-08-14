@@ -14,7 +14,7 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.ApiKeyLength), MemberType = typeof(Helper))]
         public void GenerateApiKey_Valid(int length)
         {
-            var apiKey = Utils.GenerateApiKey(length);
+            var apiKey = Utils.GenerateApiKey<Client>(length);
 
             Assert.NotNull(apiKey);
             Assert.Contains('=', apiKey.ToCharArray());
@@ -42,7 +42,7 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.ApiKeyLength), MemberType = typeof(Helper))]
         public void GenerateApiKeys_From_IApiKey(int length)
         {
-            var clientApiKey = new Client { } as IApiKey;
+            var clientApiKey = new Client { };
 
             Assert.Null(clientApiKey.PrimaryApiKey);
             Assert.Null(clientApiKey.SecondaryApiKey);
