@@ -14,6 +14,8 @@ namespace aiof.auth.data
         public string Email { get; set; }
         public string Username { get; set; }
         [JsonIgnore] public string Password { get; set; }
+        [JsonIgnore] public string PrimaryApiKey { get; set; }
+        [JsonIgnore] public string SecondaryApiKey { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
     }
 
