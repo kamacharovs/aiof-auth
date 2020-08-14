@@ -58,7 +58,7 @@ namespace aiof.auth.services
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
                     return GenerateJwtToken(user);
                 case TokenType.ApiKey:
-                    return await (GenerateJwtTokenAsync(request.ApiKey));
+                    return await GenerateJwtTokenAsync(request.ApiKey);
                 case TokenType.Refresh:
                     var client = (await _clientRepo.GetRefreshTokenAsync(request.Token)).Client;
                     return RefreshToken(client);
