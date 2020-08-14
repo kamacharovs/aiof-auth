@@ -60,6 +60,10 @@ namespace aiof.auth.services
         {
             return await base.GetEntityAsync<User>(publicKey);
         }
+        public async Task<IUser> GetUserAsync(string apiKey)
+        {
+            return await base.GetEntityAsync<User>(apiKey);
+        }
         public async Task<IUser> GetUserAsync(
             string username, 
             bool asNoTracking = true)
@@ -72,7 +76,7 @@ namespace aiof.auth.services
             string username, 
             string password)
         {
-            var user = await GetUserAsync(username);
+            var user = await GetUserAsync(username, true);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,

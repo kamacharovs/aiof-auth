@@ -57,11 +57,8 @@ namespace aiof.auth.services
                 case TokenType.User:
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
                     return GenerateJwtToken(user);
-                case TokenType.Client:
-                    var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
-                    return GenerateJwtToken(
-                        clientRefresh.Client,
-                        clientRefresh.Token);
+                case TokenType.ApiKey:
+                    return await (GenerateJwtTokenAsync(request.ApiKey));
                 case TokenType.Refresh:
                     var client = (await _clientRepo.GetRefreshTokenAsync(request.Token)).Client;
                     return RefreshToken(client);
@@ -83,6 +80,24 @@ namespace aiof.auth.services
                 Token = clientRefresh.Token,
                 Revoked = clientRefresh.Revoked
             };
+        }
+
+        public async Task<ITokenResponse> GenerateJwtTokenAsync(string apiKey)
+        {
+            switch (apiKey.DecodeApiKey())
+            {
+                case nameof(User):
+                    var user = await _userRepo.GetUserAsync(apiKey);
+                    return GenerateJwtToken(user);
+                case nameof(Client):
+                    var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(apiKey);
+                    return GenerateJwtToken(
+                        clientRefresh.Client,
+                        clientRefresh.Token);
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid token request with ApiKey='{apiKey}'");
+            }
         }
 
         public ITokenResponse RefreshToken(IClient client)
