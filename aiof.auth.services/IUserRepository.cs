@@ -9,6 +9,7 @@ namespace aiof.auth.services
     {
         Task<IUser> GetUserAsync(int id);
         Task<IUser> GetUserAsync(Guid publicKey);
+        Task<IUser> GetUserAsync(string apiKey);
         Task<IUser> GetUserAsync(string username, string password);
         Task<IUser> GetUserAsync(
             string firstName,
