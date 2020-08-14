@@ -73,6 +73,23 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [InlineData(nameof(User))]
+        [InlineData(nameof(Client))]
+        [InlineData(nameof(ClientRefreshToken))]
+        public void Base64Encode_Base64Decode_Valid(string str)
+        {
+            var encoded = str.Base64Encode();
+
+            Assert.NotNull(encoded);
+            Assert.Contains("=", encoded);
+
+            var decoded = encoded.Base64Decode();
+
+            Assert.NotNull(decoded);
+            Assert.Equal(str, decoded);
+        }
+
+        [Theory]
         [InlineData(nameof(User.Username))]
         [InlineData(nameof(User.Password))]
         [InlineData(nameof(User.Email))]

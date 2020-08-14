@@ -54,15 +54,15 @@ namespace aiof.auth.data
         }
 
         public static string ToSnakeCase(
-            [NotNull] this string str)
+            [NotNull] this string value)
         {
-            return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
+            return string.Concat(value.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
         }
 
         public static string ToHyphenCase(
-            [NotNull] this string str)
+            [NotNull] this string value)
         {
-            return str.Replace(' ', '-').ToLower();
+            return value.Replace(' ', '-').ToLower();
         }
 
         public static PropertyBuilder HasSnakeCaseColumnName(
