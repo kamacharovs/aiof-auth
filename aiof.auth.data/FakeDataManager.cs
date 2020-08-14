@@ -224,7 +224,8 @@ namespace aiof.auth.data
         public IEnumerable<object[]> GetFakeClientsData(
             bool id = false,
             bool name = false,
-            bool apiKey = false)
+            bool apiKey = false,
+            bool enabled = true)
         {
             var fakeClients = GetFakeClients()
                 .ToArray();
@@ -241,9 +242,19 @@ namespace aiof.auth.data
                         fakeClient.PrimaryApiKey
                     });
             }
-            else if (id)
+            else if (id
+                && enabled)
             {
-                foreach (var fakeClientId in fakeClients.Select(x => x.Id))
+                foreach (var fakeClientId in fakeClients.Where(x => x.Enabled).Select(x => x.Id))
+                    toReturn.Add(new object[]
+                    {
+                        fakeClientId
+                    });
+            }
+            else if (id
+                && !enabled)
+            {
+                foreach (var fakeClientId in fakeClients.Where(x => !x.Enabled).Select(x => x.Id))
                     toReturn.Add(new object[]
                     {
                         fakeClientId
@@ -342,6 +353,6 @@ namespace aiof.auth.data
         }
 
         public string HashedPassword => "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA="; //pass1234
-        public string ExpiredJwtToken => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfa2V5IjoiNTgxZjNjZTYtY2YyYS00MmE1LTgyOGYtMTU3YTJiZmFiNzYzIiwiZ2l2ZW5fbmFtZSI6Ikdlb3JnaSIsImZhbWlseV9uYW1lIjoiS2FtYWNoYXJvdiIsImVtYWlsIjoiZ2thbWFAdGVzdC5jb20iLCJuYmYiOjE1OTQ4MzY5NTksImV4cCI6MTU5NDgzNzg1OCwiaWF0IjoxNTk0ODM2OTU5LCJpc3MiOiJhaW9mOmF1dGgiLCJhdWQiOiJhaW9mOmF1dGg6YXVkaWVuY2UifQ.RYiY7lr7uVb6gBHovsV4qlpHgqa7WEmq-Uhd_8F7B1o";
+        public string ExpiredJwtToken => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfa2V5IjoiNTgxZjNjZTYtY2YyYS00MmE1LTgyOGYtMTU3YTJiZmFiNzYzIiwiZ2l2ZW5fbmFtZSI6Ikdlb3JnaSIsImZhbWlseV9uYW1lIjoiS2FtYWNoYXJvdiIsImVtYWlsIjoiZ2thbWFAdGVzdC5jb20iLCJlbnRpdHkiOiJVc2VyIiwibmJmIjoxNTk3MTc0NDQzLCJleHAiOjE1OTcxNzUzNDMsImlhdCI6MTU5NzE3NDQ0MywiaXNzIjoiYWlvZjphdXRoIiwiYXVkIjoiYWlvZjphdXRoOmF1ZGllbmNlIn0.d8-5b3ecDc4IBrFQfyr4sv1wqxh4MpOxsDExpXP8jG0";
     }
 }

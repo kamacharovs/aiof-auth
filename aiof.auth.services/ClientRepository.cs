@@ -101,10 +101,7 @@ namespace aiof.auth.services
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
         {
-            var validation = _clientDtoValidator.Validate(clientDto);
-
-            if (!validation.IsValid)
-                throw new AuthValidationException(validation.Errors);
+            await _clientDtoValidator.ValidateAndThrowAsync(clientDto);
 
             var client = _mapper.Map<Client>(clientDto)
                 .GenerateApiKeys();
@@ -184,6 +181,11 @@ namespace aiof.auth.services
             _logger.LogInformation($"Revoked token='{token}' for cliendId='{clientId}'");
 
             return clientRefreshToken;
+        }
+
+        public async Task<IClient> SoftDeleteAsync(int id)
+        {
+            return await base.SoftDeleteAsync<Client>(id);
         }
 
         public async Task<IClient> RegenerateKeysAsync(int id)

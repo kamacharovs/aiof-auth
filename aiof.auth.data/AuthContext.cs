@@ -26,7 +26,7 @@ namespace aiof.auth.data
                 e.HasIndex(x => x.Username)
                     .IsUnique();
 
-                e.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd().IsRequired();
+                e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.FirstName).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
                 e.Property(x => x.LastName).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();

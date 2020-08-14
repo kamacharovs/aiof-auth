@@ -10,7 +10,10 @@ namespace aiof.auth.data
         {
             ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
-            // Either Username, Password is provided or ApiKey
+            RuleFor(x => x)
+                .NotNull();
+
+            // Either Username, Password is provided, ApiKey is provided or RefreshToken
             RuleFor(x => x)
                 .Must(x => 
                 {
@@ -19,7 +22,7 @@ namespace aiof.auth.data
                         && string.IsNullOrWhiteSpace(x.Token)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
                     {
-                        x.Type = TokenRequestType.User;
+                        x.Type = TokenType.User;
                         return true;
                     }
                     else if (!string.IsNullOrWhiteSpace(x.ApiKey)
@@ -27,7 +30,7 @@ namespace aiof.auth.data
                         && string.IsNullOrWhiteSpace(x.Username)
                         && string.IsNullOrWhiteSpace(x.Password))
                     {
-                        x.Type = TokenRequestType.Client;
+                        x.Type = TokenType.Client;
                         return true;
                     }
                     else if (!string.IsNullOrWhiteSpace(x.Token)
@@ -35,12 +38,13 @@ namespace aiof.auth.data
                         && string.IsNullOrWhiteSpace(x.Password)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
                     {
-                        x.Type = TokenRequestType.Refresh;
+                        x.Type = TokenType.Refresh;
                         return true;
                     }
 
                     return false;
-                });
+                })
+                .WithMessage("Invalid token request. Please provide the following: a Username/Password, ApiKey or Token");
         }
     }
 }

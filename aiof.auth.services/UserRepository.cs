@@ -110,11 +110,9 @@ namespace aiof.auth.services
 
         public async Task<IUser> AddUserAsync(UserDto userDto)
         {
-            var validation = _userDtoValidator.Validate(userDto);
+            await _userDtoValidator.ValidateAndThrowAsync(userDto);
 
-            if (!validation.IsValid)
-                throw new AuthValidationException(validation.Errors);
-            else if (await DoesUsernameExistAsync(userDto.Username))
+            if (await DoesUsernameExistAsync(userDto.Username))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                     $"{nameof(User)} with Username='{userDto.Username}' already exists");
 

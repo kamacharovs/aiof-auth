@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,7 @@ namespace aiof.auth.core.Controllers
     [Route("user")]
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
-    [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
@@ -33,21 +34,23 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserAsync([FromRoute]int id)
+        public async Task<IActionResult> GetUserAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetUserAsync(id));
         }
-        
+
         /// <summary>
         /// Get an existing User by Username and Password
         /// </summary>
         [HttpGet]
         [Route("{username}/{password}")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserUsernamePasswordAsync([FromRoute]string username, string password)
+        public async Task<IActionResult> GetUserUsernamePasswordAsync(
+            [FromRoute, Required] string username,
+            [FromRoute, Required] string password)
         {
             return Ok(await _repo.GetUserAsync(username, password));
         }
@@ -56,9 +59,9 @@ namespace aiof.auth.core.Controllers
         /// Create a User
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddUserAsync([FromBody]UserDto userDto)
+        public async Task<IActionResult> AddUserAsync([FromBody, Required] UserDto userDto)
         {
             return Created(nameof(User), await _repo.AddUserAsync(userDto));
         }
@@ -69,7 +72,7 @@ namespace aiof.auth.core.Controllers
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public IActionResult HashPassword([FromRoute]string password)
+        public IActionResult HashPassword([FromRoute, Required] string password)
         {
             return Ok(_repo.Hash(password));
         }

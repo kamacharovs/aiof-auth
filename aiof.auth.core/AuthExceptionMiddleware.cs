@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
+
+using FluentValidation;
 
 using aiof.auth.data;
 
@@ -19,7 +22,7 @@ namespace aiof.auth.core
         private readonly RequestDelegate _next;
 
         private const string _defaultMessage = "An unexpected error has occurred";
-        private const string _defaultValidationMessage = "One or more validation errors have occurred";
+        private const string _defaultValidationMessage = "One or more validation errors have occurred. Please see errors for details";
 
         public AuthExceptionMiddleware(
             ILogger<AuthExceptionMiddleware> logger, 
@@ -81,12 +84,12 @@ namespace aiof.auth.core
             {
                 problem.Code = ae.StatusCode;
                 problem.Message = ae.Message;
-        
-                if (e is AuthValidationException ave)
-                {
-                    problem.Message = _defaultValidationMessage;
-                    problem.Errors = ave.Errors;
-                }
+            }
+            else if (e is ValidationException ve)
+            {
+                problem.Code = StatusCodes.Status400BadRequest;
+                problem.Message = _defaultValidationMessage;
+                problem.Errors = ve.Errors.Select(x => x.ErrorMessage);
             }
 
             var problemjson = JsonSerializer

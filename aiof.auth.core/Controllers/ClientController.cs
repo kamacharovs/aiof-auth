@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,7 @@ namespace aiof.auth.core.Controllers
     [Route("client")]
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
-    [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class ClientController : ControllerBase
     {
         private readonly IClientRepository _repo;
@@ -33,9 +34,9 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetClientAsync([FromRoute]int id)
+        public async Task<IActionResult> GetClientAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetClientAsync(id));
         }
@@ -45,9 +46,9 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/disable")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> DisableClientAsync([FromRoute]int id)
+        public async Task<IActionResult> DisableClientAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.EnableDisableClientAsync(id, false));
         }
@@ -57,9 +58,9 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/enable")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> EnableClientAsync([FromRoute]int id)
+        public async Task<IActionResult> EnableClientAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.EnableDisableClientAsync(id));
         }
@@ -69,9 +70,9 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/regenerate/keys")]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RegenerateKeysAsync([FromRoute]int id)
+        public async Task<IActionResult> RegenerateKeysAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.RegenerateKeysAsync(id));
         }
@@ -82,7 +83,7 @@ namespace aiof.auth.core.Controllers
         [HttpGet]
         [Route("{id}/refresh/tokens")]
         [ProducesResponseType(typeof(IEnumerable<IClientRefreshToken>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetRefreshTokensAsync([FromRoute]int id)
+        public async Task<IActionResult> GetRefreshTokensAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetRefreshTokensAsync(id));
         }
@@ -91,9 +92,9 @@ namespace aiof.auth.core.Controllers
         /// Create a Client
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(AuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddClientAsync([FromBody]ClientDto clientDto)
+        public async Task<IActionResult> AddClientAsync([FromBody, Required] ClientDto clientDto)
         {
             return Created(nameof(User), await _repo.AddClientAsync(clientDto));
         }

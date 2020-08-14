@@ -15,6 +15,11 @@ namespace aiof.auth.data
         string JwtIssuer { get; }
         string JwtAudience { get; }
         string JwtSecret { get; }
+        string JwtPrivateKey { get; }
+        string JwtPublicKey { get; }
+        string JwtAlgorithmDefault { get; }
+        string JwtAlgorithmUser { get; }
+        string JwtAlgorithmClient { get; }
 
         int HashIterations { get; }
         int HashSaltSize { get; }
