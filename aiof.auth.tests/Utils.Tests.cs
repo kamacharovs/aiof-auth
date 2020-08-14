@@ -54,6 +54,15 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [InlineData("Q2xpZW50.K5HYvUuUA1Bd/VCCacBFGyz/0E5Ur8AZh1M7z4G5+C0=")]
+        public void DecodeApiKey_Client_Valid(string apiKey)
+        {
+            var client = apiKey.DecodeApiKey();
+
+            Assert.Equal(nameof(Client), client);
+        }
+
+        [Theory]
         [InlineData(nameof(User.Username))]
         [InlineData(nameof(User.Password))]
         [InlineData(nameof(User.Email))]
