@@ -77,8 +77,8 @@ namespace aiof.auth.data
 
     public enum TokenType
     {
-        Client = 1,
-        Refresh = 2,
-        User = 3
+        User,
+        ApiKey,
+        Refresh,
     }
 }

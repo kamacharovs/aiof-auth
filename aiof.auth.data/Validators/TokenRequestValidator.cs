@@ -13,7 +13,7 @@ namespace aiof.auth.data
             RuleFor(x => x)
                 .NotNull();
 
-            // Either Username, Password is provided, ApiKey is provided or RefreshToken
+            // Either Username, Password is provided, ApiKey (Client or User) is provided or RefreshToken
             RuleFor(x => x)
                 .Must(x => 
                 {
@@ -30,7 +30,7 @@ namespace aiof.auth.data
                         && string.IsNullOrWhiteSpace(x.Username)
                         && string.IsNullOrWhiteSpace(x.Password))
                     {
-                        x.Type = TokenType.Client;
+                        x.Type = TokenType.ApiKey;
                         return true;
                     }
                     else if (!string.IsNullOrWhiteSpace(x.Token)

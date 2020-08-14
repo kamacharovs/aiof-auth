@@ -54,11 +54,15 @@ namespace aiof.auth.services
 
         public async Task<IUser> GetUserAsync(int id)
         {
-            return await base.GetEntityPublicKeyIdAsync<User>(id);
+            return await base.GetEntityAsync<User>(id);
         }
         public async Task<IUser> GetUserAsync(Guid publicKey)
         {
-            return await base.GetEntityPublicKeyIdAsync<User>(publicKey);
+            return await base.GetEntityAsync<User>(publicKey);
+        }
+        public async Task<IUser> GetUserAsync(string apiKey)
+        {
+            return await base.GetEntityAsync<User>(apiKey);
         }
         public async Task<IUser> GetUserAsync(
             string username, 
@@ -72,7 +76,7 @@ namespace aiof.auth.services
             string username, 
             string password)
         {
-            var user = await GetUserAsync(username);
+            var user = await GetUserAsync(username, true);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -116,7 +120,7 @@ namespace aiof.auth.services
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                     $"{nameof(User)} with Username='{userDto.Username}' already exists");
 
-            var user = await GetUserAsync(userDto) == null
+            var user = await GetUserAsync(userDto) is null
                 ? _mapper.Map<User>(userDto)
                 : throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                     $"User with FirstName='{userDto.FirstName}', " +

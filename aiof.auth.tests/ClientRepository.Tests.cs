@@ -81,5 +81,19 @@ namespace aiof.auth.tests
 
             Assert.False(DateTime.UtcNow < clientRefreshTokenAfter.Expires);
         }
+
+        [Theory]
+        [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
+        public async Task SoftDeleteAsync_Valid(int id)
+        {
+            var client = await _repo.SoftDeleteAsync(id);
+
+            Assert.NotNull(client);
+            Assert.False(client.Enabled);
+
+            var clientInDb = await _repo.GetClientAsync(id);
+
+            Assert.NotNull(clientInDb);
+        }
     }
 }

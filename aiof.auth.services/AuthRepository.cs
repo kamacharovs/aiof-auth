@@ -57,11 +57,8 @@ namespace aiof.auth.services
                 case TokenType.User:
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
                     return GenerateJwtToken(user);
-                case TokenType.Client:
-                    var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(request.ApiKey);
-                    return GenerateJwtToken(
-                        clientRefresh.Client,
-                        clientRefresh.Token);
+                case TokenType.ApiKey:
+                    return await GenerateJwtTokenAsync(request.ApiKey);
                 case TokenType.Refresh:
                     var client = (await _clientRepo.GetRefreshTokenAsync(request.Token)).Client;
                     return RefreshToken(client);
@@ -83,6 +80,24 @@ namespace aiof.auth.services
                 Token = clientRefresh.Token,
                 Revoked = clientRefresh.Revoked
             };
+        }
+
+        public async Task<ITokenResponse> GenerateJwtTokenAsync(string apiKey)
+        {
+            switch (apiKey.DecodeApiKey())
+            {
+                case nameof(User):
+                    var user = await _userRepo.GetUserAsync(apiKey);
+                    return GenerateJwtToken(user);
+                case nameof(Client):
+                    var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(apiKey);
+                    return GenerateJwtToken(
+                        clientRefresh.Client,
+                        clientRefresh.Token);
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid token request with ApiKey='{apiKey}'");
+            }
         }
 
         public ITokenResponse RefreshToken(IClient client)
@@ -148,13 +163,6 @@ namespace aiof.auth.services
                 RefreshToken = refreshToken
             };
 
-            /// <summary>
-            /// Get <see cref="SigningCredentials"/> based on the type of <typeparamref name="T"/>. 
-            /// The credentials are used to sign the JWT (Json Web Token). They are completely configurable on an Entity level; <see cref="User"/>, <see cref="Client"/>, etc.
-            /// The default signing credentials use the <see cref="SecurityAlgorithms.RsaSha256"/> algorithm
-            /// </summary>
-            /// <typeparam name="T"></typeparam>
-            /// <returns><see cref="SigningCredentials"/></returns>
             SigningCredentials GetSigningCredentials()
             {
                 var algType = GetAlgType<T>();
@@ -177,15 +185,6 @@ namespace aiof.auth.services
             }
         }
 
-        /// <summary>
-        /// Get algorithm <see cref="AlgType"/> of <typeparamref name="T"/> based on the type and environment configuration
-        /// </summary>
-        /// <remarks>
-        /// In a case where a new entity is added, then this part should be the only part that needs to be updated.
-        /// The current supported entities are <see cref="User"/> and <see cref="Client"/>
-        /// </remarks>
-        /// <typeparam name="T"></typeparam>
-        /// <returns><see cref="AlgType"/></returns>
         public AlgType GetAlgType<T>()
             where T : class, IPublicKeyId
         {
@@ -207,12 +206,6 @@ namespace aiof.auth.services
             return alg.ToEnum();
         }
 
-        /// <summary>
-        /// Get <see cref="RsaSecurityKey"/> based on <see cref="RsaKeyType"/>. The current values are inheritted certificate signing
-        /// via a <see cref="RsaKeyType.Public"/> and <see cref="RsaKeyType.Private"/> keys
-        /// </summary>
-        /// <param name="rsaKeyType"></param>
-        /// <returns><see cref="RsaSecurityKey"/></returns>
         public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)
         {
             var rsa = RSA.Create();
@@ -261,13 +254,7 @@ namespace aiof.auth.services
                     IsAuthenticated = result.Identity.IsAuthenticated,
                     Status = TokenResultStatus.Valid.ToString()
                 };
-
-                /// <summary>
-                /// Get <see cref="SecurityKey"/> based on the type of <typeparamref name="T"/>. 
-                /// The key is then used to validate the JWT (Json Web Token) based on the algorithm the JWT (Json Web Token) was signed with
-                /// </summary>
-                /// <typeparam name="T"></typeparam>
-                /// <returns><see cref="SecurityKey"/></returns>
+                
                 SecurityKey GetSecurityKey()
                 {
                     var algType = GetAlgType<T>();

@@ -53,6 +53,18 @@ namespace aiof.auth.data
                     Email = "jessie@test.com",
                     Username = "jbro",
                     Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
+                },
+                new User
+                {
+                    Id = 3,
+                    PublicKey = Guid.Parse("7c135230-2889-4cbb-bb0e-ab4237d89367"),
+                    FirstName = "George",
+                    LastName = "Best",
+                    Email = "george.best@auth.com",
+                    Username = "gbest",
+                    Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=", //pass1234
+                    PrimaryApiKey = "VXNlcg==.x0sHnNHFytELB6FkLb/L6Q/YXPoXAZ4bAHvztgr6vIU=",
+                    SecondaryApiKey = "VXNlcg==.VmNKkE4o6zxCq8Ut1BzkSU2R7RcCqo8y/jTklcTU6m8="
                 }
             };
         }
@@ -68,8 +80,8 @@ namespace aiof.auth.data
                     Name = "GK Client 1",
                     Slug = "gk-client-1",
                     Enabled = true,
-                    PrimaryApiKey = "gk-client-1-p-key",
-                    SecondaryApiKey = "gk-client-1-s-key"
+                    PrimaryApiKey = "Q2xpZW50.YJj7MeyO1P9DpglkO8bFeAe6vYEBrFhpC9O6BrYR43w=",
+                    SecondaryApiKey = "Q2xpZW50.k3HO3GHyDpO0InUUWzzOUrs52Mt6tEdkq7MuTokH0M8="
                 },
                 new Client
                 {
@@ -78,8 +90,8 @@ namespace aiof.auth.data
                     Name = "GK Client 2",
                     Slug = "gk-client-2",
                     Enabled = true,
-                    PrimaryApiKey = "gk-client-2-p-key",
-                    SecondaryApiKey = "gk-client-2-s-key"
+                    PrimaryApiKey = "Q2xpZW50.Jo9C+6F3no9pwg8s1OWDkUGs+wHAVbsWkcRTS0s/SjU=",
+                    SecondaryApiKey = "Q2xpZW50.FAe44G9HIrbDFCGa/ZF4xZE+m3Fne7cB7eNJuy2vcoc="
                 },
                 new Client
                 {
@@ -88,8 +100,8 @@ namespace aiof.auth.data
                     Name = "GK Client 3",
                     Slug = "gk-client-3",
                     Enabled = false,
-                    PrimaryApiKey = "gk-client-3-p-key",
-                    SecondaryApiKey = "gk-client-3-s-key"
+                    PrimaryApiKey = "Q2xpZW50.Dpkt/TSLB+nlVyQwi/pSUhkwEglerntGUym6h+3DM/k=",
+                    SecondaryApiKey = "Q2xpZW50.5/fRn0AL2RYPHcrT73HCSIuIYm2Iew5+1v9nvtXrtE4="
                 }
             };
         }
@@ -173,7 +185,8 @@ namespace aiof.auth.data
             bool firstName = false,
             bool lastName = false,
             bool email = false,
-            bool username = false)
+            bool username = false,
+            bool apiKeys = false)
         {
             var fakeUsers = GetFakeUsers()
                 .ToArray();
@@ -217,6 +230,15 @@ namespace aiof.auth.data
                         fakeUserPublicKey
                     });
                 }
+            else if (apiKeys)
+                foreach (var fakeUser in fakeUsers
+                    .Where(x => x.PrimaryApiKey != null && x.SecondaryApiKey != null))
+                {
+                    toReturn.Add(new object[] 
+                    { 
+                        fakeUser.PrimaryApiKey, fakeUser.SecondaryApiKey
+                    });
+                }
 
             return toReturn;
         }
@@ -224,7 +246,8 @@ namespace aiof.auth.data
         public IEnumerable<object[]> GetFakeClientsData(
             bool id = false,
             bool name = false,
-            bool apiKey = false)
+            bool apiKey = false,
+            bool enabled = true)
         {
             var fakeClients = GetFakeClients()
                 .ToArray();
@@ -241,9 +264,19 @@ namespace aiof.auth.data
                         fakeClient.PrimaryApiKey
                     });
             }
-            else if (id)
+            else if (id
+                && enabled)
             {
-                foreach (var fakeClientId in fakeClients.Select(x => x.Id))
+                foreach (var fakeClientId in fakeClients.Where(x => x.Enabled).Select(x => x.Id))
+                    toReturn.Add(new object[]
+                    {
+                        fakeClientId
+                    });
+            }
+            else if (id
+                && !enabled)
+            {
+                foreach (var fakeClientId in fakeClients.Where(x => !x.Enabled).Select(x => x.Id))
                     toReturn.Add(new object[]
                     {
                         fakeClientId

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace aiof.auth.data
 {
     public class User : IUser, 
-        IPublicKeyId
+        IPublicKeyId, IApiKey
     {
         [JsonIgnore] public int Id { get; set; }
         [JsonIgnore] public Guid PublicKey { get; set; } = Guid.NewGuid();
@@ -14,6 +14,8 @@ namespace aiof.auth.data
         public string Email { get; set; }
         public string Username { get; set; }
         [JsonIgnore] public string Password { get; set; }
+        [JsonIgnore] public string PrimaryApiKey { get; set; }
+        [JsonIgnore] public string SecondaryApiKey { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
     }
 

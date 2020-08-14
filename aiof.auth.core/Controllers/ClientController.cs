@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +36,7 @@ namespace aiof.auth.core.Controllers
         [Route("{id}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetClientAsync([FromRoute]int id)
+        public async Task<IActionResult> GetClientAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetClientAsync(id));
         }
@@ -47,7 +48,7 @@ namespace aiof.auth.core.Controllers
         [Route("{id}/disable")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> DisableClientAsync([FromRoute]int id)
+        public async Task<IActionResult> DisableClientAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.EnableDisableClientAsync(id, false));
         }
@@ -59,7 +60,7 @@ namespace aiof.auth.core.Controllers
         [Route("{id}/enable")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> EnableClientAsync([FromRoute]int id)
+        public async Task<IActionResult> EnableClientAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.EnableDisableClientAsync(id));
         }
@@ -71,7 +72,7 @@ namespace aiof.auth.core.Controllers
         [Route("{id}/regenerate/keys")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RegenerateKeysAsync([FromRoute]int id)
+        public async Task<IActionResult> RegenerateKeysAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.RegenerateKeysAsync(id));
         }
@@ -82,7 +83,7 @@ namespace aiof.auth.core.Controllers
         [HttpGet]
         [Route("{id}/refresh/tokens")]
         [ProducesResponseType(typeof(IEnumerable<IClientRefreshToken>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetRefreshTokensAsync([FromRoute]int id)
+        public async Task<IActionResult> GetRefreshTokensAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetRefreshTokensAsync(id));
         }
@@ -93,7 +94,7 @@ namespace aiof.auth.core.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddClientAsync([FromBody]ClientDto clientDto)
+        public async Task<IActionResult> AddClientAsync([FromBody, Required] ClientDto clientDto)
         {
             return Created(nameof(User), await _repo.AddClientAsync(clientDto));
         }
