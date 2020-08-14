@@ -128,7 +128,26 @@ namespace aiof.auth.services
                 ?? throw new AuthNotFoundException($"{typeof(T).Name} with ApiKey='{apiKey}' was not found");
         }
 
-        public async Task DeleteEntityAsync<T>(int id)
+        public async Task<T> SoftDeleteAsync<T>(int id)
+            where T : class, IPublicKeyId, IEnable
+        {
+            var entity = await GetEntityPublicKeyAsync<T>(
+                id, 
+                asNoTracking: false);
+
+            entity.Enabled = false;
+
+            _context.Set<T>()
+                .Update(entity);
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Soft delete {typeof(T).Name} with Id='{entity.Id}' and PublicKey='{entity.PublicKey}'");
+
+            return entity;
+        }
+
+        public async Task DeleteAsync<T>(int id)
             where T : class, IPublicKeyId
         {
             var entity = await GetEntityPublicKeyAsync<T>(id, asNoTracking: false);

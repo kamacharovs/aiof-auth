@@ -224,7 +224,8 @@ namespace aiof.auth.data
         public IEnumerable<object[]> GetFakeClientsData(
             bool id = false,
             bool name = false,
-            bool apiKey = false)
+            bool apiKey = false,
+            bool enabled = true)
         {
             var fakeClients = GetFakeClients()
                 .ToArray();
@@ -241,9 +242,19 @@ namespace aiof.auth.data
                         fakeClient.PrimaryApiKey
                     });
             }
-            else if (id)
+            else if (id
+                && enabled)
             {
-                foreach (var fakeClientId in fakeClients.Select(x => x.Id))
+                foreach (var fakeClientId in fakeClients.Where(x => x.Enabled).Select(x => x.Id))
+                    toReturn.Add(new object[]
+                    {
+                        fakeClientId
+                    });
+            }
+            else if (id
+                && !enabled)
+            {
+                foreach (var fakeClientId in fakeClients.Where(x => !x.Enabled).Select(x => x.Id))
                     toReturn.Add(new object[]
                     {
                         fakeClientId

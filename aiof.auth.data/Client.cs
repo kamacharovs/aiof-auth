@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace aiof.auth.data
 {
     public class Client : IClient,
-        IPublicKeyId, IApiKey
+        IPublicKeyId, IApiKey, IEnable
     {
         [JsonIgnore] public int Id { get; set; }
         [JsonIgnore] public Guid PublicKey { get; set; } = Guid.NewGuid();

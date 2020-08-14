@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -38,7 +39,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetTokenAsync([FromBody]TokenRequest req)
+        public async Task<IActionResult> GetTokenAsync([FromBody, Required]TokenRequest req)
         {
             return Ok(await _repo.GetTokenAsync(req));
         }
@@ -51,7 +52,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
-        public IActionResult ValidateToken([FromBody]ValidationRequest req)
+        public IActionResult ValidateToken([FromBody, Required] ValidationRequest req)
         {
             return Ok(_repo.ValidateToken(req));
         }
@@ -65,7 +66,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RefreshTokenAsync([FromBody]TokenRequest req)
+        public async Task<IActionResult> RefreshTokenAsync([FromBody, Required] TokenRequest req)
         {
             return Ok(await _repo.GetTokenAsync(req));
         }
@@ -78,7 +79,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody]RevokeRequest request)
+        public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody, Required] RevokeRequest request)
         {
             return Ok(await _repo.RevokeTokenAsync(request.ClientId, request.Token));
         }
