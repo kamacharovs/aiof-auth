@@ -67,12 +67,17 @@ namespace aiof.auth.data
         public static string Base<T>(int id)
             where T : IPublicKeyId
         {
-            return $"{typeof(T).Name.ToLower()}.id.{id}";
+            return $"{typeof(T).Name.ToLowerInvariant()}.id.{id}";
+        }
+        public static string Base<T>(Guid publicKey)
+            where T : IPublicKeyId
+        {
+            return $"{typeof(T).Name.ToLowerInvariant()}.publicKey.{publicKey}";
         }
         public static string Base<T>(string apiKey)
             where T : IApiKey
         {
-            return $"{typeof(T).Name.ToLower()}.apikey.{apiKey}";
+            return $"{typeof(T).Name.ToLowerInvariant()}.apikey.{apiKey}";
         }
 
         public static string User(string username)

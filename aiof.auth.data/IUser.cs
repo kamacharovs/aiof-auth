@@ -35,6 +35,16 @@ namespace aiof.auth.data
         [Required]
         [MaxLength(100)]
         string Password { get; set; }
+        
+        [JsonIgnore]
+        [Required]
+        [MaxLength(100)]
+        string PrimaryApiKey { get; set; }
+
+        [JsonIgnore]
+        [Required]
+        [MaxLength(100)]
+        string SecondaryApiKey { get; set; }
 
         [Required]
         DateTime Created { get; set; }
