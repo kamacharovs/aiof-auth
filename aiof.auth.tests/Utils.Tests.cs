@@ -12,9 +12,19 @@ namespace aiof.auth.tests
     {
         [Theory]
         [MemberData(nameof(Helper.ApiKeyLength), MemberType = typeof(Helper))]
-        public void GenerateApiKey_Valid(int length)
+        public void GenerateApiKey_Client_Valid(int length)
         {
             var apiKey = Utils.GenerateApiKey<Client>(length);
+
+            Assert.NotNull(apiKey);
+            Assert.Contains('=', apiKey.ToCharArray());
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.ApiKeyLength), MemberType = typeof(Helper))]
+        public void GenerateApiKey_User_Valid(int length)
+        {
+            var apiKey = Utils.GenerateApiKey<User>(length);
 
             Assert.NotNull(apiKey);
             Assert.Contains('=', apiKey.ToCharArray());

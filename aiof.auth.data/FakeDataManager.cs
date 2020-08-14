@@ -53,6 +53,18 @@ namespace aiof.auth.data
                     Email = "jessie@test.com",
                     Username = "jbro",
                     Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
+                },
+                new User
+                {
+                    Id = 3,
+                    PublicKey = Guid.Parse("7c135230-2889-4cbb-bb0e-ab4237d89367"),
+                    FirstName = "George",
+                    LastName = "Best",
+                    Email = "george.best@auth.com",
+                    Username = "gbest",
+                    Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=", //pass1234
+                    PrimaryApiKey = "VXNlcg==.x0sHnNHFytELB6FkLb/L6Q/YXPoXAZ4bAHvztgr6vIU=",
+                    SecondaryApiKey = "VXNlcg==.VmNKkE4o6zxCq8Ut1BzkSU2R7RcCqo8y/jTklcTU6m8="
                 }
             };
         }
