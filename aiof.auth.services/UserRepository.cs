@@ -54,11 +54,11 @@ namespace aiof.auth.services
 
         public async Task<IUser> GetUserAsync(int id)
         {
-            return await base.GetEntityPublicKeyIdAsync<User>(id);
+            return await base.GetEntityAsync<User>(id);
         }
         public async Task<IUser> GetUserAsync(Guid publicKey)
         {
-            return await base.GetEntityPublicKeyIdAsync<User>(publicKey);
+            return await base.GetEntityAsync<User>(publicKey);
         }
         public async Task<IUser> GetUserAsync(
             string username, 

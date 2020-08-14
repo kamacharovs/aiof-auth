@@ -42,96 +42,68 @@ namespace aiof.auth.services
                 : _context.Set<T>()
                     .AsQueryable();
         }
-        public IQueryable<T> GetEntityPublicKeyIdQuery<T>(bool asNoTracking = true)
-            where T : class, IPublicKeyId
-        {
-            return asNoTracking
-                ? _context.Set<T>()
-                    .AsNoTracking()
-                    .AsQueryable()
-                : _context.Set<T>()
-                    .AsQueryable();
-        }
-        public IQueryable<T> GetEntityApiKeyQuery<T>(bool asNoTracking = true)
-            where T : class, IApiKey
-        {
-            return asNoTracking
-                ? _context.Set<T>()
-                    .AsNoTracking()
-                    .AsQueryable()
-                : _context.Set<T>()
-                    .AsQueryable();
-        }
 
-        public async Task<T> GetEntityPublicKeyAsync<T>(int id, bool asNoTracking = true)
-            where T : class, IPublicKeyId
-        {
-            return await GetEntityPublicKeyIdQuery<T>(asNoTracking)
-                .FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
-        }
-
-        public async Task<T> GetEntityAsync<T>(int id, bool asNoTracking = true)
+        public async Task<T> GetEntityAsync<T>(
+            int id, 
+            bool asNoTracking = true)
             where T : class, IPublicKeyId, IApiKey
         {
-            return (await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
+            var memCacheEnabled = await _envConfig.IsEnabledAsync(FeatureFlags.MemCache);
+            var entity = memCacheEnabled
                 ? await _cache.GetOrCreateAsync(Keys.Base<T>(id), async x =>
                   {
                       x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
+                      x.Priority = CacheItemPriority.High;
                       
-                      return await GetEntityQuery<T>(asNoTracking)
-                        .FirstOrDefaultAsync(x => x.Id == id);
+                      return await GetEntityQuery<T>(asNoTracking).FirstOrDefaultAsync(x => x.Id == id);
                   })
-                : await GetEntityQuery<T>(asNoTracking)
-                    .FirstOrDefaultAsync(x => x.Id == id))
-                ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
-        }
-        public async Task<T> GetEntityPublicKeyIdAsync<T>(int id, bool asNoTracking = true)
-            where T : class, IPublicKeyId
-        {
-            return (await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
-                ? await _cache.GetOrCreateAsync(Keys.Base<T>(id), async x =>
-                  {
-                      x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
-                      
-                      return await GetEntityPublicKeyIdQuery<T>(asNoTracking)
-                        .FirstOrDefaultAsync(x => x.Id == id);
-                  })
-                : await GetEntityPublicKeyIdQuery<T>(asNoTracking)
-                    .FirstOrDefaultAsync(x => x.Id == id))
-                ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
-        }
+                : await GetEntityQuery<T>(asNoTracking).FirstOrDefaultAsync(x => x.Id == id);
 
-        public async Task<T> GetEntityPublicKeyIdAsync<T>(Guid publicKey)
-            where T : class, IPublicKeyId
-        {
-            return await GetEntityPublicKeyIdQuery<T>()
-                .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
-                ?? throw new AuthNotFoundException($"{typeof(T).Name} with PublicId='{publicKey}' was not found");
+            return entity ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
         }
-
-        public async Task<T> GetEntityAsync<T>(string apiKey)
-            where T : class, IApiKey
+        public async Task<T> GetEntityAsync<T>(
+            Guid publicKey,
+            bool asNoTracking = true)
+            where T : class, IPublicKeyId, IApiKey
         {
-            return (await _envConfig.IsEnabledAsync(FeatureFlags.MemCache)
+            var memCacheEnabled = await _envConfig.IsEnabledAsync(FeatureFlags.MemCache);
+            var entity = memCacheEnabled
+                ? await _cache.GetOrCreateAsync(Keys.Base<T>(publicKey), async x =>
+                {
+                    x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
+                    x.Priority = CacheItemPriority.Low;
+
+                    return await GetEntityQuery<T>(asNoTracking).FirstOrDefaultAsync(x => x.PublicKey == publicKey);
+                })
+                : await GetEntityQuery<T>(asNoTracking).FirstOrDefaultAsync(x => x.PublicKey == publicKey);
+
+            return entity ?? throw new AuthNotFoundException($"{typeof(T).Name} with PublicKey='{publicKey}' was not found");
+        }
+        public async Task<T> GetEntityAsync<T>(
+            string apiKey,
+            bool asNoTracking = true)
+            where T : class, IPublicKeyId, IApiKey
+        {
+            var memCacheEnabled = await _envConfig.IsEnabledAsync(FeatureFlags.MemCache);
+            var entity = memCacheEnabled
                 ? await _cache.GetOrCreateAsync(Keys.Base<T>(apiKey), async x =>
-                  {
-                      x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
-                      
-                      return await GetEntityApiKeyQuery<T>()
-                        .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
-                            || x.SecondaryApiKey == apiKey);
-                  })
-                : await GetEntityApiKeyQuery<T>()
-                    .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
-                        || x.SecondaryApiKey == apiKey))
-                ?? throw new AuthNotFoundException($"{typeof(T).Name} with ApiKey='{apiKey}' was not found");
+                {
+                    x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
+                    x.Priority = CacheItemPriority.High;
+
+                    return await GetEntityQuery<T>(asNoTracking)
+                        .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey|| x.SecondaryApiKey == apiKey);
+                })
+                : await GetEntityQuery<T>(asNoTracking)
+                    .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey);
+
+            return entity ?? throw new AuthNotFoundException($"{typeof(T).Name} with ApiKey='{apiKey}' was not found");
         }
 
         public async Task<T> SoftDeleteAsync<T>(int id)
-            where T : class, IPublicKeyId, IEnable
+            where T : class, IPublicKeyId, IApiKey, IEnable
         {
-            var entity = await GetEntityPublicKeyAsync<T>(
+            var entity = await GetEntityAsync<T>(
                 id, 
                 asNoTracking: false);
 
@@ -148,9 +120,9 @@ namespace aiof.auth.services
         }
 
         public async Task DeleteAsync<T>(int id)
-            where T : class, IPublicKeyId
+            where T : class, IPublicKeyId, IApiKey
         {
-            var entity = await GetEntityPublicKeyAsync<T>(id, asNoTracking: false);
+            var entity = await GetEntityAsync<T>(id, asNoTracking: false);
             var publicKey = entity.PublicKey;
 
             var entityJson = JsonSerializer.Serialize(entity);
