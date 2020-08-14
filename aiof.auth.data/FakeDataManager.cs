@@ -185,7 +185,8 @@ namespace aiof.auth.data
             bool firstName = false,
             bool lastName = false,
             bool email = false,
-            bool username = false)
+            bool username = false,
+            bool apiKeys = false)
         {
             var fakeUsers = GetFakeUsers()
                 .ToArray();
@@ -227,6 +228,15 @@ namespace aiof.auth.data
                     toReturn.Add(new object[] 
                     { 
                         fakeUserPublicKey
+                    });
+                }
+            else if (apiKeys)
+                foreach (var fakeUser in fakeUsers
+                    .Where(x => x.PrimaryApiKey != null && x.SecondaryApiKey != null))
+                {
+                    toReturn.Add(new object[] 
+                    { 
+                        fakeUser.PrimaryApiKey, fakeUser.SecondaryApiKey
                     });
                 }
 

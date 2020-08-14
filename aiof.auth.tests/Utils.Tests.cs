@@ -64,12 +64,14 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData("Q2xpZW50.K5HYvUuUA1Bd/VCCacBFGyz/0E5Ur8AZh1M7z4G5+C0=")]
-        public void DecodeApiKey_Client_Valid(string apiKey)
+        [MemberData(nameof(Helper.UsersApiKeys), MemberType = typeof(Helper))]
+        public void DecodeApiKey_Users_ApiKey_Valid(string primaryApiKey, string secondaryApiKey)
         {
-            var client = apiKey.DecodeApiKey();
+            var user1 = primaryApiKey.DecodeApiKey();
+            var user2 = secondaryApiKey.DecodeApiKey();
 
-            Assert.Equal(nameof(Client), client);
+            Assert.Equal(nameof(User), user1);
+            Assert.Equal(nameof(User), user2);
         }
 
         [Theory]
