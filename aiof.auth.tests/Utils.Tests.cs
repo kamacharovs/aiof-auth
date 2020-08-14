@@ -81,11 +81,12 @@ namespace aiof.auth.tests
             var encoded = str.Base64Encode();
 
             Assert.NotNull(encoded);
-            Assert.Contains("=", encoded);
+            Assert.True(encoded.Length > 0);
 
             var decoded = encoded.Base64Decode();
 
             Assert.NotNull(decoded);
+            Assert.True(decoded.Length > 0);
             Assert.Equal(str, decoded);
         }
 
