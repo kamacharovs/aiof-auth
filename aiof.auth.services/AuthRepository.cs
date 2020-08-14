@@ -67,19 +67,12 @@ namespace aiof.auth.services
                         $"Invalid token request");
             }
         }
-
-        public async Task<IRevokeResponse> RevokeTokenAsync(
-            int clientId,
-            string token)
+     
+        public ITokenResponse RefreshToken(IClient client)
         {
-            var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
-
-            return new RevokeResponse
-            {
-                ClientId = clientRefresh.ClientId,
-                Token = clientRefresh.Token,
-                Revoked = clientRefresh.Revoked
-            };
+            return GenerateJwtToken(
+                client: client,
+                expiresIn: _envConfig.JwtRefreshExpires);
         }
 
         public async Task<ITokenResponse> GenerateJwtTokenAsync(string apiKey)
@@ -98,13 +91,6 @@ namespace aiof.auth.services
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                         $"Invalid token request with ApiKey='{apiKey}'");
             }
-        }
-
-        public ITokenResponse RefreshToken(IClient client)
-        {
-            return GenerateJwtToken(
-                client: client,
-                expiresIn: _envConfig.JwtRefreshExpires);
         }
 
         public ITokenResponse GenerateJwtToken(IUser user)
@@ -294,6 +280,20 @@ namespace aiof.auth.services
                 return ValidateToken<User>(request.AccessToken);
             else
                 return ValidateToken<Client>(request.AccessToken);
+        }
+
+        public async Task<IRevokeResponse> RevokeTokenAsync(
+            int clientId,
+            string token)
+        {
+            var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
+
+            return new RevokeResponse
+            {
+                ClientId = clientRefresh.ClientId,
+                Token = clientRefresh.Token,
+                Revoked = clientRefresh.Revoked
+            };
         }
 
         public JsonWebKey GetPublicJsonWebKey()
