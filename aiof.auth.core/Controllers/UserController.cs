@@ -23,10 +23,14 @@ namespace aiof.auth.core.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
+        private readonly IAuthRepository _authRepo;
 
-        public UserController(IUserRepository repo)
+        public UserController(
+            IUserRepository repo,
+            IAuthRepository authRepo)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+            _authRepo = authRepo ?? throw new ArgumentNullException(nameof(authRepo));
         }
 
         /// <summary>
@@ -63,7 +67,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddUserAsync([FromBody, Required] UserDto userDto)
         {
-            return Created(nameof(User), await _repo.AddUserAsync(userDto));
+            return Created(nameof(User), _authRepo.GenerateJwtToken(await _repo.AddUserAsync(userDto)));
         }
 
         /// <summary>
