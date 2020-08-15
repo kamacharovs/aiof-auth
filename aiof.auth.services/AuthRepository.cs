@@ -93,9 +93,9 @@ namespace aiof.auth.services
             }
         }
 
-        public ITokenResponse GenerateJwtToken(IUser user)
+        public ITokenUserResponse GenerateJwtToken(IUser user)
         {
-            return GenerateJwtToken<User>(new Claim[]
+            var token = GenerateJwtToken<User>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
                     new Claim(AiofClaims.GivenName, user.FirstName),
@@ -103,6 +103,14 @@ namespace aiof.auth.services
                     new Claim(AiofClaims.Email, user.Email)
                 },
                 entity: user as IPublicKeyId);
+
+            return new TokenUserResponse
+            {
+                TokenType = token.TokenType,
+                ExpiresIn = token.ExpiresIn,
+                AccessToken = token.AccessToken,
+                User = user as User
+            };
         }
 
         public ITokenResponse GenerateJwtToken(
