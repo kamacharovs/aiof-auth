@@ -135,7 +135,11 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Created User with Id='{user.Id}' and PublicKey='{user.PublicKey}'");
+            _logger.LogInformation($"Created User with {nameof(User.Id)}='{user.Id}', {nameof(User.PublicKey)}='{user.PublicKey}', " +
+                $"{nameof(User.FirstName)}='{user.FirstName}', " +
+                $"{nameof(User.LastName)}='{user.LastName}', " +
+                $"{nameof(User.Email)}='{user.Email}' and " +
+                $"{nameof(User.Username)}='{user.Username}'");
 
             return user;
         }
