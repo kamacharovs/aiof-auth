@@ -46,6 +46,17 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
+        /// Get an existing User by Username
+        /// </summary>
+        [HttpGet]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserAsync([FromQuery, Required] string username)
+        {
+            return Ok(await _repo.GetUserByUsernameAsync(username));
+        }
+
+        /// <summary>
         /// Get an existing User by Username and Password
         /// </summary>
         [HttpGet]
