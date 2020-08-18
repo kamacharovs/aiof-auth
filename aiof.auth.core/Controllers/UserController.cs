@@ -51,7 +51,7 @@ namespace aiof.auth.core.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserAsync([FromQuery, Required] string username)
+        public async Task<IActionResult> GetUserByUsernameAsync([FromQuery, Required] string username)
         {
             return Ok(await _repo.GetUserByUsernameAsync(username));
         }
