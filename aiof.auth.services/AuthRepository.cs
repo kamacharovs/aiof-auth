@@ -246,7 +246,8 @@ namespace aiof.auth.services
                 return new TokenResult
                 {
                     IsAuthenticated = result.Identity.IsAuthenticated,
-                    Status = TokenResultStatus.Valid.ToString()
+                    Status = TokenResultStatus.Valid.ToString(),
+                    EntityType = typeof(T).Name
                 };
                 
                 SecurityKey GetSecurityKey()
