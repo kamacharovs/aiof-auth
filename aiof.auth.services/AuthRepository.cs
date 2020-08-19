@@ -220,6 +220,15 @@ namespace aiof.auth.services
             return new RsaSecurityKey(rsa);
         }
 
+        public ITokenResult ValidateUserToken(string token)
+        {
+            return ValidateToken<User>(token);
+        }
+        public ITokenResult ValidateClientToken(string token)
+        {
+            return ValidateToken<Client>(token);
+        }
+
         public ITokenResult ValidateToken<T>(string token)
             where T : class, IPublicKeyId
         {
@@ -277,18 +286,6 @@ namespace aiof.auth.services
                 throw new AuthFriendlyException(HttpStatusCode.Unauthorized,
                     $"Invalid signature");
             }
-        }
-        public ITokenResult ValidateToken(IValidationRequest request)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(request.AccessToken);
-
-            var givenName = token.Claims.FirstOrDefault(x => x.Type == AiofClaims.GivenName);
-
-            if (!string.IsNullOrWhiteSpace(givenName?.Value))
-                return ValidateToken<User>(request.AccessToken);
-            else
-                return ValidateToken<Client>(request.AccessToken);
         }
 
         public async Task<IRevokeResponse> RevokeTokenAsync(

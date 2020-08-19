@@ -26,9 +26,10 @@ namespace aiof.auth.services
         AlgType GetAlgType<T>()
             where T : class, IPublicKeyId;
         RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType);
+        ITokenResult ValidateUserToken(string token);
+        ITokenResult ValidateClientToken(string token);
         ITokenResult ValidateToken<T>(string token)
-            where T : class, IPublicKeyId;
-        ITokenResult ValidateToken(IValidationRequest request);       
+            where T : class, IPublicKeyId;   
         Task<IRevokeResponse> RevokeTokenAsync(
             int clientId, 
             string token);
