@@ -114,7 +114,7 @@ namespace aiof.auth.data
                 {
                     Id = 1,
                     PublicKey = Guid.Parse("239eebf7-30f1-4f32-b1f1-18622dc2342d"),
-                    Token = "refresh-token-1",
+                    Token = "Q2xpZW50.VOJ6KaAss0+uQHD3e+OieAO2FrY2LsY/jzX6nAsSkdWqY7TGDI+b6lSsoNzvaMOwgu0TvXNPsQ7OlBBkuBYE0g==",
                     ClientId = 1,
                     Created = DateTime.UtcNow,
                     Expires = DateTime.UtcNow.AddDays(1)
@@ -123,7 +123,7 @@ namespace aiof.auth.data
                 {
                     Id = 2,
                     PublicKey = Guid.Parse("c8f80b28-3459-42b8-9c13-30e719a14df7"),
-                    Token = "refresh-token-2",
+                    Token = "Q2xpZW50.9hMijUAPRBnEohxLg3z9VZRSefhuBfZs9NgkR3Bf9/r1WG1mupPNCJcdmgGWLBob7fRMCH4JFBJPiahYfQXYdA==",
                     ClientId = 2,
                     Created = DateTime.UtcNow.AddDays(-2),
                     Expires = DateTime.UtcNow.AddDays(-1),
