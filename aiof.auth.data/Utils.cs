@@ -6,9 +6,6 @@ using System.Security.Cryptography;
 
 using JetBrains.Annotations;
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace aiof.auth.data
 {
     public static class Utils
@@ -63,18 +60,6 @@ namespace aiof.auth.data
             [NotNull] this string value)
         {
             return value.Replace(' ', '-').ToLower();
-        }
-
-        public static PropertyBuilder HasSnakeCaseColumnName(
-            [NotNull] this PropertyBuilder propertyBuilder)
-        {
-            propertyBuilder.Metadata.SetColumnName(
-                propertyBuilder
-                    .Metadata
-                    .Name
-                    .ToSnakeCase());
-
-            return propertyBuilder;
         }
 
         public static T ParseEnum<T>(string value)

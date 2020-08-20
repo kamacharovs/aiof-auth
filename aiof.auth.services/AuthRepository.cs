@@ -67,19 +67,12 @@ namespace aiof.auth.services
                         $"Invalid token request");
             }
         }
-
-        public async Task<IRevokeResponse> RevokeTokenAsync(
-            int clientId,
-            string token)
+     
+        public ITokenResponse RefreshToken(IClient client)
         {
-            var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
-
-            return new RevokeResponse
-            {
-                ClientId = clientRefresh.ClientId,
-                Token = clientRefresh.Token,
-                Revoked = clientRefresh.Revoked
-            };
+            return GenerateJwtToken(
+                client: client,
+                expiresIn: _envConfig.JwtRefreshExpires);
         }
 
         public async Task<ITokenResponse> GenerateJwtTokenAsync(string apiKey)
@@ -100,16 +93,9 @@ namespace aiof.auth.services
             }
         }
 
-        public ITokenResponse RefreshToken(IClient client)
+        public ITokenUserResponse GenerateJwtToken(IUser user)
         {
-            return GenerateJwtToken(
-                client: client,
-                expiresIn: _envConfig.JwtRefreshExpires);
-        }
-
-        public ITokenResponse GenerateJwtToken(IUser user)
-        {
-            return GenerateJwtToken<User>(new Claim[]
+            var token = GenerateJwtToken<User>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
                     new Claim(AiofClaims.GivenName, user.FirstName),
@@ -117,6 +103,14 @@ namespace aiof.auth.services
                     new Claim(AiofClaims.Email, user.Email)
                 },
                 entity: user as IPublicKeyId);
+
+            return new TokenUserResponse
+            {
+                TokenType = token.TokenType,
+                ExpiresIn = token.ExpiresIn,
+                AccessToken = token.AccessToken,
+                User = user as User
+            };
         }
 
         public ITokenResponse GenerateJwtToken(
@@ -226,6 +220,15 @@ namespace aiof.auth.services
             return new RsaSecurityKey(rsa);
         }
 
+        public ITokenResult ValidateUserToken(string token)
+        {
+            return ValidateToken<User>(token);
+        }
+        public ITokenResult ValidateClientToken(string token)
+        {
+            return ValidateToken<Client>(token);
+        }
+
         public ITokenResult ValidateToken<T>(string token)
             where T : class, IPublicKeyId
         {
@@ -252,7 +255,8 @@ namespace aiof.auth.services
                 return new TokenResult
                 {
                     IsAuthenticated = result.Identity.IsAuthenticated,
-                    Status = TokenResultStatus.Valid.ToString()
+                    Status = TokenResultStatus.Valid.ToString(),
+                    EntityType = typeof(T).Name
                 };
                 
                 SecurityKey GetSecurityKey()
@@ -283,17 +287,19 @@ namespace aiof.auth.services
                     $"Invalid signature");
             }
         }
-        public ITokenResult ValidateToken(IValidationRequest request)
+
+        public async Task<IRevokeResponse> RevokeTokenAsync(
+            int clientId,
+            string token)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(request.AccessToken);
+            var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
 
-            var givenName = token.Claims.FirstOrDefault(x => x.Type == AiofClaims.GivenName);
-
-            if (!string.IsNullOrWhiteSpace(givenName?.Value))
-                return ValidateToken<User>(request.AccessToken);
-            else
-                return ValidateToken<Client>(request.AccessToken);
+            return new RevokeResponse
+            {
+                ClientId = clientRefresh.ClientId,
+                Token = clientRefresh.Token,
+                Revoked = clientRefresh.Revoked
+            };
         }
 
         public JsonWebKey GetPublicJsonWebKey()

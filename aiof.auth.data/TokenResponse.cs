@@ -26,6 +26,16 @@ namespace aiof.auth.data
     }
 
     /// <summary>
+    /// Response for authentication for User. This is used to return User's information together with the token information
+    /// </summary>
+    public class TokenUserResponse : TokenResponse, ITokenUserResponse
+    {
+        [JsonPropertyName("user")]
+        [Required]
+        public User User { get; set; }
+    }
+
+    /// <summary>
     /// Response to revoke a Client refresh token
     /// </summary>
     public class RevokeResponse : IRevokeResponse

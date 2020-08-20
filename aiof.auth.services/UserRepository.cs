@@ -64,7 +64,7 @@ namespace aiof.auth.services
         {
             return await base.GetEntityAsync<User>(apiKey);
         }
-        public async Task<IUser> GetUserAsync(
+        public async Task<IUser> GetUserByUsernameAsync(
             string username, 
             bool asNoTracking = true)
         {
@@ -76,7 +76,9 @@ namespace aiof.auth.services
             string username, 
             string password)
         {
-            var user = await GetUserAsync(username, true);
+            var user = await GetUserByUsernameAsync(
+                username, 
+                asNoTracking: true);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -135,7 +137,11 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Created User with Id='{user.Id}' and PublicKey='{user.PublicKey}'");
+            _logger.LogInformation($"Created User with {nameof(User.Id)}='{user.Id}', {nameof(User.PublicKey)}='{user.PublicKey}', " +
+                $"{nameof(User.FirstName)}='{user.FirstName}', " +
+                $"{nameof(User.LastName)}='{user.LastName}', " +
+                $"{nameof(User.Email)}='{user.Email}' and " +
+                $"{nameof(User.Username)}='{user.Username}'");
 
             return user;
         }
@@ -145,7 +151,7 @@ namespace aiof.auth.services
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetUserAsync(
+            var user = await GetUserByUsernameAsync(
                 username, 
                 asNoTracking: false);
 
