@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Text.Json;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,9 +28,11 @@ namespace aiof.auth.core
     public class Startup
     {
         public IConfiguration _configuration { get; }
-        public IWebHostEnvironment _env {get; }
+        public IWebHostEnvironment _env { get; }
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(
+            IConfiguration configuration, 
+            IWebHostEnvironment env)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _env = env ?? throw new ArgumentNullException(nameof(env));
@@ -77,15 +81,19 @@ namespace aiof.auth.core
                     }
                 });
                 x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
-            });            
-            services.AddAuthentication()
+            });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(x =>
             {
                 x.TokenValidationParameters = new TokenValidationParameters()
                 {
+                    ValidateIssuer = true,
                     ValidIssuer = _configuration[Keys.JwtIssuer],
+                    ValidateAudience = true,
                     ValidAudience = _configuration[Keys.JwtAudience],
-                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration[Keys.JwtSecret]))
                 };
             });
 
