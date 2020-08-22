@@ -23,13 +23,8 @@ namespace aiof.auth.services
             string refreshToken = null, 
             int? expiresIn = null)
             where T : class, IPublicKeyId;
-        AlgType GetAlgType<T>()
-            where T : class, IPublicKeyId;
         RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType);
-        ITokenResult ValidateUserToken(string token);
-        ITokenResult ValidateClientToken(string token);
-        ITokenResult ValidateToken<T>(string token)
-            where T : class, IPublicKeyId;   
+        ITokenResult ValidateToken(string token); 
         Task<IRevokeResponse> RevokeTokenAsync(
             int clientId, 
             string token);

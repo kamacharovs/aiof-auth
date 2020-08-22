@@ -47,31 +47,17 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Validate a User JWT
+        /// Validate a JWT token
         /// </summary>
         [AllowAnonymous]
         [HttpPost]
-        [Route("token/user/validate")]
+        [Route("token/validate")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
-        public IActionResult ValidateUserToken([FromBody, Required] ValidationRequest req)
+        public IActionResult ValidateToken([FromBody, Required] ValidationRequest req)
         {
-            return Ok(_repo.ValidateUserToken(req.AccessToken));
-        }
-
-        /// <summary>
-        /// Validate a Client JWT
-        /// </summary>
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("token/client/validate")]
-        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
-        public IActionResult ValidateClientToken([FromBody, Required] ValidationRequest req)
-        {
-            return Ok(_repo.ValidateClientToken(req.AccessToken));
+            return Ok(_repo.ValidateToken(req.AccessToken));
         }
 
         /// <summary>

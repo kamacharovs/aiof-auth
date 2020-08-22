@@ -25,7 +25,6 @@ namespace aiof.auth.services
         private readonly IClientRepository _clientRepo;
         private readonly AbstractValidator<TokenRequest> _tokenRequestValidator;
 
-        private readonly string _key;
         private readonly string _issuer;
         private readonly string _audience;
 
@@ -43,7 +42,6 @@ namespace aiof.auth.services
             _clientRepo = clientRepo ?? throw new ArgumentNullException(nameof(clientRepo));
             _tokenRequestValidator = tokenRequestValidator ?? throw new ArgumentNullException(nameof(tokenRequestValidator));
 
-            _key = _envConfig.JwtSecret ?? throw new ArgumentNullException(nameof(_envConfig.JwtSecret));
             _issuer = _envConfig.JwtIssuer ?? throw new ArgumentNullException(nameof(_envConfig.JwtIssuer));
             _audience = _envConfig.JwtAudience ?? throw new ArgumentNullException(nameof(_envConfig.JwtAudience));
         }
@@ -137,15 +135,14 @@ namespace aiof.auth.services
             where T : class, IPublicKeyId
         {
             var expires = expiresIn ?? _envConfig.JwtExpires;
-            var audience = _audience + $":{typeof(T).Name.ToLowerInvariant()}";
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
-                Audience = audience,
-                SigningCredentials = GetSigningCredentials()
+                Audience = _audience,
+                SigningCredentials = new SigningCredentials(GetRsaKey(RsaKeyType.Private), SecurityAlgorithms.RsaSha256)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
@@ -157,48 +154,6 @@ namespace aiof.auth.services
                 AccessToken = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken
             };
-
-            SigningCredentials GetSigningCredentials()
-            {
-                var algType = GetAlgType<T>();
-
-                switch (algType)
-                {
-                    case AlgType.RS256:
-                        return new SigningCredentials(
-                            GetRsaKey(RsaKeyType.Private),
-                            SecurityAlgorithms.RsaSha256);
-                    case AlgType.HS256:
-                        var key = Encoding.ASCII.GetBytes(_key);
-                        return new SigningCredentials(
-                            new SymmetricSecurityKey(key),
-                            SecurityAlgorithms.HmacSha256Signature);
-                    default:
-                        throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                            $"Invalid or unsupported Alg Type.");
-                }
-            }
-        }
-
-        public AlgType GetAlgType<T>()
-            where T : class, IPublicKeyId
-        {
-            string alg = string.Empty;
-
-            switch (typeof(T).Name)
-            {
-                case nameof(User):
-                    alg = _envConfig.JwtAlgorithmUser;
-                    break;
-                case nameof(Client):
-                    alg = _envConfig.JwtAlgorithmClient;
-                    break;
-                default:
-                    alg = _envConfig.JwtAlgorithmDefault;
-                    break;
-            }
-
-            return alg.ToEnum();
         }
 
         public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)
@@ -221,16 +176,7 @@ namespace aiof.auth.services
             return new RsaSecurityKey(rsa);
         }
 
-        public ITokenResult ValidateUserToken(string token)
-        {
-            return ValidateToken<User>(token);
-        }
-        public ITokenResult ValidateClientToken(string token)
-        {
-            return ValidateToken<Client>(token);
-        }
-        public ITokenResult ValidateToken<T>(string token)
-            where T : class, IPublicKeyId
+        public ITokenResult ValidateToken(string token)
         {
             try
             {
@@ -243,7 +189,7 @@ namespace aiof.auth.services
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = GetSecurityKey()
+                    IssuerSigningKey = GetRsaKey(RsaKeyType.Public)
                 };
 
                 var handler = new JwtSecurityTokenHandler();
@@ -255,26 +201,8 @@ namespace aiof.auth.services
                 return new TokenResult
                 {
                     IsAuthenticated = result.Identity.IsAuthenticated,
-                    Status = TokenResultStatus.Valid.ToString(),
-                    EntityType = typeof(T).Name
+                    Status = TokenResultStatus.Valid.ToString()
                 };
-                
-                SecurityKey GetSecurityKey()
-                {
-                    var algType = GetAlgType<T>();
-
-                    switch (algType)
-                    {
-                        case AlgType.RS256:
-                            return GetRsaKey(RsaKeyType.Public);
-                        case AlgType.HS256:
-                            var key = Encoding.ASCII.GetBytes(_key);
-                            return new SymmetricSecurityKey(key);
-                        default:
-                            throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                                $"Invalid or unsupported Alg Type");
-                    }
-                }
             }
             catch (SecurityTokenExpiredException)
             {

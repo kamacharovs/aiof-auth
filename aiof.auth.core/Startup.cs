@@ -20,6 +20,7 @@ using FluentValidation;
 
 using aiof.auth.data;
 using aiof.auth.services;
+using System.Security.Cryptography;
 
 namespace aiof.auth.core
 {
@@ -85,15 +86,18 @@ namespace aiof.auth.core
                 Keys.Bearer,
                 x =>
                 {
+                    var rsa = RSA.Create();
+                    rsa.FromXmlString(_config[Keys.JwtPublicKey]);
+
                     x.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
                         ValidIssuer = _config[Keys.JwtIssuer],
                         ValidateAudience = true,
-                        ValidAudience = $"{_config[Keys.JwtAudience]}:{nameof(User).ToLowerInvariant()}",
+                        ValidAudience = _config[Keys.JwtAudience],
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
-                        IssuerSigningKey = new EnvConfiguration(_config, null).GetSecurityKey<User>()
+                        IssuerSigningKey = new RsaSecurityKey(rsa)
                     };
                 });
 
