@@ -90,7 +90,7 @@ namespace aiof.auth.core
                         ValidateIssuer = true,
                         ValidIssuer = _config[Keys.JwtIssuer],
                         ValidateAudience = true,
-                        ValidAudience = _config[Keys.JwtAudience],
+                        ValidAudience = $"{_config[Keys.JwtAudience]}:{nameof(User).ToLowerInvariant()}",
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
                         IssuerSigningKey = new EnvConfiguration(_config, null).GetSecurityKey<User>()
