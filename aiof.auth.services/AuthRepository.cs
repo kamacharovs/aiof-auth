@@ -109,7 +109,7 @@ namespace aiof.auth.services
                 TokenType = token.TokenType,
                 ExpiresIn = token.ExpiresIn,
                 AccessToken = token.AccessToken,
-                User = user as User
+                User = user
             };
         }
 
@@ -137,13 +137,14 @@ namespace aiof.auth.services
             where T : class, IPublicKeyId
         {
             var expires = expiresIn ?? _envConfig.JwtExpires;
+            var audience = _audience + $":{typeof(T).Name.ToLowerInvariant()}";
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
-                Audience = _audience,
+                Audience = audience,
                 SigningCredentials = GetSigningCredentials()
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -228,7 +229,6 @@ namespace aiof.auth.services
         {
             return ValidateToken<Client>(token);
         }
-
         public ITokenResult ValidateToken<T>(string token)
             where T : class, IPublicKeyId
         {
