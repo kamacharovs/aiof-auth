@@ -6,6 +6,7 @@ using System.Text.Json;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Caching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
 
 using AutoMapper;
 using FluentValidation;
@@ -76,6 +78,16 @@ namespace aiof.auth.core
                     }
                 });
                 x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+            });            
+            services.AddAuthentication()
+                .AddJwtBearer(x =>
+            {
+                x.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = _configuration[Keys.JwtIssuer],
+                    ValidAudience = _configuration[Keys.JwtAudience],
+                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                };
             });
 
             services.AddControllers();
@@ -104,6 +116,7 @@ namespace aiof.auth.core
             app.UseSwagger();
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(e =>
             {
