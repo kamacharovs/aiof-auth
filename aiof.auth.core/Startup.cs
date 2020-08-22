@@ -54,7 +54,7 @@ namespace aiof.auth.core
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
                 services.AddDbContext<AuthContext>(o => o.UseNpgsql(_config[Keys.PostgreSQL]));
-
+            
             services.AddLogging();
             services.AddHealthChecks();
             services.AddFeatureManagement();
@@ -93,7 +93,7 @@ namespace aiof.auth.core
                         ValidAudience = _config[Keys.JwtAudience],
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config[Keys.JwtSecret]))
+                        IssuerSigningKey = new EnvConfiguration(_config, null).GetSecurityKey<User>()
                     };
                 });
 

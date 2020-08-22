@@ -17,7 +17,7 @@ namespace aiof.auth.data
             IFeatureManager featureManager)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            _featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
+            _featureManager = featureManager;
         }
 
         public int MemCacheTtl => int.Parse(_config[Keys.MemCacheTtl] ?? throw new KeyNotFoundException());
