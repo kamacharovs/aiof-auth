@@ -60,6 +60,26 @@ namespace aiof.auth.core
             services.AddHealthChecks();
             services.AddFeatureManagement();
             services.AddMemoryCache();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(
+                Keys.Bearer,
+                x =>
+                {
+                    var rsa = RSA.Create();
+                    rsa.FromXmlString(_config[Keys.JwtPublicKey]);
+
+                    x.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = _config[Keys.JwtIssuer],
+                        ValidateAudience = true,
+                        ValidAudience = _config[Keys.JwtAudience],
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new RsaSecurityKey(rsa)
+                    };
+                });
+
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc(_config[Keys.OpenApiVersion], new OpenApiInfo
@@ -81,25 +101,6 @@ namespace aiof.auth.core
                 });
                 x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
             });
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(
-                Keys.Bearer,
-                x =>
-                {
-                    var rsa = RSA.Create();
-                    rsa.FromXmlString(_config[Keys.JwtPublicKey]);
-
-                    x.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = _config[Keys.JwtIssuer],
-                        ValidateAudience = true,
-                        ValidAudience = _config[Keys.JwtAudience],
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new RsaSecurityKey(rsa)
-                    };
-                });
 
             services.AddControllers();
             services.AddMvcCore()
