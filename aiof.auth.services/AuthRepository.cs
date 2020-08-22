@@ -137,14 +137,13 @@ namespace aiof.auth.services
             where T : class, IPublicKeyId
         {
             var expires = expiresIn ?? _envConfig.JwtExpires;
-            var audience = _audience + $":{typeof(T).Name.ToLowerInvariant()}";
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
-                Audience = audience,
+                Audience = _audience,
                 SigningCredentials = GetSigningCredentials()
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

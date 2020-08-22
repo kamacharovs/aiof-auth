@@ -13,6 +13,7 @@ namespace aiof.auth.data
         public const string PostgreSQL = nameof(PostgreSQL);
 
         public const string Jwt = nameof(Jwt);
+        public const string Bearer = nameof(Bearer);
         public const string Expires = nameof(Expires);
         public const string RefreshExpires = nameof(RefreshExpires);
         public const string Type = nameof(Type);
