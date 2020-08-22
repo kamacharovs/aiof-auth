@@ -33,7 +33,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Generate a JWT for User, Client
+        /// Generate a JWT
         /// </summary>
         [AllowAnonymous]
         [HttpPost]
@@ -47,7 +47,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Validate a JWT token
+        /// Validate a JWT
         /// </summary>
         [AllowAnonymous]
         [HttpPost]
@@ -78,11 +78,13 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Revoke an existing Client refresh token
         /// </summary>
+        [Authorize]
         [HttpPut]
         [Route("token/revoke")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody, Required] RevokeRequest request)
         {
             return Ok(await _repo.RevokeTokenAsync(request.ClientId, request.Token));

@@ -22,6 +22,7 @@ namespace aiof.auth.core.Controllers
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class ClientController : ControllerBase
     {
         private readonly IClientRepository _repo;
