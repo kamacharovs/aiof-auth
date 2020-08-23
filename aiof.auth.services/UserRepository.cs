@@ -115,7 +115,9 @@ namespace aiof.auth.services
             int userId,
             bool revoked = false)
         {
-            return (await GetRefreshTokensAsync(userId, revoked)).First();
+            return (await GetRefreshTokensAsync(userId, revoked))
+                ?.Where(x => DateTime.UtcNow < x.Expires)
+                ?.First();
         }
         public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(
             int userId,
@@ -131,6 +133,11 @@ namespace aiof.auth.services
             return revoked
                 ? refreshTokens.Where(x => x.Revoked != null)
                 : refreshTokens;
+        }
+        public async Task<IUserRefreshToken> GetOrAddRefreshTokenAsync(int userId)
+        {
+            return await GetRefreshTokenAsync(userId)
+                ?? await AddRefreshTokenAsync(userId);
         }
 
         public async Task<bool> DoesUsernameExistAsync(string username)
@@ -168,14 +175,16 @@ namespace aiof.auth.services
                 $"{nameof(User.Email)}='{user.Email}' and " +
                 $"{nameof(User.Username)}='{user.Username}'");
 
+            await GetOrAddRefreshTokenAsync(user.Id);
+
             return user;
         }
 
-        public async Task<IUserRefreshToken> AddRefreshTokenAsync(IUser user)
+        public async Task<IUserRefreshToken> AddRefreshTokenAsync(int userId)
         {
             var refreshToken = new UserRefreshToken
             {
-                UserId = user.Id,
+                UserId = userId,
                 Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtRefreshExpires)
             };
 
@@ -183,6 +192,8 @@ namespace aiof.auth.services
                 .AddAsync(refreshToken);
 
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Created {nameof(UserRefreshToken)} for {nameof(User)} with UserId='{userId}'");
 
             return refreshToken;
         }

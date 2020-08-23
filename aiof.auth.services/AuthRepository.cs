@@ -54,7 +54,10 @@ namespace aiof.auth.services
             {
                 case TokenType.User:
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
-                    return GenerateJwtToken(user);
+                    var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
+                    return GenerateJwtToken(
+                        user,
+                        refreshToken.Token);
                 case TokenType.ApiKey:
                     return await GenerateJwtTokenAsync(request.ApiKey);
                 case TokenType.Refresh:
@@ -79,7 +82,10 @@ namespace aiof.auth.services
             {
                 case nameof(User):
                     var user = await _userRepo.GetUserAsync(apiKey);
-                    return GenerateJwtToken(user);
+                    var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
+                    return GenerateJwtToken(
+                        user,
+                        refreshToken.Token);
                 case nameof(Client):
                     var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(apiKey);
                     return GenerateJwtToken(
@@ -91,19 +97,23 @@ namespace aiof.auth.services
             }
         }
 
-        public ITokenUserResponse GenerateJwtToken(IUser user)
+        public ITokenUserResponse GenerateJwtToken(
+            IUser user,
+            string refreshToken = null)
         {
             var token = GenerateJwtToken<User>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString())
                 },
-                entity: user as IPublicKeyId);
+                entity: user as IPublicKeyId,
+                refreshToken: refreshToken);
 
             return new TokenUserResponse
             {
                 TokenType = token.TokenType,
                 ExpiresIn = token.ExpiresIn,
                 AccessToken = token.AccessToken,
+                RefreshToken = token.RefreshToken,
                 User = user
             };
         }
