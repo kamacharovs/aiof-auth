@@ -47,11 +47,9 @@ namespace aiof.auth.services
         {
             return asNoTracking
                 ? _context.Users
-                    .Include(x => x.RefreshTokens)
                     .AsNoTracking()
                     .AsQueryable()
                 : _context.Users
-                    .Include(x => x.RefreshTokens)
                     .AsQueryable();
         }
 
@@ -73,7 +71,7 @@ namespace aiof.auth.services
         {
             return await GetUsersQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Username == username)
-                ?? throw new AuthNotFoundException($"User with Username='{username}' was not found.");
+                ?? throw new AuthNotFoundException($"User with Username='{username}' was not found");
         }
         public async Task<IUser> GetUserAsync(
             string username, 
@@ -111,6 +109,14 @@ namespace aiof.auth.services
                 userDto.Username);
         }
 
+        public async Task<IUser> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.Users
+                .Include(x => x.RefreshTokens)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken))
+                ?? throw new AuthNotFoundException($"{nameof(User)} with RefreshToken='{refreshToken}' was not found");
+        }
         public async Task<IUserRefreshToken> GetRefreshTokenAsync(
             int userId,
             bool revoked = false)

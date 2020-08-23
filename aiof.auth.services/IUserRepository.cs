@@ -23,6 +23,7 @@ namespace aiof.auth.services
             string email,
             string username);
         Task<IUser> GetUserAsync(UserDto userDto);
+        Task<IUser> GetUserByRefreshTokenAsync(string refreshToken);
         Task<IUserRefreshToken> GetRefreshTokenAsync(
             int userId,
             bool revoked = false);
