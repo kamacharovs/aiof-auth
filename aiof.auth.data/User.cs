@@ -49,6 +49,9 @@ namespace aiof.auth.data
 
         [Required]
         public DateTime Created { get; set; } = DateTime.UtcNow;
+
+        [JsonIgnore]
+        public UserRefreshToken RefreshToken { get; set; }
     }
 
     public class UserDto

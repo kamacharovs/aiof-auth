@@ -48,5 +48,8 @@ namespace aiof.auth.data
 
         [Required]
         DateTime Created { get; set; }
+
+        [JsonIgnore]
+        UserRefreshToken RefreshToken { get; set; }
     }
 }

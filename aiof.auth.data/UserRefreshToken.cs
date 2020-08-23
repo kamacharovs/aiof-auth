@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
-    class UserRefreshToken : 
+    public class UserRefreshToken : 
         IPublicKeyId
     {
         [JsonIgnore]
@@ -17,10 +17,18 @@ namespace aiof.auth.data
         [Required]
         public Guid PublicKey { get; set; } = Guid.NewGuid();
 
+        [Required]
         public string Token { get; set; } = Utils.GenerateApiKey<User>(64);
+
+        [Required]
         public int UserId { get; set; }
+
+        [Required]
         public DateTime Created { get; set; } = DateTime.UtcNow;
+
+        [Required]
         public DateTime Expires { get; set; }
+
         public DateTime? Revoked { get; set; }
     }
 }
