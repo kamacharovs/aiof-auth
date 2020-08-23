@@ -331,6 +331,26 @@ namespace aiof.auth.data
             return toReturn;
         }
 
+        public IEnumerable<object[]> GetFakeUserRefreshTokensData(
+            bool userId = false)
+        {
+            var refreshTokens = GetFakeUserRefreshTokens()
+                .ToArray();
+
+            var toReturn = new List<object[]>();
+
+            if (userId)
+            {
+                foreach (var rtUserId in refreshTokens.Select(x => x.UserId).Distinct())
+                    toReturn.Add(new object[]
+                    {
+                        rtUserId
+                    });
+            }
+
+            return toReturn;
+        }
+
         public IEnumerable<object[]> GetFakeClientRefreshTokensData(
             bool clientId = false,
             bool token = false,

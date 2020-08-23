@@ -141,6 +141,13 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> UserRefreshTokensUserId()
+        {
+            return _Fake.GetFakeUserRefreshTokensData(
+                userId: true
+            );
+        }
+
         public static IEnumerable<object[]> ClientRefreshClientIdToken()
         {
             return _Fake.GetFakeClientRefreshTokensData(
