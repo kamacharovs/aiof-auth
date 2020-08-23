@@ -95,10 +95,7 @@ namespace aiof.auth.services
         {
             var token = GenerateJwtToken<User>(new Claim[]
                 {
-                    new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
-                    new Claim(AiofClaims.GivenName, user.FirstName),
-                    new Claim(AiofClaims.FamilyName, user.LastName),
-                    new Claim(AiofClaims.Email, user.Email)
+                    new Claim(AiofClaims.PublicKey, user.PublicKey.ToString())
                 },
                 entity: user as IPublicKeyId);
 
@@ -118,9 +115,7 @@ namespace aiof.auth.services
         {
             return GenerateJwtToken<Client>(new Claim[]
                 {
-                    new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
-                    new Claim(AiofClaims.Name, client.Name),
-                    new Claim(AiofClaims.Slug, client.Slug)
+                    new Claim(AiofClaims.PublicKey, client.PublicKey.ToString())
                 },
                 entity: client as IPublicKeyId,
                 refreshToken: refreshToken,
