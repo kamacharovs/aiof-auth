@@ -173,7 +173,7 @@ namespace aiof.auth.services
                 $"{nameof(User.Email)}='{user.Email}' and " +
                 $"{nameof(User.Username)}='{user.Username}'");
 
-            await GetOrAddRefreshTokenAsync(user.Id);
+            await AddRefreshTokenAsync(user.Id);
 
             return user;
         }
