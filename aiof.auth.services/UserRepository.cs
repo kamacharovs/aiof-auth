@@ -111,19 +111,26 @@ namespace aiof.auth.services
                 userDto.Username);
         }
 
-        public async Task<IUserRefreshToken> GetRefreshTokenAsync(int userId)
+        public async Task<IUserRefreshToken> GetRefreshTokenAsync(
+            int userId,
+            bool revoked = false)
         {
-            return (await GetRefreshTokensAsync(userId))
-                .First();
+            return (await GetRefreshTokensAsync(userId, revoked)).First();
         }
-        public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId)
+        public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(
+            int userId,
+            bool revoked = false)
         {
-            return await _context.UserRefreshTokens
+            var refreshTokens = await _context.UserRefreshTokens
                 .AsNoTracking()
                 .AsQueryable()
                 .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.Expires)
                 .ToListAsync();
+
+            return revoked
+                ? refreshTokens.Where(x => x.Revoked != null)
+                : refreshTokens;
         }
 
         public async Task<bool> DoesUsernameExistAsync(string username)

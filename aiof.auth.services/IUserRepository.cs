@@ -23,8 +23,12 @@ namespace aiof.auth.services
             string email,
             string username);
         Task<IUser> GetUserAsync(UserDto userDto);
-        Task<IUserRefreshToken> GetRefreshTokenAsync(int userId);
-        Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId);
+        Task<IUserRefreshToken> GetRefreshTokenAsync(
+            int userId,
+            bool revoked = false);
+        Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(
+            int userId,
+            bool revoked = false);
         Task<bool> DoesUsernameExistAsync(string username);
         Task<IUser> AddUserAsync(UserDto userDto);
         Task<IUser> UpdatePasswordAsync(

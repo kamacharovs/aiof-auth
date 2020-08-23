@@ -73,18 +73,31 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetUserAsync(username, password));
         }
 
+        /// <summary>
+        /// Get a User first non-revoked refresh token
+        /// </summary>
         [HttpGet]
         [Route("{id}/refresh/token")]
-        public async Task<IActionResult> GetUserRefreshTokenAsync([FromRoute, Required] int id)
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserRefreshTokenAsync(
+            [FromRoute, Required] int id,
+            [FromQuery] bool revoked)
         {
-            return Ok(await _repo.GetRefreshTokenAsync(id));
+            return Ok(await _repo.GetRefreshTokenAsync(id, revoked));
         }
 
+        /// <summary>
+        /// Get a User refresh tokens
+        /// </summary>
         [HttpGet]
         [Route("{id}/refresh/tokens")]
-        public async Task<IActionResult> GetUserRefreshTokensAsync([FromRoute, Required] int id)
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserRefreshTokensAsync(
+            [FromRoute, Required] int id,
+            [FromQuery] bool revoked)
         {
-            return Ok(await _repo.GetRefreshTokensAsync(id));
+            return Ok(await _repo.GetRefreshTokensAsync(id, revoked));
         }
 
         /// <summary>
