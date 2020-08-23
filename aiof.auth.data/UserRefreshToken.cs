@@ -20,6 +20,7 @@ namespace aiof.auth.data
         [Required]
         public string Token { get; set; } = Utils.GenerateApiKey<User>(64);
 
+        [JsonIgnore]
         [Required]
         public int UserId { get; set; }
 

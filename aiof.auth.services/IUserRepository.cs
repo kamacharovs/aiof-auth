@@ -13,7 +13,9 @@ namespace aiof.auth.services
         Task<IUser> GetUserByUsernameAsync(
             string username, 
             bool asNoTracking = true);
-        Task<IUser> GetUserAsync(string username, string password);
+        Task<IUser> GetUserAsync(
+            string username, 
+            string password);
         Task<IUser> GetUserAsync(
             string firstName,
             string lastName,

@@ -21,6 +21,9 @@ namespace aiof.auth.data
             _context.Clients
                 .AddRange(GetFakeClients());
 
+            _context.UserRefreshTokens
+                .AddRange(GetFakeUserRefreshTokens());
+
             _context.ClientRefreshTokens
                 .AddRange(GetFakeClientRefreshTokens());
 
@@ -102,6 +105,22 @@ namespace aiof.auth.data
                     Enabled = false,
                     PrimaryApiKey = "Q2xpZW50.Dpkt/TSLB+nlVyQwi/pSUhkwEglerntGUym6h+3DM/k=",
                     SecondaryApiKey = "Q2xpZW50.5/fRn0AL2RYPHcrT73HCSIuIYm2Iew5+1v9nvtXrtE4="
+                }
+            };
+        }
+
+        public IEnumerable<UserRefreshToken> GetFakeUserRefreshTokens()
+        {
+            return new List<UserRefreshToken>
+            {
+                new UserRefreshToken
+                {
+                    Id = 1,
+                    PublicKey = Guid.Parse("8e483815-1f5a-4ae3-af15-b91cc9371878"),
+                    Token = "VXNlcg==.dx9lkJq6WfEA+8oNoikmI4Mk3N/CeGY5hptngJSBmILXp8klx2A1vlzcWpieYa5xiUqimrTYAUrNTI0eQr84gQ==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow,
+                    Expires = DateTime.UtcNow.AddDays(1)
                 }
             };
         }

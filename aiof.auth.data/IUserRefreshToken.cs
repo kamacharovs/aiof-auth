@@ -19,6 +19,7 @@ namespace aiof.auth.data
         [Required]
         string Token { get; set; }
 
+        [JsonIgnore]
         [Required]
         int UserId { get; set; }
 

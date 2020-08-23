@@ -46,12 +46,11 @@ namespace aiof.auth.services
         {
             return asNoTracking
                 ? _context.Users
-                    .Include(x => x.RefreshTokens
-                        .OrderByDescending(x => x.Expires)
-                        .Take(1))
+                    .Include(x => x.RefreshTokens)
                     .AsNoTracking()
                     .AsQueryable()
                 : _context.Users
+                    .Include(x => x.RefreshTokens)
                     .AsQueryable();
         }
 
