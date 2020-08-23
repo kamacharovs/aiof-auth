@@ -128,7 +128,7 @@ namespace aiof.auth.services
             return await _context.UserRefreshTokens
                 .AsNoTracking()
                 .AsQueryable()
-                .Where(x => x.UserId == userId && x.Revoked != null)
+                .Where(x => x.UserId == userId && x.Revoked == null)
                 .OrderByDescending(x => x.Expires)
                 .ToListAsync();
         }
