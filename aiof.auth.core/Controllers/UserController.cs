@@ -80,11 +80,9 @@ namespace aiof.auth.core.Controllers
         [Route("{id}/refresh/token")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserRefreshTokenAsync(
-            [FromRoute, Required] int id,
-            [FromQuery] bool revoked)
+        public async Task<IActionResult> GetUserRefreshTokenAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.GetRefreshTokenAsync(id, revoked));
+            return Ok(await _repo.GetRefreshTokenAsync(id));
         }
 
         /// <summary>
@@ -93,11 +91,9 @@ namespace aiof.auth.core.Controllers
         [HttpGet]
         [Route("{id}/refresh/tokens")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserRefreshTokensAsync(
-            [FromRoute, Required] int id,
-            [FromQuery] bool revoked)
+        public async Task<IActionResult> GetUserRefreshTokensAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.GetRefreshTokensAsync(id, revoked));
+            return Ok(await _repo.GetRefreshTokensAsync(id));
         }
 
         /// <summary>

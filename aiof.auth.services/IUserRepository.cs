@@ -24,12 +24,8 @@ namespace aiof.auth.services
             string username);
         Task<IUser> GetUserAsync(UserDto userDto);
         Task<IUser> GetUserByRefreshTokenAsync(string refreshToken);
-        Task<IUserRefreshToken> GetRefreshTokenAsync(
-            int userId,
-            bool revoked = false);
-        Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(
-            int userId,
-            bool revoked = false);
+        Task<IUserRefreshToken> GetRefreshTokenAsync(int userId);
+        Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId);
         Task<IUserRefreshToken> GetOrAddRefreshTokenAsync(int userId);
         Task<bool> DoesUsernameExistAsync(string username);
         Task<IUser> AddUserAsync(UserDto userDto);

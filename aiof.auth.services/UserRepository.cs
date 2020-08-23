@@ -117,28 +117,20 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken))
                 ?? throw new AuthNotFoundException($"{nameof(User)} with RefreshToken='{refreshToken}' was not found");
         }
-        public async Task<IUserRefreshToken> GetRefreshTokenAsync(
-            int userId,
-            bool revoked = false)
+        public async Task<IUserRefreshToken> GetRefreshTokenAsync(int userId)
         {
-            return (await GetRefreshTokensAsync(userId, revoked))
+            return (await GetRefreshTokensAsync(userId))
                 ?.Where(x => DateTime.UtcNow < x.Expires)
-                ?.First();
+                ?.FirstOrDefault();
         }
-        public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(
-            int userId,
-            bool revoked = false)
+        public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId)
         {
-            var refreshTokens = await _context.UserRefreshTokens
+            return await _context.UserRefreshTokens
                 .AsNoTracking()
                 .AsQueryable()
-                .Where(x => x.UserId == userId)
+                .Where(x => x.UserId == userId && x.Revoked != null)
                 .OrderByDescending(x => x.Expires)
                 .ToListAsync();
-
-            return revoked
-                ? refreshTokens.Where(x => x.Revoked != null)
-                : refreshTokens;
         }
         public async Task<IUserRefreshToken> GetOrAddRefreshTokenAsync(int userId)
         {
