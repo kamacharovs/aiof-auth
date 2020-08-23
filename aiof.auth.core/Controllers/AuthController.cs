@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.FeatureManagement.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -32,8 +33,9 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Generate a JWT for User, Client
+        /// Generate a JWT
         /// </summary>
+        [AllowAnonymous]
         [HttpPost]
         [Route("token")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
@@ -45,35 +47,24 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Validate a User JWT
+        /// Validate a JWT
         /// </summary>
+        [AllowAnonymous]
         [HttpPost]
-        [Route("token/user/validate")]
+        [Route("token/validate")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
-        public IActionResult ValidateUserToken([FromBody, Required] ValidationRequest req)
+        public IActionResult ValidateToken([FromBody, Required] ValidationRequest req)
         {
-            return Ok(_repo.ValidateUserToken(req.AccessToken));
-        }
-
-        /// <summary>
-        /// Validate a Client JWT
-        /// </summary>
-        [HttpPost]
-        [Route("token/client/validate")]
-        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
-        public IActionResult ValidateClientToken([FromBody, Required] ValidationRequest req)
-        {
-            return Ok(_repo.ValidateClientToken(req.AccessToken));
+            return Ok(_repo.ValidateToken(req.AccessToken));
         }
 
         /// <summary>
         /// Generate a refresh JWT for Client
         /// </summary>
         [FeatureGate(FeatureFlags.RefreshToken)]
+        [AllowAnonymous]
         [HttpPost]
         [Route("token/refresh")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
@@ -87,11 +78,13 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Revoke an existing Client refresh token
         /// </summary>
+        [Authorize]
         [HttpPut]
         [Route("token/revoke")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody, Required] RevokeRequest request)
         {
             return Ok(await _repo.RevokeTokenAsync(request.ClientId, request.Token));
@@ -100,6 +93,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Get all available claims for JWT
         /// </summary>
+        [AllowAnonymous]
         [HttpGet]
         [Route("claims")]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
@@ -112,6 +106,7 @@ namespace aiof.auth.core.Controllers
         /// Get JWKS for JWT creation
         /// </summary>
         [FeatureGate(FeatureFlags.OpenId)]
+        [AllowAnonymous]
         [HttpGet]
         [Route("jwks")]
         [ProducesResponseType(typeof(JsonWebKey), StatusCodes.Status200OK)]
@@ -124,6 +119,7 @@ namespace aiof.auth.core.Controllers
         /// Get OpenId Configuration for JWT creation
         /// </summary>
         [FeatureGate(FeatureFlags.OpenId)]
+        [AllowAnonymous]
         [HttpGet]
         [Route(".well-known/openid-configuration")]
         [ProducesResponseType(typeof(IOpenIdConfig), StatusCodes.Status200OK)]

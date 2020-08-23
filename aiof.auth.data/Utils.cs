@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 
 namespace aiof.auth.data
 {
-    public static class Utils
+    public static partial class Utils
     {
         public static string GenerateApiKey<T>(int length = 32)
             where T : class

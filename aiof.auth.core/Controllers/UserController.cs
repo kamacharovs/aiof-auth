@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -15,11 +16,13 @@ namespace aiof.auth.core.Controllers
     /// <summary>
     /// Everything aiof user
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("user")]
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;

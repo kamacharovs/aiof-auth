@@ -32,7 +32,7 @@ namespace aiof.auth.data
     {
         [JsonPropertyName("user")]
         [Required]
-        User User { get; set; }
+        IUser User { get; set; }
     }
 
     /// <summary>

@@ -91,28 +91,6 @@ namespace aiof.auth.tests
         }
 
         [Fact]
-        public void GetAlgType_User_Valid()
-        {
-            var algType = _repo.GetAlgType<User>();
-
-            Assert.Equal(AlgType.HS256, algType);
-        }
-        [Fact]
-        public void GetAlgType_Client_Valid()
-        {
-            var algType = _repo.GetAlgType<Client>();
-
-            Assert.Equal(AlgType.RS256, algType);
-        }   
-        [Fact]
-        public void GetAlgType_Default_Valid()
-        {
-            var algType = _repo.GetAlgType<ClientRefreshToken>();
-
-            Assert.Equal(AlgType.RS256, algType);
-        }
-
-        [Fact]
         public void GetRsaKey_Public()
         {
             var rsaSecKey = _repo.GetRsaKey(RsaKeyType.Public);
@@ -128,7 +106,7 @@ namespace aiof.auth.tests
             var user = await _userRepo.GetUserAsync(id);
 
             var token = _repo.GenerateJwtToken(user);
-            var tokenValidation = _repo.ValidateToken<User>(token.AccessToken);
+            var tokenValidation = _repo.ValidateToken(token.AccessToken);
 
             Assert.NotNull(tokenValidation);
             Assert.True(tokenValidation.IsAuthenticated);
@@ -156,7 +134,7 @@ namespace aiof.auth.tests
             var tokenReq = new TokenRequest { ApiKey = apiKey };
             var token = await _repo.GetTokenAsync(tokenReq);
             var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
-            var validation = _repo.ValidateClientToken(validationReq.AccessToken);
+            var validation = _repo.ValidateToken(validationReq.AccessToken);
 
             Assert.NotNull(validation);
             Assert.True(validation.IsAuthenticated);
@@ -169,7 +147,7 @@ namespace aiof.auth.tests
             var tokenReq = new TokenRequest { Username = username, Password = password };
             var token = await _repo.GetTokenAsync(tokenReq);
             var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
-            var validation = _repo.ValidateUserToken(validationReq.AccessToken);
+            var validation = _repo.ValidateToken(validationReq.AccessToken);
 
             Assert.NotNull(validation);
             Assert.True(validation.IsAuthenticated);
@@ -178,8 +156,7 @@ namespace aiof.auth.tests
         [Fact]
         public void ValidateToken_Expired()
         {
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateClientToken(Helper.ExpiredJwtToken));
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateUserToken(Helper.ExpiredJwtToken));
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(Helper.ExpiredJwtToken));
         }
         [Fact]
         public void ValidateClientToken_Expired_ThrowsUnauthorized()
@@ -187,8 +164,7 @@ namespace aiof.auth.tests
             var token = Helper.ExpiredJwtToken;
             var validationReq = new ValidationRequest { AccessToken = token };
 
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateClientToken(validationReq.AccessToken));
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateUserToken(validationReq.AccessToken));
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(validationReq.AccessToken));
         }
 
         [Fact]
