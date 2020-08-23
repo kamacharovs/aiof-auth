@@ -37,6 +37,11 @@ namespace aiof.auth.data
                 e.Property(x => x.PrimaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+
+                e.HasMany(x => x.RefreshTokens)
+                    .WithOne()
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Client>(e =>
