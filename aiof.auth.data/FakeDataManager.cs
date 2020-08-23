@@ -349,7 +349,17 @@ namespace aiof.auth.data
 
             var toReturn = new List<object[]>();
 
-            if (userId)
+            if (userId
+                && refreshToken)
+            {
+                foreach (var rt in refreshTokens.Where(x => x.Revoked == null))
+                    toReturn.Add(new object[]
+                    {
+                        rt.UserId,
+                        rt.Token
+                    });
+            }
+            else if (userId)
             {
                 foreach (var rtUserId in refreshTokens.Select(x => x.UserId).Distinct())
                     toReturn.Add(new object[]

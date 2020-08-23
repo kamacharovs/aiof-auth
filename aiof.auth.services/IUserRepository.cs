@@ -33,6 +33,9 @@ namespace aiof.auth.services
             string username, 
             string oldPassword, 
             string newPassword);
+        Task<IUserRefreshToken> RevokeTokenAsync(
+            int userId,
+            string token);
         string Hash(string password);
         bool Check(string hash, string password);
     }
