@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Linq;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -108,6 +109,21 @@ namespace aiof.auth.services
                 userDto.LastName,
                 userDto.Email,
                 userDto.Username);
+        }
+
+        public async Task<IUserRefreshToken> GetRefreshTokenAsync(int userId)
+        {
+            return (await GetRefreshTokensAsync(userId))
+                .First();
+        }
+        public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId)
+        {
+            return await _context.UserRefreshTokens
+                .AsNoTracking()
+                .AsQueryable()
+                .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.Expires)
+                .ToListAsync();
         }
 
         public async Task<bool> DoesUsernameExistAsync(string username)

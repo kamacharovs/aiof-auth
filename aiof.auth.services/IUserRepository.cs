@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using aiof.auth.data;
@@ -22,6 +23,8 @@ namespace aiof.auth.services
             string email,
             string username);
         Task<IUser> GetUserAsync(UserDto userDto);
+        Task<IUserRefreshToken> GetRefreshTokenAsync(int userId);
+        Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId);
         Task<bool> DoesUsernameExistAsync(string username);
         Task<IUser> AddUserAsync(UserDto userDto);
         Task<IUser> UpdatePasswordAsync(

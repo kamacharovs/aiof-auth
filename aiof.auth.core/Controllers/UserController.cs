@@ -73,6 +73,20 @@ namespace aiof.auth.core.Controllers
             return Ok(await _repo.GetUserAsync(username, password));
         }
 
+        [HttpGet]
+        [Route("{id}/refresh/token")]
+        public async Task<IActionResult> GetUserRefreshTokenAsync([FromRoute, Required] int id)
+        {
+            return Ok(await _repo.GetRefreshTokenAsync(id));
+        }
+
+        [HttpGet]
+        [Route("{id}/refresh/tokens")]
+        public async Task<IActionResult> GetUserRefreshTokensAsync([FromRoute, Required] int id)
+        {
+            return Ok(await _repo.GetRefreshTokensAsync(id));
+        }
+
         /// <summary>
         /// Create a User
         /// </summary>

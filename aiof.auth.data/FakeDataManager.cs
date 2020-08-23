@@ -121,6 +121,16 @@ namespace aiof.auth.data
                     UserId = 1,
                     Created = DateTime.UtcNow,
                     Expires = DateTime.UtcNow.AddDays(1)
+                },
+                new UserRefreshToken
+                {
+                    Id = 2,
+                    PublicKey = Guid.Parse("5a1f029f-d692-4148-b6a2-c6a072a71cdf"),
+                    Token = "VXNlcg==.nBpRyGz2l+KtVOJO/Lr74MZs1IVh/Cl7hfE7+OO8V59IZlF+weU6BJiKz1L+sFLROZNyHi76ZPz7ZXOwYnsdXg==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow.AddDays(-2),
+                    Expires = DateTime.UtcNow.AddDays(-1),
+                    Revoked = DateTime.UtcNow.AddDays(-2)
                 }
             };
         }
