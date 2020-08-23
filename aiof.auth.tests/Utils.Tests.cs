@@ -67,8 +67,8 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UsersApiKeys), MemberType = typeof(Helper))]
         public void DecodeApiKey_Users_ApiKey_Valid(string primaryApiKey, string secondaryApiKey)
         {
-            var user1 = primaryApiKey.DecodeApiKey();
-            var user2 = secondaryApiKey.DecodeApiKey();
+            var user1 = primaryApiKey.DecodeKey();
+            var user2 = secondaryApiKey.DecodeKey();
 
             Assert.Equal(nameof(User), user1);
             Assert.Equal(nameof(User), user2);

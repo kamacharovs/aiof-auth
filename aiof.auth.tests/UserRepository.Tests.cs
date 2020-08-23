@@ -75,6 +75,22 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [MemberData(nameof(Helper.UserRefreshTokensToken), MemberType = typeof(Helper))]
+        public async Task GetUserAsync_ByRefreshToken_Valid(string refreshToken)
+        {
+            var user = await _repo.GetUserByRefreshTokenAsync(refreshToken);
+
+            Assert.NotNull(user);
+            Assert.NotNull(user.FirstName);
+            Assert.NotNull(user.LastName);
+            Assert.NotNull(user.Email);
+            Assert.NotNull(user.Username);
+            Assert.NotNull(user.Password);
+            Assert.NotEqual(new DateTime(), user.Created);
+        }
+
+
+        [Theory]
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
         public async Task GetRefreshTokenAsync_ByUserId_Valid(int userId)
         {

@@ -341,7 +341,8 @@ namespace aiof.auth.data
         }
 
         public IEnumerable<object[]> GetFakeUserRefreshTokensData(
-            bool userId = false)
+            bool userId = false,
+            bool refreshToken = false)
         {
             var refreshTokens = GetFakeUserRefreshTokens()
                 .ToArray();
@@ -354,6 +355,14 @@ namespace aiof.auth.data
                     toReturn.Add(new object[]
                     {
                         rtUserId
+                    });
+            }
+            else if (refreshToken)
+            {
+                foreach (var token in refreshTokens.Where(x => x.Revoked == null).Select(x => x.Token))
+                    toReturn.Add(new object[]
+                    {
+                        token
                     });
             }
 
