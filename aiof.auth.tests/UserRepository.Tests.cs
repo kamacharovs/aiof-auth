@@ -88,8 +88,6 @@ namespace aiof.auth.tests
             Assert.NotNull(user.Password);
             Assert.NotEqual(new DateTime(), user.Created);
         }
-
-
         [Theory]
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
         public async Task GetRefreshTokenAsync_ByUserId_Valid(int userId)
@@ -98,6 +96,10 @@ namespace aiof.auth.tests
 
             Assert.NotNull(refreshToken);
             Assert.NotNull(refreshToken.Token);
+            Assert.Equal(userId, refreshToken.UserId);
+            Assert.NotEqual(new DateTime(), refreshToken.Created);
+            Assert.NotEqual(new DateTime(), refreshToken.Expires);
+            Assert.Null(refreshToken.Revoked);
         }
         [Theory]
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
@@ -107,6 +109,19 @@ namespace aiof.auth.tests
 
             Assert.NotNull(refreshTokens);
             Assert.NotEmpty(refreshTokens);
+        }
+        [Theory]
+        [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
+        public async Task GetOrAddRefreshTokenAsync_NotRevoked(int userId)
+        {
+            var refreshToken = await _repo.GetOrAddRefreshTokenAsync(userId);
+
+            Assert.NotNull(refreshToken);
+            Assert.NotNull(refreshToken.Token);
+            Assert.Equal(userId, refreshToken.UserId);
+            Assert.NotEqual(new DateTime(), refreshToken.Created);
+            Assert.NotEqual(new DateTime(), refreshToken.Expires);
+            Assert.Null(refreshToken.Revoked);
         }
 
         [Theory]
