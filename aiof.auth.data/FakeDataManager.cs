@@ -125,6 +125,15 @@ namespace aiof.auth.data
                 new UserRefreshToken
                 {
                     Id = 2,
+                    PublicKey = Guid.Parse("427c0b4d-93d9-4868-97bc-54e8852510a7"),
+                    Token = "VXNlcg==.C05sToSVAE4uHZTYchRW2/5/93UHorgcYioAJStqbvahV8jN4MhoygJA3VkrXuwNLfenH7yaHHru/cEkH5Do8g==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow.AddMinutes(-60),
+                    Expires = DateTime.UtcNow.AddMinutes(-60).AddDays(1)
+                },
+                new UserRefreshToken
+                {
+                    Id = 3,
                     PublicKey = Guid.Parse("5a1f029f-d692-4148-b6a2-c6a072a71cdf"),
                     Token = "VXNlcg==.nBpRyGz2l+KtVOJO/Lr74MZs1IVh/Cl7hfE7+OO8V59IZlF+weU6BJiKz1L+sFLROZNyHi76ZPz7ZXOwYnsdXg==",
                     UserId = 1,
@@ -150,7 +159,7 @@ namespace aiof.auth.data
                 },
                 new ClientRefreshToken
                 {
-                    Id = 2,
+                    Id = 3,
                     PublicKey = Guid.Parse("c8f80b28-3459-42b8-9c13-30e719a14df7"),
                     Token = "Q2xpZW50.9hMijUAPRBnEohxLg3z9VZRSefhuBfZs9NgkR3Bf9/r1WG1mupPNCJcdmgGWLBob7fRMCH4JFBJPiahYfQXYdA==",
                     ClientId = 2,
