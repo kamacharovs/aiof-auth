@@ -29,7 +29,7 @@ namespace aiof.auth.data
             return client;
         }
 
-        public static string DecodeApiKey(
+        public static string DecodeKey(
             [NotNull] this string apiKey)
         {
             return apiKey.Split('.')

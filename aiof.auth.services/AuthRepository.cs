@@ -68,17 +68,10 @@ namespace aiof.auth.services
                         $"Invalid token request");
             }
         }
-     
-        public ITokenResponse RefreshToken(IClient client)
-        {
-            return GenerateJwtToken(
-                client: client,
-                expiresIn: _envConfig.JwtRefreshExpires);
-        }
 
         public async Task<ITokenResponse> GenerateJwtTokenAsync(string apiKey)
         {
-            switch (apiKey.DecodeApiKey())
+            switch (apiKey.DecodeKey())
             {
                 case nameof(User):
                     var user = await _userRepo.GetUserAsync(apiKey);
@@ -97,16 +90,25 @@ namespace aiof.auth.services
             }
         }
 
+        public ITokenResponse RefreshToken(IClient client)
+        {
+            return GenerateJwtToken(
+                client: client,
+                expiresIn: _envConfig.JwtRefreshExpires);
+        }
+
         public ITokenUserResponse GenerateJwtToken(
             IUser user,
-            string refreshToken = null)
+            string refreshToken = null,
+            int? expiresIn = null)
         {
             var token = GenerateJwtToken<User>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString())
                 },
                 entity: user as IPublicKeyId,
-                refreshToken: refreshToken);
+                refreshToken: refreshToken,
+                expiresIn: expiresIn);
 
             return new TokenUserResponse
             {

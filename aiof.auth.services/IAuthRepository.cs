@@ -14,7 +14,8 @@ namespace aiof.auth.services
         Task<ITokenResponse> GetTokenAsync(ITokenRequest request);
         ITokenUserResponse GenerateJwtToken(
             IUser user,
-            string refreshToken = null);
+            string refreshToken = null,
+            int? expiresIn = null);
         ITokenResponse GenerateJwtToken(
             IClient client, 
             string refreshToken = null,
