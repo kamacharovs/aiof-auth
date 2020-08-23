@@ -46,6 +46,9 @@ namespace aiof.auth.services
         {
             return asNoTracking
                 ? _context.Users
+                    .Include(x => x.RefreshTokens
+                        .OrderByDescending(x => x.Expires)
+                        .Take(1))
                     .AsNoTracking()
                     .AsQueryable()
                 : _context.Users
@@ -144,6 +147,22 @@ namespace aiof.auth.services
                 $"{nameof(User.Username)}='{user.Username}'");
 
             return user;
+        }
+
+        public async Task<IUserRefreshToken> AddRefreshTokenAsync(IUser user)
+        {
+            var refreshToken = new UserRefreshToken
+            {
+                UserId = user.Id,
+                Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtRefreshExpires)
+            };
+
+            await _context.UserRefreshTokens
+                .AddAsync(refreshToken);
+
+            await _context.SaveChangesAsync();
+
+            return refreshToken;
         }
 
         public async Task<IUser> UpdatePasswordAsync(

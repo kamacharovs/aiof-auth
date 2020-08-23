@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
-    public class UserRefreshToken : 
+    public class UserRefreshToken : IUserRefreshToken,
         IPublicKeyId
     {
         [JsonIgnore]
