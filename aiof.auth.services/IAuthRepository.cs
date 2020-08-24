@@ -27,10 +27,11 @@ namespace aiof.auth.services
             int? expiresIn = null)
             where T : class, IPublicKeyId;
         RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType);
-        ITokenResult ValidateToken(string token); 
+        ITokenResult ValidateToken(string token);
         Task<IRevokeResponse> RevokeTokenAsync(
-            int clientId, 
-            string token);
+            string token,
+            int? userId = null,
+            int? clientId = null);
         JsonWebKey GetPublicJsonWebKey();
         IOpenIdConfig GetOpenIdConfig(
              string host,

@@ -24,8 +24,16 @@ namespace aiof.auth.data
 
     public interface IRevokeRequest
     {
-        int ClientId { get; set; }
         string Token { get; set; }
+    }
+    public interface IRevokeUserRequest : IRevokeRequest
+    {
+        int UserId { get; set; }
+    }
+
+    public interface IRevokeClientRequest : IRevokeRequest
+    {
+        int ClientId { get; set; }
     }
 
     public interface  IValidationRequest 

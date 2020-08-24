@@ -52,17 +52,32 @@ namespace aiof.auth.data
     }
 
     /// <summary>
-    /// Request to revoke a Client refresh token
+    /// Request to revoke a refresh token
     /// </summary>
     public class RevokeRequest : IRevokeRequest
     {
-        [Required]
-        public int ClientId { get; set; }
-
         [JsonPropertyName("refresh_token")]
         [Required]
         [MaxLength(128)]
         public string Token { get; set; }
+    }
+
+    /// <summary>
+    /// Request to revoke a User refresh token
+    /// </summary>
+    public class RevokeUserRequest : RevokeRequest, IRevokeUserRequest
+    {
+        [Required]
+        public int UserId { get; set; }
+    }
+
+    /// <summary>
+    /// Request to revoke a Client refresh token
+    /// </summary>
+    public class RevokeClientRequest : RevokeRequest, IRevokeClientRequest
+    {
+        [Required]
+        public int ClientId { get; set; }
     }
 
     /// <summary>

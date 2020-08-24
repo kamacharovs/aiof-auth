@@ -36,13 +36,10 @@ namespace aiof.auth.data
     }
 
     /// <summary>
-    /// Response to revoke a Client refresh token
+    /// Response to revoke a refresh token
     /// </summary>
     public interface IRevokeResponse
     {
-        [Required]
-        int ClientId { get; set; }
-
         [JsonPropertyName("refresh_token")]
         [Required]
         [MaxLength(128)]

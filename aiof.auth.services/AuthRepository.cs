@@ -236,17 +236,33 @@ namespace aiof.auth.services
         }
 
         public async Task<IRevokeResponse> RevokeTokenAsync(
-            int clientId,
-            string token)
+            string token,
+            int? userId = null,
+            int? clientId = null)
         {
-            var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
-
-            return new RevokeResponse
+            if (clientId != null)
             {
-                ClientId = clientRefresh.ClientId,
-                Token = clientRefresh.Token,
-                Revoked = clientRefresh.Revoked
-            };
+                var clientRefresh = await _clientRepo.RevokeTokenAsync((int)clientId, token);
+
+                return new RevokeResponse
+                {
+                    Token = clientRefresh.Token,
+                    Revoked = clientRefresh.Revoked
+                };
+            }
+            else if (userId != null)
+            {
+                var userRefresh = await _userRepo.RevokeTokenAsync((int)userId, token);
+
+                return new RevokeResponse
+                {
+                    Token = userRefresh.Token,
+                    Revoked = userRefresh.Revoked
+                };
+            }
+            else
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Couldn't revoke Token='{token}' for UserId='{userId}' or ClientId='{clientId}'");
         }
 
         public JsonWebKey GetPublicJsonWebKey()
