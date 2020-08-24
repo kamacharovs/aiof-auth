@@ -10,5 +10,8 @@ namespace aiof.auth.data
         
         [Required]
         string Status { get; set; }
+
+        [Required]
+        string EntityType { get; set; }
     }
 }

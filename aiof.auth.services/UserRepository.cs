@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Linq;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -52,6 +53,16 @@ namespace aiof.auth.services
                     .AsQueryable();
         }
 
+        private IQueryable<UserRefreshToken> GetUserRefreshTokensQuery(bool asNoTracking = true)
+        {
+            return asNoTracking
+                ? _context.UserRefreshTokens
+                    .AsNoTracking()
+                    .AsQueryable()
+                : _context.UserRefreshTokens
+                    .AsQueryable();
+        }
+
         public async Task<IUser> GetUserAsync(int id)
         {
             return await base.GetEntityAsync<User>(id);
@@ -64,19 +75,21 @@ namespace aiof.auth.services
         {
             return await base.GetEntityAsync<User>(apiKey);
         }
-        public async Task<IUser> GetUserAsync(
+        public async Task<IUser> GetUserByUsernameAsync(
             string username, 
             bool asNoTracking = true)
         {
             return await GetUsersQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Username == username)
-                ?? throw new AuthNotFoundException($"User with Username='{username}' was not found.");
+                ?? throw new AuthNotFoundException($"User with Username='{username}' was not found");
         }
         public async Task<IUser> GetUserAsync(
             string username, 
             string password)
         {
-            var user = await GetUserAsync(username, true);
+            var user = await GetUserByUsernameAsync(
+                username, 
+                asNoTracking: true);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -104,6 +117,42 @@ namespace aiof.auth.services
                 userDto.LastName,
                 userDto.Email,
                 userDto.Username);
+        }
+
+        public async Task<IUser> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.Users
+                .Include(x => x.RefreshTokens)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken))
+                ?? throw new AuthNotFoundException($"{nameof(User)} with RefreshToken='{refreshToken}' was not found");
+        }
+        public async Task<IUserRefreshToken> GetRefreshTokenAsync(int userId)
+        {
+            return (await GetRefreshTokensAsync(userId))
+                ?.Where(x => DateTime.UtcNow < x.Expires)
+                ?.FirstOrDefault();
+        }
+        public async Task<IUserRefreshToken> GetRefreshTokenAsync(
+            int userId,
+            string token, 
+            bool asNoTracking = true)
+        {
+            return await GetUserRefreshTokensQuery(asNoTracking)
+                .FirstOrDefaultAsync(x => x.UserId == userId
+                    && x.Token == token);
+        }
+        public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId)
+        {
+            return await GetUserRefreshTokensQuery()
+                .Where(x => x.UserId == userId && x.Revoked == null)
+                .OrderByDescending(x => x.Expires)
+                .ToListAsync();
+        }
+        public async Task<IUserRefreshToken> GetOrAddRefreshTokenAsync(int userId)
+        {
+            return await GetRefreshTokenAsync(userId)
+                ?? await AddRefreshTokenAsync(userId);
         }
 
         public async Task<bool> DoesUsernameExistAsync(string username)
@@ -135,9 +184,33 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Created User with Id='{user.Id}' and PublicKey='{user.PublicKey}'");
+            _logger.LogInformation($"Created User with {nameof(User.Id)}='{user.Id}', {nameof(User.PublicKey)}='{user.PublicKey}', " +
+                $"{nameof(User.FirstName)}='{user.FirstName}', " +
+                $"{nameof(User.LastName)}='{user.LastName}', " +
+                $"{nameof(User.Email)}='{user.Email}' and " +
+                $"{nameof(User.Username)}='{user.Username}'");
+
+            await AddRefreshTokenAsync(user.Id);
 
             return user;
+        }
+
+        public async Task<IUserRefreshToken> AddRefreshTokenAsync(int userId)
+        {
+            var refreshToken = new UserRefreshToken
+            {
+                UserId = userId,
+                Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtRefreshExpires)
+            };
+
+            await _context.UserRefreshTokens
+                .AddAsync(refreshToken);
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Created {nameof(UserRefreshToken)} for {nameof(User)} with UserId='{userId}'");
+
+            return refreshToken;
         }
 
         public async Task<IUser> UpdatePasswordAsync(
@@ -145,7 +218,7 @@ namespace aiof.auth.services
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetUserAsync(
+            var user = await GetUserByUsernameAsync(
                 username, 
                 asNoTracking: false);
 
@@ -161,7 +234,30 @@ namespace aiof.auth.services
 
             return user;
         }
-        
+
+        public async Task<IUserRefreshToken> RevokeTokenAsync(
+            int userId, 
+            string token)
+        {
+            var refreshToken = await GetRefreshTokenAsync(
+                userId,
+                token,
+                asNoTracking: false)
+                as UserRefreshToken
+                ?? throw new AuthNotFoundException($"{nameof(UserRefreshToken)} with UserId='{userId}' and Token='{token}' was not found");
+
+            refreshToken.Revoked = DateTime.UtcNow;
+
+            _context.UserRefreshTokens
+                .Update(refreshToken);
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Revoked {nameof(UserRefreshToken)}='{token}' for UserId='{userId}'");
+
+            return refreshToken;
+        }
+
         public string Hash(string password)
         {
             using (var algorithm = new Rfc2898DeriveBytes(

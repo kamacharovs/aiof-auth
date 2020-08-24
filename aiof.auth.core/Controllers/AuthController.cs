@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.FeatureManagement.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -32,8 +33,9 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Generate a JWT for User, Client
+        /// Generate a JWT
         /// </summary>
+        [AllowAnonymous]
         [HttpPost]
         [Route("token")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
@@ -47,6 +49,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Validate a JWT
         /// </summary>
+        [AllowAnonymous]
         [HttpPost]
         [Route("token/validate")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
@@ -54,13 +57,14 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(ITokenResult), StatusCodes.Status200OK)]
         public IActionResult ValidateToken([FromBody, Required] ValidationRequest req)
         {
-            return Ok(_repo.ValidateToken(req));
+            return Ok(_repo.ValidateToken(req.AccessToken));
         }
 
         /// <summary>
         /// Generate a refresh JWT for Client
         /// </summary>
         [FeatureGate(FeatureFlags.RefreshToken)]
+        [AllowAnonymous]
         [HttpPost]
         [Route("token/refresh")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
@@ -74,19 +78,37 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Revoke an existing Client refresh token
         /// </summary>
+        [Authorize]
         [HttpPut]
-        [Route("token/revoke")]
+        [Route("token/client/revoke")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody, Required] RevokeRequest request)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> RevokeClientRefreshTokenAsync([FromBody, Required] RevokeClientRequest request)
         {
-            return Ok(await _repo.RevokeTokenAsync(request.ClientId, request.Token));
+            return Ok(await _repo.RevokeTokenAsync(request.Token, clientId: request.ClientId));
+        }
+
+        /// <summary>
+        /// Revoke an existing User refresh token
+        /// </summary>
+        [Authorize]
+        [HttpPut]
+        [Route("token/user/revoke")]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> RevokeUserRefreshTokenAsync([FromBody, Required] RevokeUserRequest request)
+        {
+            return Ok(await _repo.RevokeTokenAsync(request.Token, userId: request.UserId));
         }
 
         /// <summary>
         /// Get all available claims for JWT
         /// </summary>
+        [AllowAnonymous]
         [HttpGet]
         [Route("claims")]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
@@ -99,6 +121,7 @@ namespace aiof.auth.core.Controllers
         /// Get JWKS for JWT creation
         /// </summary>
         [FeatureGate(FeatureFlags.OpenId)]
+        [AllowAnonymous]
         [HttpGet]
         [Route("jwks")]
         [ProducesResponseType(typeof(JsonWebKey), StatusCodes.Status200OK)]
@@ -111,6 +134,7 @@ namespace aiof.auth.core.Controllers
         /// Get OpenId Configuration for JWT creation
         /// </summary>
         [FeatureGate(FeatureFlags.OpenId)]
+        [AllowAnonymous]
         [HttpGet]
         [Route(".well-known/openid-configuration")]
         [ProducesResponseType(typeof(IOpenIdConfig), StatusCodes.Status200OK)]

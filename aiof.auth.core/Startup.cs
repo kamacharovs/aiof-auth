@@ -1,18 +1,20 @@
 using System;
-using System.Collections.Generic;
+using System.Text;
 using System.Reflection;
 using System.IO;
 using System.Text.Json;
+using System.Security.Cryptography;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Caching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
 
 using AutoMapper;
 using FluentValidation;
@@ -24,12 +26,14 @@ namespace aiof.auth.core
 {
     public class Startup
     {
-        public IConfiguration _configuration { get; }
-        public IWebHostEnvironment _env {get; }
+        public readonly IConfiguration _config;
+        public readonly IWebHostEnvironment _env;
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(
+            IConfiguration configuration,
+            IWebHostEnvironment env)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _config = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _env = env ?? throw new ArgumentNullException(nameof(env));
         }
 
@@ -38,7 +42,7 @@ namespace aiof.auth.core
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<FakeDataManager>();          
+            services.AddScoped<FakeDataManager>();
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
             services.AddScoped<AbstractValidator<User>, UserValidator>();
             services.AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>();
@@ -50,29 +54,49 @@ namespace aiof.auth.core
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
-                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_configuration[Keys.PostgreSQL]));
-
+                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_config[Keys.PostgreSQL]));
+            
             services.AddLogging();
             services.AddHealthChecks();
             services.AddFeatureManagement();
             services.AddMemoryCache();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(
+                Keys.Bearer,
+                x =>
+                {
+                    var rsa = RSA.Create();
+                    rsa.FromXmlString(_config[Keys.JwtPublicKey]);
+
+                    x.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = _config[Keys.JwtIssuer],
+                        ValidateAudience = true,
+                        ValidAudience = _config[Keys.JwtAudience],
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new RsaSecurityKey(rsa)
+                    };
+                });
+
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc(_configuration[Keys.OpenApiVersion], new OpenApiInfo
+                x.SwaggerDoc(_config[Keys.OpenApiVersion], new OpenApiInfo
                 {
-                    Title = _configuration[Keys.OpenApiTitle],
-                    Version = _configuration[Keys.OpenApiVersion],
-                    Description = _configuration[Keys.OpenApiDescription],
+                    Title = _config[Keys.OpenApiTitle],
+                    Version = _config[Keys.OpenApiVersion],
+                    Description = _config[Keys.OpenApiDescription],
                     Contact = new OpenApiContact
                     {
-                        Name = _configuration[Keys.OpenApiContactName],
-                        Email = _configuration[Keys.OpenApiContactEmail],
-                        Url = new Uri(_configuration[Keys.OpenApiContactUrl])
+                        Name = _config[Keys.OpenApiContactName],
+                        Email = _config[Keys.OpenApiContactEmail],
+                        Url = new Uri(_config[Keys.OpenApiContactUrl])
                     },
                     License = new OpenApiLicense
                     {
-                        Name = _configuration[Keys.OpenApiLicenseName],
-                        Url = new Uri(_configuration[Keys.OpenApiLicenseUrl]),
+                        Name = _config[Keys.OpenApiLicenseName],
+                        Url = new Uri(_config[Keys.OpenApiLicenseUrl]),
                     }
                 });
                 x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
@@ -104,6 +128,7 @@ namespace aiof.auth.core
             app.UseSwagger();
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(e =>
             {

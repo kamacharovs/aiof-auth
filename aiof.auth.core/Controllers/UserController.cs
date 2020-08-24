@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -15,18 +16,24 @@ namespace aiof.auth.core.Controllers
     /// <summary>
     /// Everything aiof user
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("user")]
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
+        private readonly IAuthRepository _authRepo;
 
-        public UserController(IUserRepository repo)
+        public UserController(
+            IUserRepository repo,
+            IAuthRepository authRepo)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+            _authRepo = authRepo ?? throw new ArgumentNullException(nameof(authRepo));
         }
 
         /// <summary>
@@ -39,6 +46,17 @@ namespace aiof.auth.core.Controllers
         public async Task<IActionResult> GetUserAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetUserAsync(id));
+        }
+
+        /// <summary>
+        /// Get an existing User by Username
+        /// </summary>
+        [HttpGet]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserByUsernameAsync([FromQuery, Required] string username)
+        {
+            return Ok(await _repo.GetUserByUsernameAsync(username));
         }
 
         /// <summary>
@@ -56,6 +74,29 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
+        /// Get a User first non-revoked refresh token
+        /// </summary>
+        [HttpGet]
+        [Route("{id}/refresh/token")]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserRefreshTokenAsync([FromRoute, Required] int id)
+        {
+            return Ok(await _repo.GetRefreshTokenAsync(id));
+        }
+
+        /// <summary>
+        /// Get a User refresh tokens
+        /// </summary>
+        [HttpGet]
+        [Route("{id}/refresh/tokens")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserRefreshTokensAsync([FromRoute, Required] int id)
+        {
+            return Ok(await _repo.GetRefreshTokensAsync(id));
+        }
+
+        /// <summary>
         /// Create a User
         /// </summary>
         [HttpPost]
@@ -63,7 +104,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddUserAsync([FromBody, Required] UserDto userDto)
         {
-            return Created(nameof(User), await _repo.AddUserAsync(userDto));
+            return Created(nameof(User), _authRepo.GenerateJwtToken(await _repo.AddUserAsync(userDto)));
         }
 
         /// <summary>

@@ -23,8 +23,6 @@ namespace aiof.auth.services
         private readonly AuthContext _context;
         private readonly AbstractValidator<ClientDto> _clientDtoValidator;
 
-        private const int _refreshTokenValidDay = 1;
-
         public ClientRepository(
             ILogger<ClientRepository> logger,
             IMemoryCache cache,
