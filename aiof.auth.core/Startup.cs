@@ -3,6 +3,7 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using System.Text.Json;
+using System.Security.Cryptography;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +21,6 @@ using FluentValidation;
 
 using aiof.auth.data;
 using aiof.auth.services;
-using System.Security.Cryptography;
 
 namespace aiof.auth.core
 {
