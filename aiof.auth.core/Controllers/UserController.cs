@@ -99,6 +99,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Create a User
         /// </summary>
+        [AllowAnonymous]
         [HttpPost]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
