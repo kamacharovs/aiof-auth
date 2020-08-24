@@ -22,7 +22,6 @@ namespace aiof.auth.core.Controllers
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
@@ -43,6 +42,7 @@ namespace aiof.auth.core.Controllers
         [Route("{id}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetUserAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetUserAsync(id));
@@ -54,6 +54,7 @@ namespace aiof.auth.core.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetUserByUsernameAsync([FromQuery, Required] string username)
         {
             return Ok(await _repo.GetUserByUsernameAsync(username));
@@ -66,6 +67,7 @@ namespace aiof.auth.core.Controllers
         [Route("{username}/{password}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetUserUsernamePasswordAsync(
             [FromRoute, Required] string username,
             [FromRoute, Required] string password)
@@ -80,6 +82,7 @@ namespace aiof.auth.core.Controllers
         [Route("{id}/refresh/token")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetUserRefreshTokenAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetRefreshTokenAsync(id));
@@ -91,6 +94,7 @@ namespace aiof.auth.core.Controllers
         [HttpGet]
         [Route("{id}/refresh/tokens")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetUserRefreshTokensAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetRefreshTokensAsync(id));
@@ -114,6 +118,7 @@ namespace aiof.auth.core.Controllers
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult HashPassword([FromRoute, Required] string password)
         {
             return Ok(_repo.Hash(password));
