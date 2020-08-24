@@ -12,7 +12,10 @@ namespace aiof.auth.services
     public interface IAuthRepository
     {
         Task<ITokenResponse> GetTokenAsync(ITokenRequest request);
-        ITokenUserResponse GenerateJwtToken(IUser user);
+        ITokenUserResponse GenerateJwtToken(
+            IUser user,
+            string refreshToken = null,
+            int? expiresIn = null);
         ITokenResponse GenerateJwtToken(
             IClient client, 
             string refreshToken = null,
@@ -24,10 +27,11 @@ namespace aiof.auth.services
             int? expiresIn = null)
             where T : class, IPublicKeyId;
         RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType);
-        ITokenResult ValidateToken(string token); 
+        ITokenResult ValidateToken(string token);
         Task<IRevokeResponse> RevokeTokenAsync(
-            int clientId, 
-            string token);
+            string token,
+            int? userId = null,
+            int? clientId = null);
         JsonWebKey GetPublicJsonWebKey();
         IOpenIdConfig GetOpenIdConfig(
              string host,

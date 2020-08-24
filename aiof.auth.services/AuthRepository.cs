@@ -54,32 +54,30 @@ namespace aiof.auth.services
             {
                 case TokenType.User:
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
-                    return GenerateJwtToken(user);
+                    var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
+                    return GenerateJwtToken(
+                        user,
+                        refreshToken.Token);
                 case TokenType.ApiKey:
                     return await GenerateJwtTokenAsync(request.ApiKey);
                 case TokenType.Refresh:
-                    var client = (await _clientRepo.GetRefreshTokenAsync(request.Token)).Client;
-                    return RefreshToken(client);
+                    return await RefreshTokenAsync(request.Token);
                 default:
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                         $"Invalid token request");
             }
         }
-     
-        public ITokenResponse RefreshToken(IClient client)
-        {
-            return GenerateJwtToken(
-                client: client,
-                expiresIn: _envConfig.JwtRefreshExpires);
-        }
 
         public async Task<ITokenResponse> GenerateJwtTokenAsync(string apiKey)
         {
-            switch (apiKey.DecodeApiKey())
+            switch (apiKey.DecodeKey())
             {
                 case nameof(User):
                     var user = await _userRepo.GetUserAsync(apiKey);
-                    return GenerateJwtToken(user);
+                    var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
+                    return GenerateJwtToken(
+                        user,
+                        refreshToken.Token);
                 case nameof(Client):
                     var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(apiKey);
                     return GenerateJwtToken(
@@ -91,19 +89,45 @@ namespace aiof.auth.services
             }
         }
 
-        public ITokenUserResponse GenerateJwtToken(IUser user)
+        public async Task<ITokenResponse> RefreshTokenAsync(string refreshToken)
+        {
+            switch (refreshToken.DecodeKey())
+            {
+                case nameof(User):
+                    var user = await _userRepo.GetUserByRefreshTokenAsync(refreshToken);
+                    return GenerateJwtToken(
+                        user: user,
+                        expiresIn: _envConfig.JwtRefreshExpires);
+                case nameof(Client):
+                    var client = (await _clientRepo.GetRefreshTokenAsync(refreshToken)).Client;
+                    return GenerateJwtToken(
+                        client: client,
+                        expiresIn: _envConfig.JwtRefreshExpires);
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid token request with RefreshToken='{refreshToken}'");
+            }
+        }
+
+        public ITokenUserResponse GenerateJwtToken(
+            IUser user,
+            string refreshToken = null,
+            int? expiresIn = null)
         {
             var token = GenerateJwtToken<User>(new Claim[]
                 {
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString())
                 },
-                entity: user as IPublicKeyId);
+                entity: user as IPublicKeyId,
+                refreshToken: refreshToken,
+                expiresIn: expiresIn);
 
             return new TokenUserResponse
             {
                 TokenType = token.TokenType,
                 ExpiresIn = token.ExpiresIn,
                 AccessToken = token.AccessToken,
+                RefreshToken = token.RefreshToken,
                 User = user
             };
         }
@@ -212,17 +236,33 @@ namespace aiof.auth.services
         }
 
         public async Task<IRevokeResponse> RevokeTokenAsync(
-            int clientId,
-            string token)
+            string token,
+            int? userId = null,
+            int? clientId = null)
         {
-            var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
-
-            return new RevokeResponse
+            if (clientId != null)
             {
-                ClientId = clientRefresh.ClientId,
-                Token = clientRefresh.Token,
-                Revoked = clientRefresh.Revoked
-            };
+                var clientRefresh = await _clientRepo.RevokeTokenAsync((int)clientId, token);
+
+                return new RevokeResponse
+                {
+                    Token = clientRefresh.Token,
+                    Revoked = clientRefresh.Revoked
+                };
+            }
+            else if (userId != null)
+            {
+                var userRefresh = await _userRepo.RevokeTokenAsync((int)userId, token);
+
+                return new RevokeResponse
+                {
+                    Token = userRefresh.Token,
+                    Revoked = userRefresh.Revoked
+                };
+            }
+            else
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Couldn't revoke Token='{token}' for UserId='{userId}' or ClientId='{clientId}'");
         }
 
         public JsonWebKey GetPublicJsonWebKey()

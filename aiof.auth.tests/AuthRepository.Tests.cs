@@ -118,10 +118,9 @@ namespace aiof.auth.tests
             int clientId, 
             string token)
         {
-            var revokedTokenResp = await _repo.RevokeTokenAsync(clientId, token);
+            var revokedTokenResp = await _repo.RevokeTokenAsync(token, clientId: clientId);
 
             Assert.NotNull(revokedTokenResp);
-            Assert.Equal(clientId, revokedTokenResp.ClientId);
             Assert.Equal(token, revokedTokenResp.Token);
             Assert.NotNull(revokedTokenResp.Revoked);
         }

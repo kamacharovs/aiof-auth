@@ -29,7 +29,7 @@ namespace aiof.auth.data
             return client;
         }
 
-        public static string DecodeApiKey(
+        public static string DecodeKey(
             [NotNull] this string apiKey)
         {
             return apiKey.Split('.')
@@ -60,22 +60,6 @@ namespace aiof.auth.data
             [NotNull] this string value)
         {
             return value.Replace(' ', '-').ToLower();
-        }
-
-        public static T ParseEnum<T>(string value)
-        {
-            return (T)Enum.Parse(typeof(T), value, true);
-        }
-
-        public static T ToEnum<T>(
-            [NotNull] this string value)
-        {
-            return (T)Enum.Parse(typeof(T), value, true);
-        }
-        public static AlgType ToEnum(
-            [NotNull] this string value)
-        {
-            return (AlgType)Enum.Parse(typeof(AlgType), value, true);
         }
     }
 }

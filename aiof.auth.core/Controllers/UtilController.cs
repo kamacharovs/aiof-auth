@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 using aiof.auth.data;
 
@@ -14,6 +15,7 @@ namespace aiof.auth.core.Controllers
     /// <summary>
     /// Everything utility
     /// </summary>
+    [AllowAnonymous]
     [ApiController]
     [Route("util")]
     [Produces(Keys.ApplicationJson)]

@@ -21,6 +21,9 @@ namespace aiof.auth.data
             _context.Clients
                 .AddRange(GetFakeClients());
 
+            _context.UserRefreshTokens
+                .AddRange(GetFakeUserRefreshTokens());
+
             _context.ClientRefreshTokens
                 .AddRange(GetFakeClientRefreshTokens());
 
@@ -106,6 +109,41 @@ namespace aiof.auth.data
             };
         }
 
+        public IEnumerable<UserRefreshToken> GetFakeUserRefreshTokens()
+        {
+            return new List<UserRefreshToken>
+            {
+                new UserRefreshToken
+                {
+                    Id = 1,
+                    PublicKey = Guid.Parse("8e483815-1f5a-4ae3-af15-b91cc9371878"),
+                    Token = "VXNlcg==.dx9lkJq6WfEA+8oNoikmI4Mk3N/CeGY5hptngJSBmILXp8klx2A1vlzcWpieYa5xiUqimrTYAUrNTI0eQr84gQ==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow,
+                    Expires = DateTime.UtcNow.AddDays(1)
+                },
+                new UserRefreshToken
+                {
+                    Id = 2,
+                    PublicKey = Guid.Parse("427c0b4d-93d9-4868-97bc-54e8852510a7"),
+                    Token = "VXNlcg==.C05sToSVAE4uHZTYchRW2/5/93UHorgcYioAJStqbvahV8jN4MhoygJA3VkrXuwNLfenH7yaHHru/cEkH5Do8g==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow.AddMinutes(-60),
+                    Expires = DateTime.UtcNow.AddMinutes(-60).AddDays(1)
+                },
+                new UserRefreshToken
+                {
+                    Id = 3,
+                    PublicKey = Guid.Parse("5a1f029f-d692-4148-b6a2-c6a072a71cdf"),
+                    Token = "VXNlcg==.nBpRyGz2l+KtVOJO/Lr74MZs1IVh/Cl7hfE7+OO8V59IZlF+weU6BJiKz1L+sFLROZNyHi76ZPz7ZXOwYnsdXg==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow.AddDays(-2),
+                    Expires = DateTime.UtcNow.AddDays(-1),
+                    Revoked = DateTime.UtcNow.AddDays(-2)
+                }
+            };
+        }
+
         public IEnumerable<ClientRefreshToken> GetFakeClientRefreshTokens()
         {
             return new List<ClientRefreshToken>
@@ -121,7 +159,7 @@ namespace aiof.auth.data
                 },
                 new ClientRefreshToken
                 {
-                    Id = 2,
+                    Id = 3,
                     PublicKey = Guid.Parse("c8f80b28-3459-42b8-9c13-30e719a14df7"),
                     Token = "Q2xpZW50.9hMijUAPRBnEohxLg3z9VZRSefhuBfZs9NgkR3Bf9/r1WG1mupPNCJcdmgGWLBob7fRMCH4JFBJPiahYfQXYdA==",
                     ClientId = 2,
@@ -299,6 +337,45 @@ namespace aiof.auth.data
                     });
             }
             
+            return toReturn;
+        }
+
+        public IEnumerable<object[]> GetFakeUserRefreshTokensData(
+            bool userId = false,
+            bool refreshToken = false)
+        {
+            var refreshTokens = GetFakeUserRefreshTokens()
+                .ToArray();
+
+            var toReturn = new List<object[]>();
+
+            if (userId
+                && refreshToken)
+            {
+                foreach (var rt in refreshTokens.Where(x => x.Revoked == null))
+                    toReturn.Add(new object[]
+                    {
+                        rt.UserId,
+                        rt.Token
+                    });
+            }
+            else if (userId)
+            {
+                foreach (var rtUserId in refreshTokens.Select(x => x.UserId).Distinct())
+                    toReturn.Add(new object[]
+                    {
+                        rtUserId
+                    });
+            }
+            else if (refreshToken)
+            {
+                foreach (var token in refreshTokens.Where(x => x.Revoked == null).Select(x => x.Token))
+                    toReturn.Add(new object[]
+                    {
+                        token
+                    });
+            }
+
             return toReturn;
         }
 
