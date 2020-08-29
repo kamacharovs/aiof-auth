@@ -16,7 +16,6 @@ namespace aiof.auth.core.Controllers
     /// <summary>
     /// Everything aiof user
     /// </summary>
-    [Authorize]
     [ApiController]
     [Route("user")]
     [Produces(Keys.ApplicationJson)]
@@ -38,6 +37,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Get an existing User by Id
         /// </summary>
+        [Authorize]
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
@@ -51,6 +51,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Get an existing User by Username
         /// </summary>
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
@@ -63,6 +64,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Get an existing User by Username and Password
         /// </summary>
+        [Authorize]
         [HttpGet]
         [Route("{username}/{password}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
@@ -78,6 +80,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Get a User first non-revoked refresh token
         /// </summary>
+        [Authorize]
         [HttpGet]
         [Route("{id}/refresh/token")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
@@ -91,6 +94,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Get a User refresh tokens
         /// </summary>
+        [Authorize]
         [HttpGet]
         [Route("{id}/refresh/tokens")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -115,6 +119,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Hash a Password
         /// </summary>
+        [Authorize]
         [HttpGet]
         [Route("hash/{password}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
