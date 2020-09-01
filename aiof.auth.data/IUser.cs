@@ -7,11 +7,9 @@ namespace aiof.auth.data
 {
     public interface IUser
     {
-        [JsonIgnore]
         [Required]
         int Id { get; set; }
 
-        [JsonIgnore]
         [Required]
         Guid PublicKey { get; set; }
 

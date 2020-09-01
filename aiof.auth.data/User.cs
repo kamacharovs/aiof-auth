@@ -8,11 +8,9 @@ namespace aiof.auth.data
     public class User : IUser, 
         IPublicKeyId, IApiKey
     {
-        [JsonIgnore]
         [Required]
         public int Id { get; set; }
 
-        [JsonIgnore]
         [Required]
         public Guid PublicKey { get; set; } = Guid.NewGuid();
 
