@@ -10,7 +10,7 @@ namespace aiof.auth.services
     public interface IUtilRepository
     {
         Task<IRole> GetRoleAsync<T>(
-            int id,
+            int? id,
             bool asNoTracking = true)
             where T : IPublicKeyId;
     }
