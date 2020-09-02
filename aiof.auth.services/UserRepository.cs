@@ -187,6 +187,9 @@ namespace aiof.auth.services
 
             user.Password = Hash(userDto.Password);
 
+            // TODO Default User's Role if not specified
+            
+
             await _context.Users
                 .AddAsync(user);
 

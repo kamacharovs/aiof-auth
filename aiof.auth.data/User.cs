@@ -81,5 +81,7 @@ namespace aiof.auth.data
         [Required]
         [MaxLength(100)]
         public string Password { get; set; }
+
+        public int? RoleId { get; set; }
     }
 }
