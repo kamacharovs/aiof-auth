@@ -50,6 +50,10 @@ namespace aiof.auth.data
         public DateTime Created { get; set; } = DateTime.UtcNow;
 
         [JsonIgnore]
+        [Required]
+        public int RoleId { get; set; }
+        
+        [Required]
         public Role Role { get; set; }
 
         [JsonIgnore]

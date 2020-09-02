@@ -42,7 +42,13 @@ namespace aiof.auth.data
                 e.HasMany(x => x.RefreshTokens)
                     .WithOne()
                     .HasForeignKey(x => x.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                e.HasOne(x => x.Role)
+                    .WithMany()
+                    .HasForeignKey(x => x.RoleId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Client>(e =>

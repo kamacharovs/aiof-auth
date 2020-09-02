@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
@@ -6,9 +7,11 @@ namespace aiof.auth.data
     public class Role : IRole,
         IPublicKeyId
     {
+        [JsonIgnore]
         [Required]
         public int Id { get; set; }
 
+        [JsonIgnore]
         [Required]
         public Guid PublicKey { get; set; } = Guid.NewGuid();
 
