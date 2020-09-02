@@ -25,7 +25,7 @@ namespace aiof.auth.services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        private IQueryable<Role> GetRolesQuery(bool asNoTracking = true)
+        private IQueryable<Role> GetRolesQuery(bool asNoTracking = false)
         {
             return asNoTracking
                 ? _context.Roles
@@ -37,7 +37,7 @@ namespace aiof.auth.services
 
         public async Task<IRole> GetRoleAsync<T>(
             int? id,
-            bool asNoTracking = true)
+            bool asNoTracking = false)
             where T : IPublicKeyId
         {
             var defaultRole = string.Empty;

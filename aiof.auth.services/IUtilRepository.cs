@@ -11,7 +11,7 @@ namespace aiof.auth.services
     {
         Task<IRole> GetRoleAsync<T>(
             int? id,
-            bool asNoTracking = true)
+            bool asNoTracking = false)
             where T : IPublicKeyId;
     }
 }

@@ -20,6 +20,7 @@ namespace aiof.auth.services
     {
         private readonly ILogger<UserRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
+        private readonly IUtilRepository _utilRepo;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
         private readonly AbstractValidator<UserDto> _userDtoValidator;
@@ -27,8 +28,8 @@ namespace aiof.auth.services
 
         public UserRepository(
             ILogger<UserRepository> logger,
-            IMemoryCache cache,
             IEnvConfiguration envConfig,
+            IUtilRepository utilRepo,
             IMapper mapper,
             AuthContext context,
             AbstractValidator<UserDto> userDtoValidator,
@@ -36,6 +37,7 @@ namespace aiof.auth.services
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
+            _utilRepo = utilRepo ?? throw new ArgumentNullException(nameof(utilRepo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _userDtoValidator = userDtoValidator ?? throw new ArgumentNullException(nameof(userDtoValidator));
@@ -186,9 +188,7 @@ namespace aiof.auth.services
                     $"and Username='{userDto.Username}' already exists");
 
             user.Password = Hash(userDto.Password);
-
-            // TODO Default User's Role if not specified
-            
+            user.Role = await _utilRepo.GetRoleAsync<User>(userDto.RoleId) as Role;
 
             await _context.Users
                 .AddAsync(user);
