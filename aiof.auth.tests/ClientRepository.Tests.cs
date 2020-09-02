@@ -23,7 +23,7 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
         public async Task GetClientAsync_By_Id(int id)
         {
-            var client = await _repo.GetClientAsync(id);
+            var client = await _repo.GetAsync(id);
 
             Assert.NotNull(client);
             Assert.Equal(id, client.Id);
@@ -35,7 +35,7 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
         public async Task GetClientAsync_By_ApiKey(string apiKey)
         {
-            var client = await _repo.GetClientAsync(apiKey);
+            var client = await _repo.GetAsync(apiKey);
 
             Assert.NotNull(client);
             Assert.NotNull(client.PrimaryApiKey);
@@ -91,7 +91,7 @@ namespace aiof.auth.tests
             Assert.NotNull(client);
             Assert.False(client.Enabled);
 
-            var clientInDb = await _repo.GetClientAsync(id);
+            var clientInDb = await _repo.GetAsync(id);
 
             Assert.NotNull(clientInDb);
         }

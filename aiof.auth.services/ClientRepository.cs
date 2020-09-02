@@ -39,26 +39,49 @@ namespace aiof.auth.services
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
         }
 
+        private IQueryable<Client> GetClientQuery(bool asNoTracking = true)
+        {
+            return asNoTracking
+                ? _context.Clients
+                    .Include(x => x.Role)
+                    .AsNoTracking()
+                    .AsQueryable()
+                : _context.Clients
+                    .Include(x => x.Role)
+                    .AsQueryable();
+        }
+
         private IQueryable<ClientRefreshToken> GetClientRefreshTokenQuery(bool asNoTracking = true)
         {
             return asNoTracking
                 ? _context.ClientRefreshTokens
                     .Include(x => x.Client)
+                        .ThenInclude(x => x.Role)
                     .AsNoTracking()
                     .AsQueryable()
                 : _context.ClientRefreshTokens
                     .Include(x => x.Client)
+                        .ThenInclude(x => x.Role)
                     .AsQueryable();
         }
 
-        public async Task<IClient> GetClientAsync(int id)
+        public async Task<IClient> GetAsync(
+            int id,
+            bool asNoTracking = true)
         {
-            return await base.GetEntityAsync<Client>(id);
+            return await GetClientQuery(asNoTracking)
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException($"{nameof(Client)} with Id='{id}' was not found");
         }
 
-        public async Task<IClient> GetClientAsync(string apiKey)
+        public async Task<IClient> GetAsync(
+            string apiKey,
+            bool asNoTracking = true)
         {
-            return await base.GetEntityAsync<Client>(apiKey);
+            return await GetClientQuery(asNoTracking)
+                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
+                    || x.SecondaryApiKey == apiKey)
+                ?? throw new AuthNotFoundException($"{nameof(Client)} with ApiKey='{apiKey}' was not found");
         }
 
         public async Task<IClientRefreshToken> GetRefreshTokenAsync(
@@ -125,7 +148,7 @@ namespace aiof.auth.services
 
         public async Task<IClientRefreshToken> AddClientRefreshTokenAsync(string clientApiKey)
         {
-            var client = await GetClientAsync(clientApiKey);
+            var client = await GetAsync(clientApiKey);
 
             if (!client.Enabled)
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -191,9 +214,11 @@ namespace aiof.auth.services
             return await base.RegenerateKeysAync<Client>(id);
         }
 
-        public async Task<IClient> EnableDisableClientAsync(int id, bool enable = true)
+        public async Task<IClient> EnableDisableClientAsync(
+            int id,
+            bool enable = true)
         {
-            var client = await base.GetEntityAsync<Client>(id, asNoTracking: false);
+            var client = await GetAsync(id, asNoTracking: false);
 
             client.Enabled = enable;
 

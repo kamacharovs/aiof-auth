@@ -40,9 +40,9 @@ namespace aiof.auth.core.Controllers
         [Route("{id}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetClientAsync([FromRoute, Required] int id)
+        public async Task<IActionResult> GetAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.GetClientAsync(id));
+            return Ok(await _repo.GetAsync(id));
         }
 
         /// <summary>
