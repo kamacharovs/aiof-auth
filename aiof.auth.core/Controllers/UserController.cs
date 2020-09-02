@@ -89,7 +89,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IUserRefreshToken), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserRefreshTokenAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetRefreshTokenAsync(id));
@@ -103,7 +103,7 @@ namespace aiof.auth.core.Controllers
         [Route("{id}/refresh/tokens")]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<IUserRefreshToken>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserRefreshTokensAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetRefreshTokensAsync(id));
@@ -115,7 +115,7 @@ namespace aiof.auth.core.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ITokenUserResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddUserAsync([FromBody, Required] UserDto userDto)
         {
             return Created(nameof(User), _authRepo.GenerateJwtToken(await _repo.AddUserAsync(userDto)));
