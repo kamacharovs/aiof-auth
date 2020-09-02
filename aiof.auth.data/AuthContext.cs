@@ -10,6 +10,7 @@ namespace aiof.auth.data
         public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         public virtual DbSet<ClientRefreshToken> ClientRefreshTokens { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<AiofClaim> Claims { get; set; }
 
         public AuthContext(DbContextOptions<AuthContext> options)
@@ -94,6 +95,17 @@ namespace aiof.auth.data
                     .HasForeignKey(x => x.ClientId)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Role>(e =>
+            {
+                e.ToTable("role");
+
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
+                e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Name).HasSnakeCaseColumnName().HasMaxLength(50).IsRequired();
             });
 
             modelBuilder.Entity<AiofClaim>(e =>
