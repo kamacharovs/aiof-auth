@@ -25,5 +25,9 @@ namespace aiof.auth.data
         public const string Admin = nameof(Admin);
         public const string User = nameof(User);
         public const string Client = nameof(Client);
+
+        public const string AdminOrUser = nameof(Admin) + "," + nameof(User);
+        public const string AdminOrClient = nameof(Admin) + "," + nameof(Client);
+        public const string AdminOrUserOrClient = nameof(Admin) + "," + nameof(User) + "," + nameof(Client);
     }
 }

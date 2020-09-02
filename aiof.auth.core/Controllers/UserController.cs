@@ -37,12 +37,13 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Get an existing User by Id
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetUserAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetUserAsync(id));
