@@ -42,6 +42,7 @@ namespace aiof.auth.core
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IUtilRepository, UtilRepository>();
             services.AddScoped<FakeDataManager>();
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
             services.AddScoped<AbstractValidator<User>, UserValidator>();

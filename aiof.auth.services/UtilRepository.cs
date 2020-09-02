@@ -12,7 +12,7 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public class UtilRepository
+    public class UtilRepository : IUtilRepository
     {
         private readonly ILogger<UtilRepository> _logger;
         private readonly AuthContext _context;
