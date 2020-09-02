@@ -18,23 +18,26 @@ namespace aiof.auth.services
     public class ClientRepository : BaseRepository, IClientRepository
     {
         private readonly ILogger<ClientRepository> _logger;
-        private readonly IMapper _mapper;
         private readonly IEnvConfiguration _envConfig;
+        private readonly IUtilRepository _utilRepo;
+        private readonly IMapper _mapper;
         private readonly AuthContext _context;
         private readonly AbstractValidator<ClientDto> _clientDtoValidator;
 
         public ClientRepository(
             ILogger<ClientRepository> logger,
-            IMemoryCache cache,
-            IMapper mapper,
             IEnvConfiguration envConfig,
+            IUtilRepository utilRepo,
+            IMapper mapper,
+            IMemoryCache cache,
             AuthContext context,
             AbstractValidator<ClientDto> clientDtoValidator)
             : base(logger, cache, envConfig, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
+            _utilRepo = utilRepo ?? throw new ArgumentNullException(nameof(utilRepo));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _clientDtoValidator = clientDtoValidator ?? throw new ArgumentNullException(nameof(clientDtoValidator));
         }
@@ -126,6 +129,8 @@ namespace aiof.auth.services
 
             var client = _mapper.Map<Client>(clientDto)
                 .GenerateApiKeys();
+
+            client.Role = await _utilRepo.GetRoleAsync<Client>(clientDto.RoleId) as Role;
 
             await _context.Clients
                 .AddAsync(client);

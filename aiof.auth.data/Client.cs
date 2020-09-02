@@ -52,5 +52,7 @@ namespace aiof.auth.data
         public string Name { get; set; }
 
         public bool Enabled { get; set; } = true;
+
+        public int? RoleId { get; set; }
     }
 }
