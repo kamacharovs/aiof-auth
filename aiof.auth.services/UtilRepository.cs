@@ -59,7 +59,19 @@ namespace aiof.auth.services
             return await GetRolesQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == id)
                 ?? await GetRolesQuery(asNoTracking)
-                    .FirstOrDefaultAsync(x => x.Name == defaultRole);
+                    .FirstOrDefaultAsync(x => x.Name == defaultRole)
+                    ?? await QuickAddRoleAsync(defaultRole);
+        }
+
+        public async Task<IRole> QuickAddRoleAsync(
+            string name)
+        {
+            var role = new Role { Name = name };
+            
+            await _context.Roles.AddAsync(role);
+            await _context.SaveChangesAsync();
+
+            return role;
         }
     }
 }
