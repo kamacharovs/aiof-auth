@@ -91,28 +91,6 @@ namespace aiof.auth.tests
         }
 
         [Fact]
-        public void GetAlgType_User_Valid()
-        {
-            var algType = _repo.GetAlgType<User>();
-
-            Assert.Equal(AlgType.HS256, algType);
-        }
-        [Fact]
-        public void GetAlgType_Client_Valid()
-        {
-            var algType = _repo.GetAlgType<Client>();
-
-            Assert.Equal(AlgType.RS256, algType);
-        }   
-        [Fact]
-        public void GetAlgType_Default_Valid()
-        {
-            var algType = _repo.GetAlgType<ClientRefreshToken>();
-
-            Assert.Equal(AlgType.RS256, algType);
-        }
-
-        [Fact]
         public void GetRsaKey_Public()
         {
             var rsaSecKey = _repo.GetRsaKey(RsaKeyType.Public);
@@ -128,7 +106,7 @@ namespace aiof.auth.tests
             var user = await _userRepo.GetUserAsync(id);
 
             var token = _repo.GenerateJwtToken(user);
-            var tokenValidation = _repo.ValidateToken<User>(token.AccessToken);
+            var tokenValidation = _repo.ValidateToken(token.AccessToken);
 
             Assert.NotNull(tokenValidation);
             Assert.True(tokenValidation.IsAuthenticated);
@@ -140,40 +118,52 @@ namespace aiof.auth.tests
             int clientId, 
             string token)
         {
-            var revokedTokenResp = await _repo.RevokeTokenAsync(clientId, token);
+            var revokedTokenResp = await _repo.RevokeTokenAsync(token, clientId: clientId);
 
             Assert.NotNull(revokedTokenResp);
-            Assert.Equal(clientId, revokedTokenResp.ClientId);
             Assert.Equal(token, revokedTokenResp.Token);
             Assert.NotNull(revokedTokenResp.Revoked);
         }
 
-        [Fact]
-        public void ValidateToken_Expired()
-        {
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken<Client>(Helper.ExpiredJwtToken));
-        }
-
+        
         [Theory]
         [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
-        public async Task ValidateToken_IsAuthenticated(string apiKey)
+        public async Task ValidateClientToken_IsAuthenticated(string apiKey)
         {
             var tokenReq = new TokenRequest { ApiKey = apiKey };
             var token = await _repo.GetTokenAsync(tokenReq);
             var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
-            var validation = _repo.ValidateToken(validationReq);
+            var validation = _repo.ValidateToken(validationReq.AccessToken);
+
+            Assert.NotNull(validation);
+            Assert.True(validation.IsAuthenticated);
+            Assert.Equal(TokenResultStatus.Valid.ToString(), validation.Status);
+        }
+        [Theory]
+        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType = typeof(Helper))]
+        public async Task ValidateUserToken_IsAuthenticated(string username, string password)
+        {
+            var tokenReq = new TokenRequest { Username = username, Password = password };
+            var token = await _repo.GetTokenAsync(tokenReq);
+            var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
+            var validation = _repo.ValidateToken(validationReq.AccessToken);
 
             Assert.NotNull(validation);
             Assert.True(validation.IsAuthenticated);
             Assert.Equal(TokenResultStatus.Valid.ToString(), validation.Status);
         }
         [Fact]
-        public void ValidateToken_Expired_ThrowsUnauthorized()
+        public void ValidateToken_Expired()
+        {
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(Helper.ExpiredJwtToken));
+        }
+        [Fact]
+        public void ValidateClientToken_Expired_ThrowsUnauthorized()
         {
             var token = Helper.ExpiredJwtToken;
             var validationReq = new ValidationRequest { AccessToken = token };
 
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(validationReq));
+            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(validationReq.AccessToken));
         }
 
         [Fact]

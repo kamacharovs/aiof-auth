@@ -26,13 +26,20 @@ namespace aiof.auth.data
     }
 
     /// <summary>
-    /// Response to revoke a Client refresh token
+    /// Response for authentication for User. This is used to return User's information together with the token information
+    /// </summary>
+    public class TokenUserResponse : TokenResponse, ITokenUserResponse
+    {
+        [JsonPropertyName("user")]
+        [Required]
+        public IUser User { get; set; }
+    }
+
+    /// <summary>
+    /// Response to revoke a refresh token
     /// </summary>
     public class RevokeResponse : IRevokeResponse
     {
-        [Required]
-        public int ClientId { get; set; }
-
         [JsonPropertyName("refresh_token")]
         [Required]
         [MaxLength(128)]

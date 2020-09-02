@@ -6,12 +6,9 @@ using System.Security.Cryptography;
 
 using JetBrains.Annotations;
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace aiof.auth.data
 {
-    public static class Utils
+    public static partial class Utils
     {
         public static string GenerateApiKey<T>(int length = 32)
             where T : class
@@ -32,7 +29,7 @@ namespace aiof.auth.data
             return client;
         }
 
-        public static string DecodeApiKey(
+        public static string DecodeKey(
             [NotNull] this string apiKey)
         {
             return apiKey.Split('.')
@@ -63,34 +60,6 @@ namespace aiof.auth.data
             [NotNull] this string value)
         {
             return value.Replace(' ', '-').ToLower();
-        }
-
-        public static PropertyBuilder HasSnakeCaseColumnName(
-            [NotNull] this PropertyBuilder propertyBuilder)
-        {
-            propertyBuilder.Metadata.SetColumnName(
-                propertyBuilder
-                    .Metadata
-                    .Name
-                    .ToSnakeCase());
-
-            return propertyBuilder;
-        }
-
-        public static T ParseEnum<T>(string value)
-        {
-            return (T)Enum.Parse(typeof(T), value, true);
-        }
-
-        public static T ToEnum<T>(
-            [NotNull] this string value)
-        {
-            return (T)Enum.Parse(typeof(T), value, true);
-        }
-        public static AlgType ToEnum(
-            [NotNull] this string value)
-        {
-            return (AlgType)Enum.Parse(typeof(AlgType), value, true);
         }
     }
 }

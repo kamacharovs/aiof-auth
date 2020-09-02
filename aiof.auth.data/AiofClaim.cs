@@ -1,14 +1,22 @@
 using System;
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
     public class AiofClaim : IAiofClaim, 
         IPublicKeyId
     {
-        [JsonIgnore] public int Id { get; set; }
-        [JsonIgnore] public Guid PublicKey { get; set; } = Guid.NewGuid();
+        [JsonIgnore]
+        [Required]
+        public int Id { get; set; }
+
+        [JsonIgnore]
+        [Required]
+        public Guid PublicKey { get; set; } = Guid.NewGuid();
+
+        [Required]
         public string Name { get; set; }
     }
 

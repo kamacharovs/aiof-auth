@@ -25,7 +25,6 @@ namespace aiof.auth.services
         private readonly IClientRepository _clientRepo;
         private readonly AbstractValidator<TokenRequest> _tokenRequestValidator;
 
-        private readonly string _key;
         private readonly string _issuer;
         private readonly string _audience;
 
@@ -43,7 +42,6 @@ namespace aiof.auth.services
             _clientRepo = clientRepo ?? throw new ArgumentNullException(nameof(clientRepo));
             _tokenRequestValidator = tokenRequestValidator ?? throw new ArgumentNullException(nameof(tokenRequestValidator));
 
-            _key = _envConfig.JwtSecret ?? throw new ArgumentNullException(nameof(_envConfig.JwtSecret));
             _issuer = _envConfig.JwtIssuer ?? throw new ArgumentNullException(nameof(_envConfig.JwtIssuer));
             _audience = _envConfig.JwtAudience ?? throw new ArgumentNullException(nameof(_envConfig.JwtAudience));
         }
@@ -56,39 +54,30 @@ namespace aiof.auth.services
             {
                 case TokenType.User:
                     var user = await _userRepo.GetUserAsync(request.Username, request.Password);
-                    return GenerateJwtToken(user);
+                    var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
+                    return GenerateJwtToken(
+                        user,
+                        refreshToken.Token);
                 case TokenType.ApiKey:
                     return await GenerateJwtTokenAsync(request.ApiKey);
                 case TokenType.Refresh:
-                    var client = (await _clientRepo.GetRefreshTokenAsync(request.Token)).Client;
-                    return RefreshToken(client);
+                    return await RefreshTokenAsync(request.Token);
                 default:
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                         $"Invalid token request");
             }
         }
 
-        public async Task<IRevokeResponse> RevokeTokenAsync(
-            int clientId,
-            string token)
-        {
-            var clientRefresh = await _clientRepo.RevokeTokenAsync(clientId, token);
-
-            return new RevokeResponse
-            {
-                ClientId = clientRefresh.ClientId,
-                Token = clientRefresh.Token,
-                Revoked = clientRefresh.Revoked
-            };
-        }
-
         public async Task<ITokenResponse> GenerateJwtTokenAsync(string apiKey)
         {
-            switch (apiKey.DecodeApiKey())
+            switch (apiKey.DecodeKey())
             {
                 case nameof(User):
                     var user = await _userRepo.GetUserAsync(apiKey);
-                    return GenerateJwtToken(user);
+                    var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
+                    return GenerateJwtToken(
+                        user,
+                        refreshToken.Token);
                 case nameof(Client):
                     var clientRefresh = await _clientRepo.AddClientRefreshTokenAsync(apiKey);
                     return GenerateJwtToken(
@@ -100,23 +89,47 @@ namespace aiof.auth.services
             }
         }
 
-        public ITokenResponse RefreshToken(IClient client)
+        public async Task<ITokenResponse> RefreshTokenAsync(string refreshToken)
         {
-            return GenerateJwtToken(
-                client: client,
-                expiresIn: _envConfig.JwtRefreshExpires);
+            switch (refreshToken.DecodeKey())
+            {
+                case nameof(User):
+                    var user = await _userRepo.GetUserByRefreshTokenAsync(refreshToken);
+                    return GenerateJwtToken(
+                        user: user,
+                        expiresIn: _envConfig.JwtRefreshExpires);
+                case nameof(Client):
+                    var client = (await _clientRepo.GetRefreshTokenAsync(refreshToken)).Client;
+                    return GenerateJwtToken(
+                        client: client,
+                        expiresIn: _envConfig.JwtRefreshExpires);
+                default:
+                    throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                        $"Invalid token request with RefreshToken='{refreshToken}'");
+            }
         }
 
-        public ITokenResponse GenerateJwtToken(IUser user)
+        public ITokenUserResponse GenerateJwtToken(
+            IUser user,
+            string refreshToken = null,
+            int? expiresIn = null)
         {
-            return GenerateJwtToken<User>(new Claim[]
+            var token = GenerateJwtToken<User>(new Claim[]
                 {
-                    new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
-                    new Claim(AiofClaims.GivenName, user.FirstName),
-                    new Claim(AiofClaims.FamilyName, user.LastName),
-                    new Claim(AiofClaims.Email, user.Email)
+                    new Claim(AiofClaims.PublicKey, user.PublicKey.ToString())
                 },
-                entity: user as IPublicKeyId);
+                entity: user as IPublicKeyId,
+                refreshToken: refreshToken,
+                expiresIn: expiresIn);
+
+            return new TokenUserResponse
+            {
+                TokenType = token.TokenType,
+                ExpiresIn = token.ExpiresIn,
+                AccessToken = token.AccessToken,
+                RefreshToken = token.RefreshToken,
+                User = user
+            };
         }
 
         public ITokenResponse GenerateJwtToken(
@@ -126,9 +139,7 @@ namespace aiof.auth.services
         {
             return GenerateJwtToken<Client>(new Claim[]
                 {
-                    new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
-                    new Claim(AiofClaims.Name, client.Name),
-                    new Claim(AiofClaims.Slug, client.Slug)
+                    new Claim(AiofClaims.PublicKey, client.PublicKey.ToString())
                 },
                 entity: client as IPublicKeyId,
                 refreshToken: refreshToken,
@@ -150,7 +161,7 @@ namespace aiof.auth.services
                 Expires = DateTime.UtcNow.AddSeconds(expires),
                 Issuer = _issuer,
                 Audience = _audience,
-                SigningCredentials = GetSigningCredentials()
+                SigningCredentials = new SigningCredentials(GetRsaKey(RsaKeyType.Private), SecurityAlgorithms.RsaSha256)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
@@ -162,48 +173,6 @@ namespace aiof.auth.services
                 AccessToken = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken
             };
-
-            SigningCredentials GetSigningCredentials()
-            {
-                var algType = GetAlgType<T>();
-
-                switch (algType)
-                {
-                    case AlgType.RS256:
-                        return new SigningCredentials(
-                            GetRsaKey(RsaKeyType.Private),
-                            SecurityAlgorithms.RsaSha256);
-                    case AlgType.HS256:
-                        var key = Encoding.ASCII.GetBytes(_key);
-                        return new SigningCredentials(
-                            new SymmetricSecurityKey(key),
-                            SecurityAlgorithms.HmacSha256Signature);
-                    default:
-                        throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                            $"Invalid or unsupported Alg Type.");
-                }
-            }
-        }
-
-        public AlgType GetAlgType<T>()
-            where T : class, IPublicKeyId
-        {
-            string alg = string.Empty;
-
-            switch (typeof(T).Name)
-            {
-                case nameof(User):
-                    alg = _envConfig.JwtAlgorithmUser;
-                    break;
-                case nameof(Client):
-                    alg = _envConfig.JwtAlgorithmClient;
-                    break;
-                default:
-                    alg = _envConfig.JwtAlgorithmDefault;
-                    break;
-            }
-
-            return alg.ToEnum();
         }
 
         public RsaSecurityKey GetRsaKey(RsaKeyType rsaKeyType)
@@ -226,8 +195,7 @@ namespace aiof.auth.services
             return new RsaSecurityKey(rsa);
         }
 
-        public ITokenResult ValidateToken<T>(string token)
-            where T : class, IPublicKeyId
+        public ITokenResult ValidateToken(string token)
         {
             try
             {
@@ -240,7 +208,7 @@ namespace aiof.auth.services
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = GetSecurityKey()
+                    IssuerSigningKey = GetRsaKey(RsaKeyType.Public)
                 };
 
                 var handler = new JwtSecurityTokenHandler();
@@ -254,23 +222,6 @@ namespace aiof.auth.services
                     IsAuthenticated = result.Identity.IsAuthenticated,
                     Status = TokenResultStatus.Valid.ToString()
                 };
-                
-                SecurityKey GetSecurityKey()
-                {
-                    var algType = GetAlgType<T>();
-
-                    switch (algType)
-                    {
-                        case AlgType.RS256:
-                            return GetRsaKey(RsaKeyType.Public);
-                        case AlgType.HS256:
-                            var key = Encoding.ASCII.GetBytes(_key);
-                            return new SymmetricSecurityKey(key);
-                        default:
-                            throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                                $"Invalid or unsupported Alg Type");
-                    }
-                }
             }
             catch (SecurityTokenExpiredException)
             {
@@ -283,17 +234,35 @@ namespace aiof.auth.services
                     $"Invalid signature");
             }
         }
-        public ITokenResult ValidateToken(IValidationRequest request)
+
+        public async Task<IRevokeResponse> RevokeTokenAsync(
+            string token,
+            int? userId = null,
+            int? clientId = null)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(request.AccessToken);
+            if (clientId != null)
+            {
+                var clientRefresh = await _clientRepo.RevokeTokenAsync((int)clientId, token);
 
-            var givenName = token.Claims.FirstOrDefault(x => x.Type == AiofClaims.GivenName);
+                return new RevokeResponse
+                {
+                    Token = clientRefresh.Token,
+                    Revoked = clientRefresh.Revoked
+                };
+            }
+            else if (userId != null)
+            {
+                var userRefresh = await _userRepo.RevokeTokenAsync((int)userId, token);
 
-            if (!string.IsNullOrWhiteSpace(givenName?.Value))
-                return ValidateToken<User>(request.AccessToken);
+                return new RevokeResponse
+                {
+                    Token = userRefresh.Token,
+                    Revoked = userRefresh.Revoked
+                };
+            }
             else
-                return ValidateToken<Client>(request.AccessToken);
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Couldn't revoke Token='{token}' for UserId='{userId}' or ClientId='{clientId}'");
         }
 
         public JsonWebKey GetPublicJsonWebKey()
