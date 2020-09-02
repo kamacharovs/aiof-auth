@@ -48,7 +48,8 @@ namespace aiof.auth.data
                     LastName = "Kamacharov",
                     Email = "gkama@test.com",
                     Username = "gkama",
-                    Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=" //pass1234
+                    Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=", //pass1234
+                    RoleId = 1
                 },
                 new User
                 {
@@ -58,7 +59,8 @@ namespace aiof.auth.data
                     LastName = "Brown",
                     Email = "jessie@test.com",
                     Username = "jbro",
-                    Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
+                    Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=", //password123
+                    RoleId = 2,
                 },
                 new User
                 {
@@ -70,7 +72,8 @@ namespace aiof.auth.data
                     Username = "gbest",
                     Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=", //pass1234
                     PrimaryApiKey = "VXNlcg==.x0sHnNHFytELB6FkLb/L6Q/YXPoXAZ4bAHvztgr6vIU=",
-                    SecondaryApiKey = "VXNlcg==.VmNKkE4o6zxCq8Ut1BzkSU2R7RcCqo8y/jTklcTU6m8="
+                    SecondaryApiKey = "VXNlcg==.VmNKkE4o6zxCq8Ut1BzkSU2R7RcCqo8y/jTklcTU6m8=",
+                    RoleId = 2,
                 }
             };
         }
