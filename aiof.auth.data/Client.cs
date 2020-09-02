@@ -7,13 +7,41 @@ namespace aiof.auth.data
     public class Client : IClient,
         IPublicKeyId, IApiKey, IEnable
     {
-        [JsonIgnore] public int Id { get; set; }
-        [JsonIgnore] public Guid PublicKey { get; set; } = Guid.NewGuid();
+        [JsonIgnore]
+        [Required]
+        public int Id { get; set; }
+
+        [JsonIgnore]
+        [Required]
+        public Guid PublicKey { get; set; } = Guid.NewGuid();
+
+        [Required]
+        [MaxLength(200)]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(50)]
         public string Slug { get; set; }
-        public bool Enabled { get; set; } = true;
+
+        [Required]
+        public bool Enabled { get; set; }
+
+        [Required]
+        [MaxLength(100)]
         public string PrimaryApiKey { get; set; }
+
+        [Required]
+        [MaxLength(100)]
         public string SecondaryApiKey { get; set; }
+        
+        [JsonIgnore]
+        [Required]
+        public int RoleId { get; set; }
+        
+        [Required]
+        public Role Role { get; set; }
+
+        [Required]
         public DateTime Created { get; set; } = DateTime.UtcNow;
     }
 
@@ -24,5 +52,7 @@ namespace aiof.auth.data
         public string Name { get; set; }
 
         public bool Enabled { get; set; } = true;
+
+        public int? RoleId { get; set; }
     }
 }

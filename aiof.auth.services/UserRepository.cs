@@ -16,10 +16,11 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public class UserRepository : BaseRepository, IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
+        private readonly IUtilRepository _utilRepo;
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
         private readonly AbstractValidator<UserDto> _userDtoValidator;
@@ -27,16 +28,16 @@ namespace aiof.auth.services
 
         public UserRepository(
             ILogger<UserRepository> logger,
-            IMemoryCache cache,
             IEnvConfiguration envConfig,
+            IUtilRepository utilRepo,
             IMapper mapper,
             AuthContext context,
             AbstractValidator<UserDto> userDtoValidator,
             AbstractValidator<User> userValidator)
-            : base(logger, cache, envConfig, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
+            _utilRepo = utilRepo ?? throw new ArgumentNullException(nameof(utilRepo));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _userDtoValidator = userDtoValidator ?? throw new ArgumentNullException(nameof(userDtoValidator));
@@ -47,9 +48,11 @@ namespace aiof.auth.services
         {
             return asNoTracking
                 ? _context.Users
+                    .Include(x => x.Role)
                     .AsNoTracking()
                     .AsQueryable()
                 : _context.Users
+                    .Include(x => x.Role)
                     .AsQueryable();
         }
 
@@ -65,15 +68,22 @@ namespace aiof.auth.services
 
         public async Task<IUser> GetUserAsync(int id)
         {
-            return await base.GetEntityAsync<User>(id);
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException($"{nameof(User)} with Id='{id}' was not found");
         }
         public async Task<IUser> GetUserAsync(Guid publicKey)
         {
-            return await base.GetEntityAsync<User>(publicKey);
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
+                ?? throw new AuthNotFoundException($"{nameof(User)} with publicKey='{publicKey}' was not found");
         }
         public async Task<IUser> GetUserAsync(string apiKey)
         {
-            return await base.GetEntityAsync<User>(apiKey);
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
+                    || x.SecondaryApiKey == apiKey)
+                ?? throw new AuthNotFoundException($"{nameof(User)} with ApiKey='{apiKey}' was not found");
         }
         public async Task<IUser> GetUserByUsernameAsync(
             string username, 
@@ -88,8 +98,7 @@ namespace aiof.auth.services
             string password)
         {
             var user = await GetUserByUsernameAsync(
-                username, 
-                asNoTracking: true);
+                username);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -178,6 +187,7 @@ namespace aiof.auth.services
                     $"and Username='{userDto.Username}' already exists");
 
             user.Password = Hash(userDto.Password);
+            user.Role = await _utilRepo.GetRoleAsync<User>(userDto.RoleId) as Role;
 
             await _context.Users
                 .AddAsync(user);
@@ -218,9 +228,7 @@ namespace aiof.auth.services
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetUserByUsernameAsync(
-                username, 
-                asNoTracking: false);
+            var user = await GetUserByUsernameAsync(username, asNoTracking: false);
 
             if (!Check(user.Password, oldPassword))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,

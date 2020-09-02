@@ -13,7 +13,7 @@ namespace aiof.auth.services
         Task<IUser> GetUserAsync(string apiKey);
         Task<IUser> GetUserByUsernameAsync(
             string username, 
-            bool asNoTracking = true);
+            bool asNoTracking = false);
         Task<IUser> GetUserAsync(
             string username, 
             string password);

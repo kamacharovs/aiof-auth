@@ -44,6 +44,13 @@ namespace aiof.auth.data
         [Required]
         [MaxLength(100)]
         string SecondaryApiKey { get; set; }
+        
+        [JsonIgnore]
+        [Required]
+        int RoleId { get; set; }
+        
+        [Required]
+        Role Role { get; set; }
 
         [Required]
         DateTime Created { get; set; }

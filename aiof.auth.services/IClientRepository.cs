@@ -8,8 +8,12 @@ namespace aiof.auth.services
 {
     public interface IClientRepository
     {
-        Task<IClient> GetClientAsync(int id);
-        Task<IClient> GetClientAsync(string apiKey);
+        Task<IClient> GetAsync(
+            int id,
+            bool asNoTracking = true);
+        Task<IClient> GetAsync(
+            string apiKey,
+            bool asNoTracking = true);
         Task<IClientRefreshToken> GetRefreshTokenAsync(
             string token,
             bool asNoTracking = true);
