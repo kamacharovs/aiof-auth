@@ -42,7 +42,7 @@ namespace aiof.auth.core
                 return;
 
             var statusCode = httpContext.Response.StatusCode;
-            var authProblem = new AuthProblemDetail();
+            var authProblem = new AuthProblemDetailBase();
 
             switch (statusCode)
             {
@@ -55,10 +55,6 @@ namespace aiof.auth.core
                     authProblem.Message = _defaultForbiddenMessage;
                     break;
             }
- 
-            authProblem.TraceId = string.IsNullOrEmpty(httpContext?.TraceIdentifier)
-                ? Guid.NewGuid().ToString()
-                : httpContext.TraceIdentifier;
 
             var authProblemJson = JsonSerializer
                 .Serialize(authProblem, new JsonSerializerOptions { IgnoreNullValues = true });
