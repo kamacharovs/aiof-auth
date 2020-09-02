@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
@@ -26,8 +27,18 @@ namespace aiof.auth.data
         public const string User = nameof(User);
         public const string Client = nameof(Client);
 
+
         public const string AdminOrUser = nameof(Admin) + "," + nameof(User);
         public const string AdminOrClient = nameof(Admin) + "," + nameof(Client);
-        public const string AdminOrUserOrClient = nameof(Admin) + "," + nameof(User) + "," + nameof(Client);
+
+        public const string Any = nameof(Admin) + "," + nameof(User) + "," + nameof(Client);
+
+        public static IEnumerable<string> All 
+            => new string[]
+            {
+                Admin,
+                User,
+                Client
+            };
     }
 }
