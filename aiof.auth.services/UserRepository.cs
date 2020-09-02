@@ -44,7 +44,7 @@ namespace aiof.auth.services
             _userValidator = userValidator ?? throw new ArgumentNullException(nameof(userValidator));
         }
 
-        private IQueryable<User> GetUsersQuery(bool asNoTracking = false)
+        private IQueryable<User> GetUsersQuery(bool asNoTracking = true)
         {
             return asNoTracking
                 ? _context.Users
@@ -56,7 +56,7 @@ namespace aiof.auth.services
                     .AsQueryable();
         }
 
-        private IQueryable<UserRefreshToken> GetUserRefreshTokensQuery(bool asNoTracking = false)
+        private IQueryable<UserRefreshToken> GetUserRefreshTokensQuery(bool asNoTracking = true)
         {
             return asNoTracking
                 ? _context.UserRefreshTokens
@@ -68,26 +68,26 @@ namespace aiof.auth.services
 
         public async Task<IUser> GetUserAsync(int id)
         {
-            return await GetUsersQuery(true)
+            return await GetUsersQuery()
                 .FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new AuthNotFoundException($"{nameof(User)} with Id='{id}' was not found");
         }
         public async Task<IUser> GetUserAsync(Guid publicKey)
         {
-            return await GetUsersQuery(true)
+            return await GetUsersQuery()
                 .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
                 ?? throw new AuthNotFoundException($"{nameof(User)} with publicKey='{publicKey}' was not found");
         }
         public async Task<IUser> GetUserAsync(string apiKey)
         {
-            return await GetUsersQuery(true)
+            return await GetUsersQuery()
                 .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
                     || x.SecondaryApiKey == apiKey)
                 ?? throw new AuthNotFoundException($"{nameof(User)} with ApiKey='{apiKey}' was not found");
         }
         public async Task<IUser> GetUserByUsernameAsync(
             string username, 
-            bool asNoTracking = false)
+            bool asNoTracking = true)
         {
             return await GetUsersQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Username == username)
@@ -98,8 +98,7 @@ namespace aiof.auth.services
             string password)
         {
             var user = await GetUserByUsernameAsync(
-                username, 
-                asNoTracking: true);
+                username);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -146,7 +145,7 @@ namespace aiof.auth.services
         public async Task<IUserRefreshToken> GetRefreshTokenAsync(
             int userId,
             string token, 
-            bool asNoTracking = false)
+            bool asNoTracking = true)
         {
             return await GetUserRefreshTokensQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.UserId == userId
@@ -229,7 +228,7 @@ namespace aiof.auth.services
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetUserByUsernameAsync(username);
+            var user = await GetUserByUsernameAsync(username, asNoTracking: false);
 
             if (!Check(user.Password, oldPassword))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -250,7 +249,8 @@ namespace aiof.auth.services
         {
             var refreshToken = await GetRefreshTokenAsync(
                 userId,
-                token)
+                token,
+                asNoTracking: false)
                 as UserRefreshToken
                 ?? throw new AuthNotFoundException($"{nameof(UserRefreshToken)} with UserId='{userId}' and Token='{token}' was not found");
 
