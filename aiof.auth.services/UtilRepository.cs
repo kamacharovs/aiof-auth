@@ -33,6 +33,15 @@ namespace aiof.auth.services
                     .AsQueryable();
         }
 
+        /// <summary>
+        /// Get a Role by id. If the id is null, then a default role is assigned and retrieved from the database.
+        /// If the Role still doesn't exist in the database, then it's added. The default roles are assigned
+        /// based on T name (User, Client, etc.)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <param name="asNoTracking"></param>
+        /// <returns></returns>
         public async Task<IRole> GetRoleAsync<T>(
             int? id,
             bool asNoTracking = false)
@@ -49,7 +58,7 @@ namespace aiof.auth.services
                     defaultRole = Roles.Client;
                     break;
                 default:
-                    defaultRole = Roles.User;
+                    defaultRole = Roles.Basic;
                     break;
             }
 
@@ -63,6 +72,11 @@ namespace aiof.auth.services
                     ?? await QuickAddRoleAsync(defaultRole);
         }
 
+        /// <summary>
+        /// Add Role in a quick and invalidated way
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public async Task<IRole> QuickAddRoleAsync(
             string name)
         {

@@ -200,6 +200,12 @@ namespace aiof.auth.data
                     Id = 3,
                     PublicKey = Guid.Parse("d4d4a9a7-6dd2-4bfc-934a-9f94d8f8f82f"),
                     Name = Roles.Client
+                },
+                new Role
+                {
+                    Id = 4,
+                    PublicKey = Guid.Parse("f5a44fee-3789-478a-a1a3-2e5b7a87167c"),
+                    Name = Roles.Basic
                 }
             };
         }

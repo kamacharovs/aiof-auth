@@ -274,6 +274,13 @@ namespace aiof.auth.tests
         public const string Category = nameof(Category);
         public const string UnitTest = nameof(UnitTest);
         public const string IntegrationTest = nameof(IntegrationTest);
+
+        
+        public class TestPublicKeyId : IPublicKeyId
+        {
+            public int Id { get; set; }
+            public Guid PublicKey { get; set; } = Guid.NewGuid();
+        }
         #endregion
     }
 }

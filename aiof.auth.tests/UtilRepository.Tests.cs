@@ -44,5 +44,18 @@ namespace aiof.auth.tests
             Assert.NotNull(role);
             Assert.Equal(role.Name, Roles.Client);
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(77)]
+        [InlineData(88)]
+        [InlineData(99)]
+        public async Task GetRoleAsync_Non_UserOrClient_Defaults(int? id)
+        {
+            var role = await _repo.GetRoleAsync<Helper.TestPublicKeyId>(id);
+
+            Assert.NotNull(role);
+            Assert.Equal(Roles.Basic, role.Name);
+        }
     }
 }
