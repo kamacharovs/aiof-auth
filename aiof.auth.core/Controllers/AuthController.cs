@@ -78,13 +78,14 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Revoke an existing Client refresh token
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut]
         [Route("token/client/revoke")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> RevokeClientRefreshTokenAsync([FromBody, Required] RevokeClientRequest request)
         {
             return Ok(await _repo.RevokeTokenAsync(request.Token, clientId: request.ClientId));
@@ -93,13 +94,14 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Revoke an existing User refresh token
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut]
         [Route("token/user/revoke")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> RevokeUserRefreshTokenAsync([FromBody, Required] RevokeUserRequest request)
         {
             return Ok(await _repo.RevokeTokenAsync(request.Token, userId: request.UserId));

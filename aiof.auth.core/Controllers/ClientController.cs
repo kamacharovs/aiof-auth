@@ -16,13 +16,14 @@ namespace aiof.auth.core.Controllers
     /// <summary>
     /// Everything aiof client
     /// </summary>
-    [Authorize]
+    [Authorize(Roles = Roles.Admin)]
     [ApiController]
     [Route("client")]
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class ClientController : ControllerBase
     {
         private readonly IClientRepository _repo;
