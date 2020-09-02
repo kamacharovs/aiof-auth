@@ -50,6 +50,9 @@ namespace aiof.auth.data
         public DateTime Created { get; set; } = DateTime.UtcNow;
 
         [JsonIgnore]
+        public Role Role { get; set; }
+
+        [JsonIgnore]
         public ICollection<UserRefreshToken> RefreshTokens { get; set; } = new List<UserRefreshToken>();
     }
 

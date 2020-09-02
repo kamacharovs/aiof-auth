@@ -158,7 +158,7 @@ namespace aiof.auth.data
                     Token = "Q2xpZW50.VOJ6KaAss0+uQHD3e+OieAO2FrY2LsY/jzX6nAsSkdWqY7TGDI+b6lSsoNzvaMOwgu0TvXNPsQ7OlBBkuBYE0g==",
                     ClientId = 1,
                     Created = DateTime.UtcNow,
-                    Expires = DateTime.UtcNow.AddDays(1)
+                    Expires = DateTime.UtcNow.AddDays(7)
                 },
                 new ClientRefreshToken
                 {
@@ -166,9 +166,9 @@ namespace aiof.auth.data
                     PublicKey = Guid.Parse("c8f80b28-3459-42b8-9c13-30e719a14df7"),
                     Token = "Q2xpZW50.9hMijUAPRBnEohxLg3z9VZRSefhuBfZs9NgkR3Bf9/r1WG1mupPNCJcdmgGWLBob7fRMCH4JFBJPiahYfQXYdA==",
                     ClientId = 2,
-                    Created = DateTime.UtcNow.AddDays(-2),
+                    Created = DateTime.UtcNow.AddDays(-8),
                     Expires = DateTime.UtcNow.AddDays(-1),
-                    Revoked = DateTime.UtcNow.AddDays(-1)
+                    Revoked = DateTime.UtcNow.AddDays(-2)
                 }
             };
         }
