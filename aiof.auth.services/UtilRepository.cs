@@ -71,6 +71,8 @@ namespace aiof.auth.services
             await _context.Roles.AddAsync(role);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation($"Created {nameof(Role)}='{name}'");
+
             return role;
         }
     }
