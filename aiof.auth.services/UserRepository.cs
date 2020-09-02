@@ -16,7 +16,7 @@ using aiof.auth.data;
 
 namespace aiof.auth.services
 {
-    public class UserRepository : BaseRepository, IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly ILogger<UserRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
@@ -33,7 +33,6 @@ namespace aiof.auth.services
             AuthContext context,
             AbstractValidator<UserDto> userDtoValidator,
             AbstractValidator<User> userValidator)
-            : base(logger, cache, envConfig, context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
@@ -47,9 +46,11 @@ namespace aiof.auth.services
         {
             return asNoTracking
                 ? _context.Users
+                    .Include(x => x.Role)
                     .AsNoTracking()
                     .AsQueryable()
                 : _context.Users
+                    .Include(x => x.Role)
                     .AsQueryable();
         }
 
@@ -65,15 +66,22 @@ namespace aiof.auth.services
 
         public async Task<IUser> GetUserAsync(int id)
         {
-            return await base.GetEntityAsync<User>(id);
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException($"{nameof(User)} with Id='{id}' was not found");
         }
         public async Task<IUser> GetUserAsync(Guid publicKey)
         {
-            return await base.GetEntityAsync<User>(publicKey);
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
+                ?? throw new AuthNotFoundException($"{nameof(User)} with publicKey='{publicKey}' was not found");
         }
         public async Task<IUser> GetUserAsync(string apiKey)
         {
-            return await base.GetEntityAsync<User>(apiKey);
+            return await GetUsersQuery()
+                .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
+                    || x.SecondaryApiKey == apiKey)
+                ?? throw new AuthNotFoundException($"{nameof(User)} with ApiKey='{apiKey}' was not found");
         }
         public async Task<IUser> GetUserByUsernameAsync(
             string username, 
