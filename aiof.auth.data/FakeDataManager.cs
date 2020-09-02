@@ -30,6 +30,9 @@ namespace aiof.auth.data
             _context.Claims
                 .AddRange(GetFakeClaims());
 
+            _context.Roles
+                .AddRange(GetFakeRoles());
+
             _context.SaveChanges();
         }
 
@@ -166,6 +169,31 @@ namespace aiof.auth.data
                     Created = DateTime.UtcNow.AddDays(-2),
                     Expires = DateTime.UtcNow.AddDays(-1),
                     Revoked = DateTime.UtcNow.AddDays(-1)
+                }
+            };
+        }
+
+        public IEnumerable<Role> GetFakeRoles()
+        {
+            return new List<Role>
+            {
+                new Role
+                {
+                    Id = 1,
+                    PublicKey = Guid.Parse("596b81af-e6f1-4634-aa96-6ccc38bd0dc3"),
+                    Name = Roles.Admin
+                },
+                new Role
+                {
+                    Id = 2,
+                    PublicKey = Guid.Parse("8e5a2f46-1f7c-4e42-8f24-567e18c58b9c"),
+                    Name = Roles.User
+                },
+                new Role
+                {
+                    Id = 3,
+                    PublicKey = Guid.Parse("d4d4a9a7-6dd2-4bfc-934a-9f94d8f8f82f"),
+                    Name = Roles.Client
                 }
             };
         }

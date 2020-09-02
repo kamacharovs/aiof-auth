@@ -103,6 +103,9 @@ namespace aiof.auth.data
 
                 e.HasKey(x => x.Id);
 
+                e.HasIndex(x => x.Name)
+                    .IsUnique();
+
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Name).HasSnakeCaseColumnName().HasMaxLength(50).IsRequired();
