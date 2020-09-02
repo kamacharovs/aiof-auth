@@ -46,15 +46,15 @@ namespace aiof.auth.data
         [MaxLength(100)]
         public string SecondaryApiKey { get; set; }
 
-        [Required]
-        public DateTime Created { get; set; } = DateTime.UtcNow;
-
         [JsonIgnore]
         [Required]
         public int RoleId { get; set; }
         
         [Required]
         public Role Role { get; set; }
+
+        [Required]
+        public DateTime Created { get; set; } = DateTime.UtcNow;
 
         [JsonIgnore]
         public ICollection<UserRefreshToken> RefreshTokens { get; set; } = new List<UserRefreshToken>();
