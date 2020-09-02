@@ -124,6 +124,7 @@ namespace aiof.auth.core
             }
 
             app.UseAuthExceptionMiddleware();
+            app.UseAuthUnauthorizedMiddleware();
             app.UseHealthChecks("/health");
             app.UseSwagger();
 
