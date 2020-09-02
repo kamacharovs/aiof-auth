@@ -90,7 +90,8 @@ namespace aiof.auth.data
                     Slug = "gk-client-1",
                     Enabled = true,
                     PrimaryApiKey = "Q2xpZW50.YJj7MeyO1P9DpglkO8bFeAe6vYEBrFhpC9O6BrYR43w=",
-                    SecondaryApiKey = "Q2xpZW50.k3HO3GHyDpO0InUUWzzOUrs52Mt6tEdkq7MuTokH0M8="
+                    SecondaryApiKey = "Q2xpZW50.k3HO3GHyDpO0InUUWzzOUrs52Mt6tEdkq7MuTokH0M8=",
+                    RoleId = 3
                 },
                 new Client
                 {
@@ -100,7 +101,8 @@ namespace aiof.auth.data
                     Slug = "gk-client-2",
                     Enabled = true,
                     PrimaryApiKey = "Q2xpZW50.Jo9C+6F3no9pwg8s1OWDkUGs+wHAVbsWkcRTS0s/SjU=",
-                    SecondaryApiKey = "Q2xpZW50.FAe44G9HIrbDFCGa/ZF4xZE+m3Fne7cB7eNJuy2vcoc="
+                    SecondaryApiKey = "Q2xpZW50.FAe44G9HIrbDFCGa/ZF4xZE+m3Fne7cB7eNJuy2vcoc=",
+                    RoleId = 3
                 },
                 new Client
                 {
@@ -110,7 +112,8 @@ namespace aiof.auth.data
                     Slug = "gk-client-3",
                     Enabled = false,
                     PrimaryApiKey = "Q2xpZW50.Dpkt/TSLB+nlVyQwi/pSUhkwEglerntGUym6h+3DM/k=",
-                    SecondaryApiKey = "Q2xpZW50.5/fRn0AL2RYPHcrT73HCSIuIYm2Iew5+1v9nvtXrtE4="
+                    SecondaryApiKey = "Q2xpZW50.5/fRn0AL2RYPHcrT73HCSIuIYm2Iew5+1v9nvtXrtE4=",
+                    RoleId = 3
                 }
             };
         }
