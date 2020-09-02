@@ -1,1359 +1,1998 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "aiof.auth",
-    "description": "Aiof authentication microservice",
-    "contact": {
-      "name": "Georgi Kamacharov",
-      "url": "https://github.com/gkama",
-      "email": "gkamacharov@aiof.com"
-    },
-    "license": {
-      "name": "MIT",
-      "url": "https://github.com/kamacharovs/aiof-auth/blob/master/LICENSE"
-    },
-    "version": "v1.0.0"
+      "title": "aiof.auth",
+      "contact": {
+          "name": "Georgi Kamacharov",
+          "url": "https://github.com/gkama",
+          "email": "gkamacharov@aiof.com"
+      },
+      "license": {
+          "name": "MIT",
+          "url": "https://github.com/kamacharovs/aiof-auth/blob/master/LICENSE"
+      },
+      "version": "v1.0.0"
   },
   "paths": {
-    "/auth/token": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Generate a JWT for User, Client",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TokenRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ITokenResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/token/validate": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Validate a JWT",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ValidationRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ITokenResult"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/token/refresh": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Generate a refresh JWT for Client",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TokenRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ITokenResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/token/revoke": {
-      "put": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Revoke an existing Client refresh token",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RevokeRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IRevokeResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/claims": {
-      "get": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Get all available claims for JWT",
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+      "/auth/token": {
+          "post": {
+              "tags": [
+                  "Auth"
+              ],
+              "summary": "Generate a JWT",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/TokenRequest"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad Request",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ITokenResponse"
+                              }
+                          }
+                      }
                   }
-                }
               }
-            }
           }
-        }
-      }
-    },
-    "/auth/jwks": {
-      "get": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Get JWKS for JWT creation",
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/JsonWebKey"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/.well-known/openid-configuration": {
-      "get": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Get OpenId Configuration for JWT creation",
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IOpenIdConfig"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/{id}": {
-      "get": {
-        "tags": [
-          "Client"
-        ],
-        "summary": "Get an existing Client by Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IClient"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/{id}/disable": {
-      "get": {
-        "tags": [
-          "Client"
-        ],
-        "summary": "Disable an existing Client",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IClient"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/{id}/enable": {
-      "get": {
-        "tags": [
-          "Client"
-        ],
-        "summary": "Enable an existing Client",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IClient"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/{id}/regenerate/keys": {
-      "get": {
-        "tags": [
-          "Client"
-        ],
-        "summary": "Regenerate PrimaryApiKey and SecondaryApiKey of an existing Client",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IClient"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/{id}/refresh/tokens": {
-      "get": {
-        "tags": [
-          "Client"
-        ],
-        "summary": "Get Client Refresh Tokens of an existing Client",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IClientRefreshToken"
+      },
+      "/auth/token/validate": {
+          "post": {
+              "tags": [
+                  "Auth"
+              ],
+              "summary": "Validate a JWT",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/ValidationRequest"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad Request",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ITokenResult"
+                              }
+                          }
+                      }
                   }
-                }
               }
-            }
           }
-        }
+      },
+      "/auth/token/refresh": {
+          "post": {
+              "tags": [
+                  "Auth"
+              ],
+              "summary": "Generate a refresh JWT for Client",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/TokenRequest"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad Request",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ITokenResponse"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/auth/token/client/revoke": {
+          "put": {
+              "tags": [
+                  "Auth"
+              ],
+              "summary": "Revoke an existing Client refresh token",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/RevokeClientRequest"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad Request",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IRevokeResponse"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/auth/token/user/revoke": {
+          "put": {
+              "tags": [
+                  "Auth"
+              ],
+              "summary": "Revoke an existing User refresh token",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/RevokeUserRequest"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad Request",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IRevokeResponse"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/auth/claims": {
+          "get": {
+              "tags": [
+                  "Auth"
+              ],
+              "summary": "Get all available claims for JWT",
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "array",
+                                  "items": {
+                                      "type": "string"
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/auth/jwks": {
+          "get": {
+              "tags": [
+                  "Auth"
+              ],
+              "summary": "Get JWKS for JWT creation",
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/JsonWebKey"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/auth/.well-known/openid-configuration": {
+          "get": {
+              "tags": [
+                  "Auth"
+              ],
+              "summary": "Get OpenId Configuration for JWT creation",
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IOpenIdConfig"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/client/{id}": {
+          "get": {
+              "tags": [
+                  "Client"
+              ],
+              "summary": "Get an existing Client by Id",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IClient"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/client/{id}/disable": {
+          "get": {
+              "tags": [
+                  "Client"
+              ],
+              "summary": "Disable an existing Client",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IClient"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/client/{id}/enable": {
+          "get": {
+              "tags": [
+                  "Client"
+              ],
+              "summary": "Enable an existing Client",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IClient"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/client/{id}/regenerate/keys": {
+          "get": {
+              "tags": [
+                  "Client"
+              ],
+              "summary": "Regenerate PrimaryApiKey and SecondaryApiKey of an existing Client",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IClient"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/client/{id}/refresh/tokens": {
+          "get": {
+              "tags": [
+                  "Client"
+              ],
+              "summary": "Get Client Refresh Tokens of an existing Client",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "array",
+                                  "items": {
+                                      "$ref": "#/components/schemas/IClientRefreshToken"
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/client": {
+          "post": {
+              "tags": [
+                  "Client"
+              ],
+              "summary": "Create a Client",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/ClientDto"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad Request",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "201": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IClient"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/user/{id}": {
+          "get": {
+              "tags": [
+                  "User"
+              ],
+              "summary": "Get an existing User by Id",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IUser"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/user": {
+          "get": {
+              "tags": [
+                  "User"
+              ],
+              "summary": "Get an existing User by Username",
+              "parameters": [
+                  {
+                      "name": "username",
+                      "in": "query",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IUser"
+                              }
+                          }
+                      }
+                  }
+              }
+          },
+          "post": {
+              "tags": [
+                  "User"
+              ],
+              "summary": "Create a User",
+              "requestBody": {
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/UserDto"
+                          }
+                      }
+                  },
+                  "required": true
+              },
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Bad Request",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "201": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IUser"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/user/{username}/{password}": {
+          "get": {
+              "tags": [
+                  "User"
+              ],
+              "summary": "Get an existing User by Username and Password",
+              "parameters": [
+                  {
+                      "name": "username",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      }
+                  },
+                  {
+                      "name": "password",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IUser"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/user/{id}/refresh/token": {
+          "get": {
+              "tags": [
+                  "User"
+              ],
+              "summary": "Get a User first non-revoked refresh token",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "404": {
+                      "description": "Not Found",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/user/{id}/refresh/tokens": {
+          "get": {
+              "tags": [
+                  "User"
+              ],
+              "summary": "Get a User refresh tokens",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/user/hash/{password}": {
+          "get": {
+              "tags": [
+                  "User"
+              ],
+              "summary": "Hash a Password",
+              "parameters": [
+                  {
+                      "name": "password",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Unauthorized",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "403": {
+                      "description": "Forbidden",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetailBase"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/util/apikey/{length}/user": {
+          "get": {
+              "tags": [
+                  "Util"
+              ],
+              "summary": "Generate User ApiKey",
+              "parameters": [
+                  {
+                      "name": "length",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/util/apikey/{length}/client": {
+          "get": {
+              "tags": [
+                  "Util"
+              ],
+              "summary": "Generate Client ApiKey",
+              "parameters": [
+                  {
+                      "name": "length",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              ],
+              "responses": {
+                  "500": {
+                      "description": "Server Error",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/IAuthProblemDetail"
+                              }
+                          }
+                      }
+                  },
+                  "200": {
+                      "description": "Success",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              }
+          }
       }
-    },
-    "/client": {
-      "post": {
-        "tags": [
-          "Client"
-        ],
-        "summary": "Create a Client",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClientDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IClient"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/{id}": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Get an existing User by Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IUser"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/{username}/{password}": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Get an existing User by Username and Password",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          },
-          {
-            "name": "password",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IUser"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Create a User",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IUser"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/hash/{password}": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Hash a Password",
-        "parameters": [
-          {
-            "name": "password",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthProblemDetail"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   },
   "components": {
-    "schemas": {
-      "TokenRequest": {
-        "type": "object",
-        "properties": {
-          "api_key": {
-            "maxLength": 64,
-            "type": "string",
-            "nullable": true
+      "schemas": {
+          "TokenRequest": {
+              "type": "object",
+              "properties": {
+                  "api_key": {
+                      "maxLength": 64,
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "refresh_token": {
+                      "maxLength": 128,
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "username": {
+                      "maxLength": 200,
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "password": {
+                      "maxLength": 100,
+                      "type": "string",
+                      "nullable": true
+                  }
+              },
+              "additionalProperties": false
           },
-          "refresh_token": {
-            "maxLength": 128,
-            "type": "string",
-            "nullable": true
+          "IAuthProblemDetail": {
+              "required": [
+                  "code",
+                  "message",
+                  "traceId"
+              ],
+              "type": "object",
+              "properties": {
+                  "code": {
+                      "type": "integer",
+                      "format": "int32"
+                  },
+                  "message": {
+                      "type": "string"
+                  },
+                  "traceId": {
+                      "type": "string"
+                  },
+                  "errors": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "nullable": true
+                  }
+              },
+              "additionalProperties": false
           },
-          "username": {
-            "maxLength": 200,
-            "type": "string",
-            "nullable": true
+          "ITokenResponse": {
+              "required": [
+                  "access_token",
+                  "expires_in",
+                  "token_type"
+              ],
+              "type": "object",
+              "properties": {
+                  "token_type": {
+                      "type": "string"
+                  },
+                  "expires_in": {
+                      "type": "integer",
+                      "format": "int32"
+                  },
+                  "access_token": {
+                      "type": "string"
+                  },
+                  "refresh_token": {
+                      "type": "string",
+                      "nullable": true
+                  }
+              },
+              "additionalProperties": false
           },
-          "password": {
-            "maxLength": 100,
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AuthProblemDetail": {
-        "required": [
-          "code",
-          "message",
-          "traceId"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
+          "ValidationRequest": {
+              "required": [
+                  "access_token"
+              ],
+              "type": "object",
+              "properties": {
+                  "access_token": {
+                      "type": "string"
+                  }
+              },
+              "additionalProperties": false
           },
-          "message": {
-            "type": "string"
+          "IAuthProblemDetailBase": {
+              "required": [
+                  "code",
+                  "message"
+              ],
+              "type": "object",
+              "properties": {
+                  "code": {
+                      "type": "integer",
+                      "format": "int32"
+                  },
+                  "message": {
+                      "type": "string"
+                  }
+              },
+              "additionalProperties": false
           },
-          "traceId": {
-            "type": "string"
+          "ITokenResult": {
+              "required": [
+                  "entityType",
+                  "isAuthenticated",
+                  "status"
+              ],
+              "type": "object",
+              "properties": {
+                  "isAuthenticated": {
+                      "type": "boolean"
+                  },
+                  "status": {
+                      "type": "string"
+                  },
+                  "entityType": {
+                      "type": "string"
+                  }
+              },
+              "additionalProperties": false
           },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ITokenResponse": {
-        "required": [
-          "access_token",
-          "expires_in",
-          "token_type"
-        ],
-        "type": "object",
-        "properties": {
-          "token_type": {
-            "type": "string"
+          "RevokeClientRequest": {
+              "required": [
+                  "clientId",
+                  "refresh_token"
+              ],
+              "type": "object",
+              "properties": {
+                  "clientId": {
+                      "type": "integer",
+                      "format": "int32"
+                  },
+                  "refresh_token": {
+                      "maxLength": 128,
+                      "type": "string"
+                  }
+              },
+              "additionalProperties": false
           },
-          "expires_in": {
-            "type": "integer",
-            "format": "int32"
+          "IRevokeResponse": {
+              "required": [
+                  "refresh_token",
+                  "revoked"
+              ],
+              "type": "object",
+              "properties": {
+                  "refresh_token": {
+                      "maxLength": 128,
+                      "type": "string"
+                  },
+                  "revoked": {
+                      "type": "string",
+                      "format": "date-time"
+                  }
+              },
+              "additionalProperties": false
           },
-          "access_token": {
-            "type": "string"
+          "RevokeUserRequest": {
+              "required": [
+                  "refresh_token",
+                  "userId"
+              ],
+              "type": "object",
+              "properties": {
+                  "userId": {
+                      "type": "integer",
+                      "format": "int32"
+                  },
+                  "refresh_token": {
+                      "maxLength": 128,
+                      "type": "string"
+                  }
+              },
+              "additionalProperties": false
           },
-          "refresh_token": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ValidationRequest": {
-        "required": [
-          "access_token"
-        ],
-        "type": "object",
-        "properties": {
-          "access_token": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ITokenResult": {
-        "required": [
-          "isAuthenticated",
-          "status"
-        ],
-        "type": "object",
-        "properties": {
-          "isAuthenticated": {
-            "type": "boolean"
-          },
-          "status": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RevokeRequest": {
-        "required": [
-          "clientId",
-          "refresh_token"
-        ],
-        "type": "object",
-        "properties": {
-          "clientId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "refresh_token": {
-            "maxLength": 128,
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "IRevokeResponse": {
-        "required": [
-          "clientId",
-          "refresh_token",
-          "revoked"
-        ],
-        "type": "object",
-        "properties": {
-          "clientId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "refresh_token": {
-            "maxLength": 128,
-            "type": "string"
-          },
-          "revoked": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CryptoProviderCache": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "ICryptoProvider": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "CryptoProviderFactory": {
-        "type": "object",
-        "properties": {
-          "cryptoProviderCache": {
-            "$ref": "#/components/schemas/CryptoProviderCache"
-          },
-          "customCryptoProvider": {
-            "$ref": "#/components/schemas/ICryptoProvider"
-          },
-          "cacheSignatureProviders": {
-            "type": "boolean",
-            "default": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "JsonWebKey": {
-        "type": "object",
-        "properties": {
-          "additionalData": {
-            "type": "object",
-            "additionalProperties": {
+          "CryptoProviderCache": {
               "type": "object",
               "additionalProperties": false
-            },
-            "nullable": true,
-            "readOnly": true
           },
-          "alg": {
-            "type": "string",
-            "nullable": true
+          "ICryptoProvider": {
+              "type": "object",
+              "additionalProperties": false
           },
-          "crv": {
-            "type": "string",
-            "nullable": true
+          "CryptoProviderFactory": {
+              "type": "object",
+              "properties": {
+                  "cryptoProviderCache": {
+                      "$ref": "#/components/schemas/CryptoProviderCache"
+                  },
+                  "customCryptoProvider": {
+                      "$ref": "#/components/schemas/ICryptoProvider"
+                  },
+                  "cacheSignatureProviders": {
+                      "type": "boolean",
+                      "default": true
+                  }
+              },
+              "additionalProperties": false
           },
-          "d": {
-            "type": "string",
-            "nullable": true
+          "JsonWebKey": {
+              "type": "object",
+              "properties": {
+                  "additionalData": {
+                      "type": "object",
+                      "additionalProperties": {
+                          "type": "object",
+                          "additionalProperties": false
+                      },
+                      "nullable": true,
+                      "readOnly": true
+                  },
+                  "alg": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "crv": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "d": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "dp": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "dq": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "e": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "k": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "keyId": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "keyOps": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "nullable": true,
+                      "readOnly": true
+                  },
+                  "kid": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "kty": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "n": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "oth": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "nullable": true
+                  },
+                  "p": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "q": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "qi": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "use": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "x": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "x5c": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "nullable": true,
+                      "readOnly": true
+                  },
+                  "x5t": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "x5tS256": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "x5u": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "y": {
+                      "type": "string",
+                      "nullable": true
+                  },
+                  "keySize": {
+                      "type": "integer",
+                      "format": "int32",
+                      "readOnly": true
+                  },
+                  "hasPrivateKey": {
+                      "type": "boolean",
+                      "readOnly": true
+                  },
+                  "cryptoProviderFactory": {
+                      "$ref": "#/components/schemas/CryptoProviderFactory"
+                  }
+              },
+              "additionalProperties": false
           },
-          "dp": {
-            "type": "string",
-            "nullable": true
+          "IOpenIdConfig": {
+              "required": [
+                  "claim_types_supported",
+                  "claims_supported",
+                  "id_token_signing_alg_values_supported",
+                  "issuer",
+                  "jwks_uri",
+                  "response_types_supported",
+                  "subject_types_supported",
+                  "token_endpoint",
+                  "token_refresh_endpoint"
+              ],
+              "type": "object",
+              "properties": {
+                  "issuer": {
+                      "type": "string"
+                  },
+                  "token_endpoint": {
+                      "type": "string"
+                  },
+                  "token_refresh_endpoint": {
+                      "type": "string"
+                  },
+                  "jwks_uri": {
+                      "type": "string"
+                  },
+                  "response_types_supported": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "readOnly": true
+                  },
+                  "subject_types_supported": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "readOnly": true
+                  },
+                  "id_token_signing_alg_values_supported": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "readOnly": true
+                  },
+                  "claim_types_supported": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "readOnly": true
+                  },
+                  "claims_supported": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      },
+                      "readOnly": true
+                  }
+              },
+              "additionalProperties": false
           },
-          "dq": {
-            "type": "string",
-            "nullable": true
+          "Role": {
+              "required": [
+                  "name"
+              ],
+              "type": "object",
+              "properties": {
+                  "name": {
+                      "maxLength": 50,
+                      "type": "string"
+                  }
+              },
+              "additionalProperties": false
           },
-          "e": {
-            "type": "string",
-            "nullable": true
+          "IClient": {
+              "required": [
+                  "created",
+                  "enabled",
+                  "name",
+                  "primaryApiKey",
+                  "role",
+                  "secondaryApiKey",
+                  "slug"
+              ],
+              "type": "object",
+              "properties": {
+                  "name": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "slug": {
+                      "maxLength": 50,
+                      "type": "string"
+                  },
+                  "enabled": {
+                      "type": "boolean"
+                  },
+                  "primaryApiKey": {
+                      "maxLength": 100,
+                      "type": "string"
+                  },
+                  "secondaryApiKey": {
+                      "maxLength": 100,
+                      "type": "string"
+                  },
+                  "role": {
+                      "$ref": "#/components/schemas/Role"
+                  },
+                  "created": {
+                      "type": "string",
+                      "format": "date-time"
+                  }
+              },
+              "additionalProperties": false
           },
-          "k": {
-            "type": "string",
-            "nullable": true
+          "IClientRefreshToken": {
+              "required": [
+                  "clientId",
+                  "created",
+                  "expires",
+                  "token"
+              ],
+              "type": "object",
+              "properties": {
+                  "token": {
+                      "maxLength": 100,
+                      "type": "string"
+                  },
+                  "clientId": {
+                      "type": "integer",
+                      "format": "int32"
+                  },
+                  "created": {
+                      "type": "string",
+                      "format": "date-time"
+                  },
+                  "expires": {
+                      "type": "string",
+                      "format": "date-time"
+                  },
+                  "revoked": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                  }
+              },
+              "additionalProperties": false
           },
-          "keyId": {
-            "type": "string",
-            "nullable": true
+          "ClientDto": {
+              "required": [
+                  "name"
+              ],
+              "type": "object",
+              "properties": {
+                  "name": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "enabled": {
+                      "type": "boolean"
+                  }
+              },
+              "additionalProperties": false
           },
-          "keyOps": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true,
-            "readOnly": true
+          "IUser": {
+              "required": [
+                  "created",
+                  "email",
+                  "firstName",
+                  "id",
+                  "lastName",
+                  "publicKey",
+                  "role",
+                  "username"
+              ],
+              "type": "object",
+              "properties": {
+                  "id": {
+                      "type": "integer",
+                      "format": "int32"
+                  },
+                  "publicKey": {
+                      "type": "string",
+                      "format": "uuid"
+                  },
+                  "firstName": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "lastName": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "email": {
+                      "maxLength": 200,
+                      "type": "string",
+                      "format": "email"
+                  },
+                  "username": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "role": {
+                      "$ref": "#/components/schemas/Role"
+                  },
+                  "created": {
+                      "type": "string",
+                      "format": "date-time"
+                  }
+              },
+              "additionalProperties": false
           },
-          "kid": {
-            "type": "string",
-            "nullable": true
-          },
-          "kty": {
-            "type": "string",
-            "nullable": true
-          },
-          "n": {
-            "type": "string",
-            "nullable": true
-          },
-          "oth": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "p": {
-            "type": "string",
-            "nullable": true
-          },
-          "q": {
-            "type": "string",
-            "nullable": true
-          },
-          "qi": {
-            "type": "string",
-            "nullable": true
-          },
-          "use": {
-            "type": "string",
-            "nullable": true
-          },
-          "x": {
-            "type": "string",
-            "nullable": true
-          },
-          "x5c": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true,
-            "readOnly": true
-          },
-          "x5t": {
-            "type": "string",
-            "nullable": true
-          },
-          "x5tS256": {
-            "type": "string",
-            "nullable": true
-          },
-          "x5u": {
-            "type": "string",
-            "nullable": true
-          },
-          "y": {
-            "type": "string",
-            "nullable": true
-          },
-          "keySize": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "hasPrivateKey": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "cryptoProviderFactory": {
-            "$ref": "#/components/schemas/CryptoProviderFactory"
+          "UserDto": {
+              "required": [
+                  "email",
+                  "firstName",
+                  "lastName",
+                  "password",
+                  "username"
+              ],
+              "type": "object",
+              "properties": {
+                  "firstName": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "lastName": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "email": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "username": {
+                      "maxLength": 200,
+                      "type": "string"
+                  },
+                  "password": {
+                      "maxLength": 100,
+                      "type": "string"
+                  }
+              },
+              "additionalProperties": false
           }
-        },
-        "additionalProperties": false
-      },
-      "IOpenIdConfig": {
-        "required": [
-          "claim_types_supported",
-          "claims_supported",
-          "id_token_signing_alg_values_supported",
-          "issuer",
-          "jwks_uri",
-          "response_types_supported",
-          "subject_types_supported",
-          "token_endpoint",
-          "token_refresh_endpoint"
-        ],
-        "type": "object",
-        "properties": {
-          "issuer": {
-            "type": "string"
-          },
-          "token_endpoint": {
-            "type": "string"
-          },
-          "token_refresh_endpoint": {
-            "type": "string"
-          },
-          "jwks_uri": {
-            "type": "string"
-          },
-          "response_types_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "readOnly": true
-          },
-          "subject_types_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "readOnly": true
-          },
-          "id_token_signing_alg_values_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "readOnly": true
-          },
-          "claim_types_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "readOnly": true
-          },
-          "claims_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "IClient": {
-        "required": [
-          "created",
-          "enabled",
-          "name",
-          "primaryApiKey",
-          "secondaryApiKey",
-          "slug"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "slug": {
-            "maxLength": 50,
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "primaryApiKey": {
-            "maxLength": 100,
-            "type": "string"
-          },
-          "secondaryApiKey": {
-            "maxLength": 100,
-            "type": "string"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "IClientRefreshToken": {
-        "required": [
-          "clientId",
-          "created",
-          "expires",
-          "token"
-        ],
-        "type": "object",
-        "properties": {
-          "token": {
-            "maxLength": 100,
-            "type": "string"
-          },
-          "clientId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "expires": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "revoked": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ClientDto": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "IUser": {
-        "required": [
-          "created",
-          "email",
-          "firstName",
-          "lastName",
-          "username"
-        ],
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "lastName": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "email": {
-            "maxLength": 200,
-            "type": "string",
-            "format": "email"
-          },
-          "username": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "UserDto": {
-        "required": [
-          "email",
-          "firstName",
-          "lastName",
-          "password",
-          "username"
-        ],
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "lastName": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "email": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "username": {
-            "maxLength": 200,
-            "type": "string"
-          },
-          "password": {
-            "maxLength": 100,
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
       }
-    }
   }
 }
