@@ -2,6 +2,8 @@
 
 All in one finance authentication API. Generates JWT for entities such as users and clients. Full documentation of the API can be found at [aiof-auth](https://kamacharovs.github.io/aiof-auth/)
 
+[![Build Status](https://gkamacharov.visualstudio.com/gkama-cicd/_apis/build/status/kamacharovs.aiof-auth?branchName=master)](https://gkamacharov.visualstudio.com/gkama-cicd/_build/latest?definitionId=22&branchName=master)
+
 ## Documentation
 
 Overall documentation for the AIOF Auth Microservice
@@ -10,19 +12,11 @@ Overall documentation for the AIOF Auth Microservice
 
 Unit tests are ran on each pipeline build. The pipelines are built with `Azure DevOps` from the `azure-pipelines.yml` file
 
-Additionally, there are test result coverage reports done by [Coverlet](https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core?view=azure-devops#collect-code-coverage-metrics-with-coverlet). An example of a pipeline build with unit test coverage report can be found below
-
-- [#20200804.10](https://gkamacharov.visualstudio.com/gkama-cicd/_build/results?buildId=681&view=codecoverage-tab)
+Additionally, as part of the build pipeline, there are test result coverage reports done by [Coverlet](https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core?view=azure-devops#collect-code-coverage-metrics-with-coverlet)
 
 The authentication microservice is built to additionally leverage the following libraries:
 
 - [Fluent Validation](https://github.com/FluentValidation/FluentValidation#get-started) for validation
-- [Polly](https://github.com/App-vNext/Polly#polly) for resiliency and transient-fault-handling
-
-### Microsoft
-
-- [Implement the Circuit Breaker pattern](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/implement-circuit-breaker-pattern)
-- [Microsoft Feature Flag Management](https://docs.microsoft.com/en-us/azure/azure-app-configuration/use-feature-flags-dotnet-core)
 
 ### JWT
 
@@ -32,7 +26,7 @@ The authentication microservice is built to additionally leverage the following 
 
 ### OpenSSL
 
-If you plan on using RSA256 algorithm to sign the JWT's then you need a Certificate. For this scenario we use OpenSSL to generate a private and public key. In order to do so follow the below steps:
+The service currently uses RSA256 algorithm to sign the JWT's. For this scenario we use OpenSSL to generate a private and public key. In order to do so follow the below steps:
 
 - Install `openssl` tools from Chocolatey by running the following command: `choco install openssl.light` (needs to only be done once)
 - Then restart PowerShell, if required
