@@ -49,16 +49,6 @@ namespace aiof.auth.data
                 .NotEmpty()
                 .MaximumLength(100);
 
-            RuleFor(x => x.PrimaryApiKey)
-                .NotNull()
-                .NotEmpty()
-                .MaximumLength(100);
-
-            RuleFor(x => x.SecondaryApiKey)
-                .NotNull()
-                .NotEmpty()
-                .MaximumLength(100);
-
             RuleFor(x => x.RoleId)
                 .NotEmpty()
                 .NotNull()

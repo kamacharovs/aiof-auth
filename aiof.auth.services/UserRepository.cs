@@ -191,6 +191,8 @@ namespace aiof.auth.services
 
             await _context.Users
                 .AddAsync(user);
+                
+            await _userValidator.ValidateAndThrowAsync(user);
 
             await _context.SaveChangesAsync();
 
