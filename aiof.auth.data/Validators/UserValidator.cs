@@ -53,6 +53,27 @@ namespace aiof.auth.data
                 .NotEmpty()
                 .NotNull()
                 .GreaterThan(0);
+
+            When(x => !string.IsNullOrEmpty(x.PrimaryApiKey), () =>
+            {
+                RuleFor(x => x.PrimaryApiKey)
+                    .Must(x =>
+                    {
+                        return x.DecodeKey() == nameof(User)
+                            ? true
+                            : false;
+                    });
+            });
+            When(x => !string.IsNullOrEmpty(x.SecondaryApiKey), () =>
+            {
+                RuleFor(x => x.SecondaryApiKey)
+                    .Must(x =>
+                    {
+                        return x.DecodeKey() == nameof(User)
+                            ? true
+                            : false;
+                    });
+            });
         }
     }
 }
