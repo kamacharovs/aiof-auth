@@ -50,6 +50,33 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [InlineData("Georgi")]
+        [InlineData("John")]
+        [InlineData("Oliver")]
+        [InlineData("Jessie")]
+        public void UserDto_Validate_FirstName_TooLong_Fails(string firstName)
+        {
+            var userDto = Helper.FakerUserDtos().First();
+
+            userDto.FirstName = firstName.Repeat(100);
+
+            Assert.False(_userDtoValidator.Validate(userDto).IsValid);
+        }
+        [Theory]
+        [InlineData("Kamacharov")]
+        [InlineData("Doe")]
+        [InlineData("Brown")]
+        [InlineData("Bezos")]
+        public void UserDto_Validate_LastName_TooLong_Fails(string lastName)
+        {
+            var userDto = Helper.FakerUserDtos().First();
+
+            userDto.LastName = lastName.Repeat(100);
+
+            Assert.False(_userDtoValidator.Validate(userDto).IsValid);
+        }
+
+        [Theory]
         [InlineData("test client")]
         [InlineData("Client 1")]
         public void ClientDto_Validate_Valid(string name)
