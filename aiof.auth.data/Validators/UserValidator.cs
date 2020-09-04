@@ -23,24 +23,46 @@ namespace aiof.auth.data
 
             RuleFor(x => x.FirstName)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(200)
+                .NotEqual(x => x.LastName);
 
             RuleFor(x => x.LastName)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(200)
+                .NotEqual(x => x.FirstName);
 
             RuleFor(x => x.Email)
                 .NotNull()
                 .NotEmpty()
-                .EmailAddress();
+                .EmailAddress()
+                .MaximumLength(200);
 
             RuleFor(x => x.Username)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(200);
 
             RuleFor(x => x.Password)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(100);
+
+            RuleFor(x => x.PrimaryApiKey)
+                .NotNull()
+                .NotEmpty()
+                .MaximumLength(100);
+
+            RuleFor(x => x.SecondaryApiKey)
+                .NotNull()
+                .NotEmpty()
+                .MaximumLength(100);
+
+            RuleFor(x => x.RoleId)
+                .NotEmpty()
+                .NotNull()
+                .GreaterThan(0);
         }
     }
 }
