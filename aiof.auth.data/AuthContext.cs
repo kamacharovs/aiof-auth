@@ -37,6 +37,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Password).HasSnakeCaseColumnName().HasMaxLength(100).IsRequired();
                 e.Property(x => x.PrimaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
+                e.Property(x => x.RoleId).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
 
                 e.HasMany(x => x.RefreshTokens)
