@@ -37,14 +37,19 @@ namespace aiof.auth.data
         public string Password { get; set; }
 
         [JsonIgnore]
-        [Required]
         [MaxLength(100)]
         public string PrimaryApiKey { get; set; }
 
         [JsonIgnore]
-        [Required]
         [MaxLength(100)]
         public string SecondaryApiKey { get; set; }
+
+        [JsonIgnore]
+        [Required]
+        public int RoleId { get; set; }
+        
+        [Required]
+        public Role Role { get; set; }
 
         [Required]
         public DateTime Created { get; set; } = DateTime.UtcNow;
@@ -74,5 +79,7 @@ namespace aiof.auth.data
         [Required]
         [MaxLength(100)]
         public string Password { get; set; }
+
+        public int? RoleId { get; set; }
     }
 }

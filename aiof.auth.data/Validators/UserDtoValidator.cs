@@ -16,24 +16,29 @@ namespace aiof.auth.data
 
             RuleFor(x => x.FirstName)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(200);
 
             RuleFor(x => x.LastName)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(200);
 
             RuleFor(x => x.Email)
                 .NotNull()
                 .NotEmpty()
+                .MaximumLength(200)
                 .EmailAddress();
 
             RuleFor(x => x.Username)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(200);
 
             RuleFor(x => x.Password)
                 .NotNull()
                 .NotEmpty()
+                .MaximumLength(100)
                 .Must(x => IsValid(x))
                 .WithMessage("Password must meet the following requirements: has a number, has an upper character, has between 8 and 50 characters");
         }

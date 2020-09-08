@@ -61,44 +61,6 @@ namespace aiof.auth.services
 
             return entity ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
         }
-        public async Task<T> GetEntityAsync<T>(
-            Guid publicKey,
-            bool asNoTracking = true)
-            where T : class, IPublicKeyId, IApiKey
-        {
-            var memCacheEnabled = await _envConfig.IsEnabledAsync(FeatureFlags.MemCache);
-            var entity = memCacheEnabled
-                ? await _cache.GetOrCreateAsync(Keys.Base<T>(publicKey), async x =>
-                {
-                    x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
-                    x.Priority = CacheItemPriority.Low;
-
-                    return await GetEntityQuery<T>(asNoTracking).FirstOrDefaultAsync(x => x.PublicKey == publicKey);
-                })
-                : await GetEntityQuery<T>(asNoTracking).FirstOrDefaultAsync(x => x.PublicKey == publicKey);
-
-            return entity ?? throw new AuthNotFoundException($"{typeof(T).Name} with PublicKey='{publicKey}' was not found");
-        }
-        public async Task<T> GetEntityAsync<T>(
-            string apiKey,
-            bool asNoTracking = true)
-            where T : class, IPublicKeyId, IApiKey
-        {
-            var memCacheEnabled = await _envConfig.IsEnabledAsync(FeatureFlags.MemCache);
-            var entity = memCacheEnabled
-                ? await _cache.GetOrCreateAsync(Keys.Base<T>(apiKey), async x =>
-                {
-                    x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
-                    x.Priority = CacheItemPriority.High;
-
-                    return await GetEntityQuery<T>(asNoTracking)
-                        .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey|| x.SecondaryApiKey == apiKey);
-                })
-                : await GetEntityQuery<T>(asNoTracking)
-                    .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey || x.SecondaryApiKey == apiKey);
-
-            return entity ?? throw new AuthNotFoundException($"{typeof(T).Name} with ApiKey='{apiKey}' was not found");
-        }
 
         public async Task<T> SoftDeleteAsync<T>(int id)
             where T : class, IPublicKeyId, IApiKey, IEnable

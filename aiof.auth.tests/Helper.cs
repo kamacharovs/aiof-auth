@@ -63,6 +63,7 @@ namespace aiof.auth.tests
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IUtilRepository, UtilRepository>();
             services.AddScoped<FakeDataManager>();
             services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
 
@@ -273,6 +274,13 @@ namespace aiof.auth.tests
         public const string Category = nameof(Category);
         public const string UnitTest = nameof(UnitTest);
         public const string IntegrationTest = nameof(IntegrationTest);
+
+        
+        public class TestPublicKeyId : IPublicKeyId
+        {
+            public int Id { get; set; }
+            public Guid PublicKey { get; set; } = Guid.NewGuid();
+        }
         #endregion
     }
 }

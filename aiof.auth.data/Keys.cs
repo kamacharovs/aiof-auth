@@ -5,6 +5,7 @@ namespace aiof.auth.data
     public static class Keys
     {
         public const string ApplicationJson = "application/json";
+        public const string ApplicationProblemJson = "application/problem+json";
 
         public const string MemCache = nameof(MemCache);
         public const string Ttl = nameof(Ttl);
@@ -56,9 +57,10 @@ namespace aiof.auth.data
         public const string OpenApiLicenseName = nameof(OpenApi) + ":" + nameof(License) + ":" + nameof(Name);
         public const string OpenApiLicenseUrl = nameof(OpenApi) + ":" + nameof(License) + ":" + nameof(Url);
 
-        ///
-        /// Caching keys
-        ///
+        public static string User = nameof(data.User);
+        public static string Client = nameof(data.Client);
+        public static string UserRefreshToken = nameof(data.UserRefreshToken);
+
         public static string Base<T>(int id)
             where T : IPublicKeyId
         {
@@ -73,24 +75,6 @@ namespace aiof.auth.data
             where T : IApiKey
         {
             return $"{typeof(T).Name.ToLowerInvariant()}.apikey.{apiKey}";
-        }
-
-        public static string User(string username)
-        {
-            return $"user.username.{username}";
-        }
-        public static string User(int id)
-        {
-            return $"user.id.{id}";
-        }
-
-        public static string Client(int id)
-        {
-            return $"client.id.{id}";
-        }
-        public static string Client(string apiKey)
-        {
-            return $"client.apikey.{apiKey}";
         }
     }
 }

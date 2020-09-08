@@ -22,4 +22,15 @@ namespace aiof.auth.data
         [JsonPropertyName("errors")]
         public IEnumerable<string> Errors { get; set; }
     }
+
+    public class AuthProblemDetailBase : IAuthProblemDetailBase
+    {
+        [JsonPropertyName("code")]
+        [Required]
+        public int? Code { get; set; }
+        
+        [JsonPropertyName("message")]
+        [Required]
+        public string Message { get; set; }
+    }
 }
