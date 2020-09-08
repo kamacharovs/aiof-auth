@@ -32,17 +32,14 @@ namespace aiof.auth.data
     {
         [JsonPropertyName("user")]
         [Required]
-        public User User { get; set; }
+        public IUser User { get; set; }
     }
 
     /// <summary>
-    /// Response to revoke a Client refresh token
+    /// Response to revoke a refresh token
     /// </summary>
     public class RevokeResponse : IRevokeResponse
     {
-        [Required]
-        public int ClientId { get; set; }
-
         [JsonPropertyName("refresh_token")]
         [Required]
         [MaxLength(128)]

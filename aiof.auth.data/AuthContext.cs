@@ -8,7 +8,9 @@ namespace aiof.auth.data
     {
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
+        public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         public virtual DbSet<ClientRefreshToken> ClientRefreshTokens { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<AiofClaim> Claims { get; set; }
 
         public AuthContext(DbContextOptions<AuthContext> options)
@@ -43,6 +45,17 @@ namespace aiof.auth.data
                 e.Property(x => x.PrimaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+
+                e.HasMany(x => x.RefreshTokens)
+                    .WithOne()
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                e.HasOne(x => x.Role)
+                    .WithMany()
+                    .HasForeignKey(x => x.RoleId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Client>(e =>
@@ -59,6 +72,27 @@ namespace aiof.auth.data
                 e.Property(x => x.PrimaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+
+                e.HasOne(x => x.Role)
+                    .WithMany()
+                    .HasForeignKey(x => x.RoleId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<UserRefreshToken>(e =>
+            {
+                e.ToTable("user_refresh_token");
+
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
+                e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.UserId).HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Token).HasSnakeCaseColumnName().HasMaxLength(100).IsRequired();
+                e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Expires).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Revoked).HasColumnType("timestamp").HasSnakeCaseColumnName();
             });
 
             modelBuilder.Entity<ClientRefreshToken>(e =>
@@ -80,6 +114,20 @@ namespace aiof.auth.data
                     .HasForeignKey(x => x.ClientId)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Role>(e =>
+            {
+                e.ToTable("role");
+
+                e.HasKey(x => x.Id);
+
+                e.HasIndex(x => x.Name)
+                    .IsUnique();
+
+                e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
+                e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.Name).HasSnakeCaseColumnName().HasMaxLength(50).IsRequired();
             });
 
             modelBuilder.Entity<AiofClaim>(e =>

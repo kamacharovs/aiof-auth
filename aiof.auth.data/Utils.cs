@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 
 namespace aiof.auth.data
 {
-    public static class Utils
+    public static partial class Utils
     {
         public static string GenerateApiKey<T>(int length = 32)
             where T : class
@@ -29,7 +29,7 @@ namespace aiof.auth.data
             return client;
         }
 
-        public static string DecodeApiKey(
+        public static string DecodeKey(
             [NotNull] this string apiKey)
         {
             return apiKey.Split('.')
@@ -62,20 +62,13 @@ namespace aiof.auth.data
             return value.Replace(' ', '-').ToLower();
         }
 
-        public static T ParseEnum<T>(string value)
+        public static string Repeat(
+            [NotNull] this string s, 
+            int n)
         {
-            return (T)Enum.Parse(typeof(T), value, true);
-        }
-
-        public static T ToEnum<T>(
-            [NotNull] this string value)
-        {
-            return (T)Enum.Parse(typeof(T), value, true);
-        }
-        public static AlgType ToEnum(
-            [NotNull] this string value)
-        {
-            return (AlgType)Enum.Parse(typeof(AlgType), value, true);
+            return new StringBuilder(s.Length * n)
+                .AppendJoin(s, new string[n + 1])
+                .ToString();
         }
     }
 }

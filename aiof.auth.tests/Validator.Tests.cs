@@ -28,7 +28,8 @@ namespace aiof.auth.tests
         [Theory]
         [InlineData("Password1234")]
         [InlineData("Testing@92")]
-        public void UserDto_ValidatePassword_Valid(string password)
+        [InlineData("thisISALSOvalid@1")]
+        public void UserDto_Validate_Password_IsSuccessful(string password)
         {
             var userDto = Helper.FakerUserDtos().First();
 
@@ -36,15 +37,95 @@ namespace aiof.auth.tests
 
             Assert.True(_userDtoValidator.Validate(userDto).IsValid);
         }
-
         [Theory]
+        [InlineData("short")]
         [InlineData("password1234")]
         [InlineData("")]
-        public void UserDto_ValidatePassword_Invalid(string password)
+        [InlineData(null)]
+        public void UserDto_Validate_Password_Fails(string password)
         {
             var userDto = Helper.FakerUserDtos().First();
 
             userDto.Password = password;
+
+            Assert.False(_userDtoValidator.Validate(userDto).IsValid);
+        }
+
+        [Theory]
+        [InlineData("Georgi")]
+        [InlineData("John")]
+        [InlineData("Jessie")]
+        [InlineData("Jeff")]
+        public void UserDto_Validate_FirstName_TooLong_Fails(string firstName)
+        {
+            var userDto = Helper.FakerUserDtos().First();
+
+            userDto.FirstName = firstName.Repeat(100);
+
+            Assert.False(_userDtoValidator.Validate(userDto).IsValid);
+        }
+        [Theory]
+        [InlineData("Kamacharov")]
+        [InlineData("Doe")]
+        [InlineData("Brown")]
+        [InlineData("Bezos")]
+        public void UserDto_Validate_LastName_TooLong_Fails(string lastName)
+        {
+            var userDto = Helper.FakerUserDtos().First();
+
+            userDto.LastName = lastName.Repeat(100);
+
+            Assert.False(_userDtoValidator.Validate(userDto).IsValid);
+        }
+
+        [Theory]
+        [InlineData("gkama@aiof.com")]
+        [InlineData("john.doe@yahoo.com")]
+        [InlineData("jeff.bezos@amazon.com")]
+        [InlineData("test@fb.com")]
+        public void UserDto_Validate_EmailAddress_IsSuccessful(string email)
+        {
+            var userDto = Helper.FakerUserDtos().First();
+
+            userDto.Email = email;
+
+            Assert.True(_userDtoValidator.Validate(userDto).IsValid);
+        }
+        [Theory]
+        [InlineData("gkama")]
+        [InlineData("john.doe.com")]
+        [InlineData("definitelynotanemail")]
+        [InlineData("")]
+        public void UserDto_Validate_EmailAddress_Fails(string email)
+        {
+            var userDto = Helper.FakerUserDtos().First();
+
+            userDto.Email = email;
+
+            Assert.False(_userDtoValidator.Validate(userDto).IsValid);
+        }
+
+        [Theory]
+        [InlineData("gkama")]
+        [InlineData("john.doe@yahoo.com")]
+        [InlineData("jeff.bezos")]
+        [InlineData("test@fb.com")]
+        public void UserDto_Validate_Username_IsSuccessful(string username)
+        {
+            var userDto = Helper.FakerUserDtos().First();
+
+            userDto.Username = username;
+
+            Assert.True(_userDtoValidator.Validate(userDto).IsValid);
+        }
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public void UserDto_Validate_Username_Fails(string username)
+        {
+            var userDto = Helper.FakerUserDtos().First();
+
+            userDto.Username = username;
 
             Assert.False(_userDtoValidator.Validate(userDto).IsValid);
         }

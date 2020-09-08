@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -15,11 +16,14 @@ namespace aiof.auth.core.Controllers
     /// <summary>
     /// Everything aiof client
     /// </summary>
+    [Authorize(Roles = Roles.Admin)]
     [ApiController]
     [Route("client")]
     [Produces(Keys.ApplicationJson)]
     [Consumes(Keys.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
     public class ClientController : ControllerBase
     {
         private readonly IClientRepository _repo;
@@ -36,9 +40,9 @@ namespace aiof.auth.core.Controllers
         [Route("{id}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetClientAsync([FromRoute, Required] int id)
+        public async Task<IActionResult> GetAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.GetClientAsync(id));
+            return Ok(await _repo.GetAsync(id));
         }
 
         /// <summary>

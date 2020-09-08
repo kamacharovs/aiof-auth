@@ -1,14 +1,22 @@
 using System;
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
     public class AiofClaim : IAiofClaim, 
         IPublicKeyId
     {
-        [JsonIgnore] public int Id { get; set; }
-        [JsonIgnore] public Guid PublicKey { get; set; } = Guid.NewGuid();
+        [JsonIgnore]
+        [Required]
+        public int Id { get; set; }
+
+        [JsonIgnore]
+        [Required]
+        public Guid PublicKey { get; set; } = Guid.NewGuid();
+
+        [Required]
         public string Name { get; set; }
     }
 
@@ -19,6 +27,7 @@ namespace aiof.auth.data
         public const string Sig = "sig";
 
         public const string PublicKey = "public_key";
+        public const string Role = "role";
         public const string GivenName = "given_name";
         public const string FamilyName = "family_name";
         public const string Name = "name";
@@ -31,6 +40,7 @@ namespace aiof.auth.data
                 Sub,
                 Iss,
                 PublicKey,
+                Role,
                 GivenName,
                 FamilyName,
                 Name,

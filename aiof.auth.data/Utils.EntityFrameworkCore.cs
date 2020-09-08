@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace aiof.auth.data
 {
-    public static class UtilsEntityFrameworkCore
+    public static partial class Utils
     {
         public static PropertyBuilder HasSnakeCaseColumnName(
             [NotNull] this PropertyBuilder propertyBuilder)

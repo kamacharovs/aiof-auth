@@ -21,11 +21,17 @@ namespace aiof.auth.data
             _context.Clients
                 .AddRange(GetFakeClients());
 
+            _context.UserRefreshTokens
+                .AddRange(GetFakeUserRefreshTokens());
+
             _context.ClientRefreshTokens
                 .AddRange(GetFakeClientRefreshTokens());
 
             _context.Claims
                 .AddRange(GetFakeClaims());
+
+            _context.Roles
+                .AddRange(GetFakeRoles());
 
             _context.SaveChanges();
         }
@@ -42,7 +48,8 @@ namespace aiof.auth.data
                     LastName = "Kamacharov",
                     Email = "gkama@test.com",
                     Username = "gkama",
-                    Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=" //pass1234
+                    Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=", //pass1234
+                    RoleId = 1
                 },
                 new User
                 {
@@ -52,7 +59,8 @@ namespace aiof.auth.data
                     LastName = "Brown",
                     Email = "jessie@test.com",
                     Username = "jbro",
-                    Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=" //password123
+                    Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=", //password123
+                    RoleId = 2,
                 },
                 new User
                 {
@@ -64,7 +72,8 @@ namespace aiof.auth.data
                     Username = "gbest",
                     Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=", //pass1234
                     PrimaryApiKey = "VXNlcg==.x0sHnNHFytELB6FkLb/L6Q/YXPoXAZ4bAHvztgr6vIU=",
-                    SecondaryApiKey = "VXNlcg==.VmNKkE4o6zxCq8Ut1BzkSU2R7RcCqo8y/jTklcTU6m8="
+                    SecondaryApiKey = "VXNlcg==.VmNKkE4o6zxCq8Ut1BzkSU2R7RcCqo8y/jTklcTU6m8=",
+                    RoleId = 2,
                 }
             };
         }
@@ -81,7 +90,8 @@ namespace aiof.auth.data
                     Slug = "gk-client-1",
                     Enabled = true,
                     PrimaryApiKey = "Q2xpZW50.YJj7MeyO1P9DpglkO8bFeAe6vYEBrFhpC9O6BrYR43w=",
-                    SecondaryApiKey = "Q2xpZW50.k3HO3GHyDpO0InUUWzzOUrs52Mt6tEdkq7MuTokH0M8="
+                    SecondaryApiKey = "Q2xpZW50.k3HO3GHyDpO0InUUWzzOUrs52Mt6tEdkq7MuTokH0M8=",
+                    RoleId = 3
                 },
                 new Client
                 {
@@ -91,7 +101,8 @@ namespace aiof.auth.data
                     Slug = "gk-client-2",
                     Enabled = true,
                     PrimaryApiKey = "Q2xpZW50.Jo9C+6F3no9pwg8s1OWDkUGs+wHAVbsWkcRTS0s/SjU=",
-                    SecondaryApiKey = "Q2xpZW50.FAe44G9HIrbDFCGa/ZF4xZE+m3Fne7cB7eNJuy2vcoc="
+                    SecondaryApiKey = "Q2xpZW50.FAe44G9HIrbDFCGa/ZF4xZE+m3Fne7cB7eNJuy2vcoc=",
+                    RoleId = 3
                 },
                 new Client
                 {
@@ -101,7 +112,43 @@ namespace aiof.auth.data
                     Slug = "gk-client-3",
                     Enabled = false,
                     PrimaryApiKey = "Q2xpZW50.Dpkt/TSLB+nlVyQwi/pSUhkwEglerntGUym6h+3DM/k=",
-                    SecondaryApiKey = "Q2xpZW50.5/fRn0AL2RYPHcrT73HCSIuIYm2Iew5+1v9nvtXrtE4="
+                    SecondaryApiKey = "Q2xpZW50.5/fRn0AL2RYPHcrT73HCSIuIYm2Iew5+1v9nvtXrtE4=",
+                    RoleId = 3
+                }
+            };
+        }
+
+        public IEnumerable<UserRefreshToken> GetFakeUserRefreshTokens()
+        {
+            return new List<UserRefreshToken>
+            {
+                new UserRefreshToken
+                {
+                    Id = 1,
+                    PublicKey = Guid.Parse("8e483815-1f5a-4ae3-af15-b91cc9371878"),
+                    Token = "VXNlcg==.dx9lkJq6WfEA+8oNoikmI4Mk3N/CeGY5hptngJSBmILXp8klx2A1vlzcWpieYa5xiUqimrTYAUrNTI0eQr84gQ==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow,
+                    Expires = DateTime.UtcNow.AddDays(1)
+                },
+                new UserRefreshToken
+                {
+                    Id = 2,
+                    PublicKey = Guid.Parse("427c0b4d-93d9-4868-97bc-54e8852510a7"),
+                    Token = "VXNlcg==.C05sToSVAE4uHZTYchRW2/5/93UHorgcYioAJStqbvahV8jN4MhoygJA3VkrXuwNLfenH7yaHHru/cEkH5Do8g==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow.AddMinutes(-60),
+                    Expires = DateTime.UtcNow.AddMinutes(-60).AddDays(1)
+                },
+                new UserRefreshToken
+                {
+                    Id = 3,
+                    PublicKey = Guid.Parse("5a1f029f-d692-4148-b6a2-c6a072a71cdf"),
+                    Token = "VXNlcg==.nBpRyGz2l+KtVOJO/Lr74MZs1IVh/Cl7hfE7+OO8V59IZlF+weU6BJiKz1L+sFLROZNyHi76ZPz7ZXOwYnsdXg==",
+                    UserId = 1,
+                    Created = DateTime.UtcNow.AddDays(-2),
+                    Expires = DateTime.UtcNow.AddDays(-1),
+                    Revoked = DateTime.UtcNow.AddDays(-2)
                 }
             };
         }
@@ -114,20 +161,51 @@ namespace aiof.auth.data
                 {
                     Id = 1,
                     PublicKey = Guid.Parse("239eebf7-30f1-4f32-b1f1-18622dc2342d"),
-                    Token = "refresh-token-1",
+                    Token = "Q2xpZW50.VOJ6KaAss0+uQHD3e+OieAO2FrY2LsY/jzX6nAsSkdWqY7TGDI+b6lSsoNzvaMOwgu0TvXNPsQ7OlBBkuBYE0g==",
                     ClientId = 1,
                     Created = DateTime.UtcNow,
-                    Expires = DateTime.UtcNow.AddDays(1)
+                    Expires = DateTime.UtcNow.AddDays(7)
                 },
                 new ClientRefreshToken
                 {
-                    Id = 2,
+                    Id = 3,
                     PublicKey = Guid.Parse("c8f80b28-3459-42b8-9c13-30e719a14df7"),
-                    Token = "refresh-token-2",
+                    Token = "Q2xpZW50.9hMijUAPRBnEohxLg3z9VZRSefhuBfZs9NgkR3Bf9/r1WG1mupPNCJcdmgGWLBob7fRMCH4JFBJPiahYfQXYdA==",
                     ClientId = 2,
-                    Created = DateTime.UtcNow.AddDays(-2),
+                    Created = DateTime.UtcNow.AddDays(-8),
                     Expires = DateTime.UtcNow.AddDays(-1),
-                    Revoked = DateTime.UtcNow.AddDays(-1)
+                    Revoked = DateTime.UtcNow.AddDays(-2)
+                }
+            };
+        }
+
+        public IEnumerable<Role> GetFakeRoles()
+        {
+            return new List<Role>
+            {
+                new Role
+                {
+                    Id = 1,
+                    PublicKey = Guid.Parse("596b81af-e6f1-4634-aa96-6ccc38bd0dc3"),
+                    Name = Roles.Admin
+                },
+                new Role
+                {
+                    Id = 2,
+                    PublicKey = Guid.Parse("8e5a2f46-1f7c-4e42-8f24-567e18c58b9c"),
+                    Name = Roles.User
+                },
+                new Role
+                {
+                    Id = 3,
+                    PublicKey = Guid.Parse("d4d4a9a7-6dd2-4bfc-934a-9f94d8f8f82f"),
+                    Name = Roles.Client
+                },
+                new Role
+                {
+                    Id = 4,
+                    PublicKey = Guid.Parse("f5a44fee-3789-478a-a1a3-2e5b7a87167c"),
+                    Name = Roles.Basic
                 }
             };
         }
@@ -299,6 +377,45 @@ namespace aiof.auth.data
                     });
             }
             
+            return toReturn;
+        }
+
+        public IEnumerable<object[]> GetFakeUserRefreshTokensData(
+            bool userId = false,
+            bool refreshToken = false)
+        {
+            var refreshTokens = GetFakeUserRefreshTokens()
+                .ToArray();
+
+            var toReturn = new List<object[]>();
+
+            if (userId
+                && refreshToken)
+            {
+                foreach (var rt in refreshTokens.Where(x => x.Revoked == null))
+                    toReturn.Add(new object[]
+                    {
+                        rt.UserId,
+                        rt.Token
+                    });
+            }
+            else if (userId)
+            {
+                foreach (var rtUserId in refreshTokens.Select(x => x.UserId).Distinct())
+                    toReturn.Add(new object[]
+                    {
+                        rtUserId
+                    });
+            }
+            else if (refreshToken)
+            {
+                foreach (var token in refreshTokens.Where(x => x.Revoked == null).Select(x => x.Token))
+                    toReturn.Add(new object[]
+                    {
+                        token
+                    });
+            }
+
             return toReturn;
         }
 
