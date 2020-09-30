@@ -29,13 +29,10 @@ namespace aiof.auth.data
         public const string Client = nameof(Client);
         public const string Basic = nameof(Basic);
 
-
-        public static string AdminOrUser = Combine(Admin, User);
-        public static string AdminOrClient = Combine(Admin, Client);
-        public static string BasicOrUser = Combine(Basic, User);
-        public static string BasicOrClient = Combine(Basic, Client);
-        public static string Any = Combine(All.ToArray());
-        public static string Combine(params string[] roles) => string.Join(",", roles);
+        public const string AdminOrUser = Admin + "," + User;
+        public const string AdminOrClient = Admin + "," + Client;
+        public const string BasicOrUser = Basic + "," + User;
+        public const string BasicOrClient = Basic + "," + Client;
 
         public static IEnumerable<string> All 
             => new string[]
