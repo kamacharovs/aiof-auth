@@ -167,7 +167,8 @@ namespace aiof.auth.services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            _logger.LogInformation($"Created JWT for {typeof(T).Name} with Id='{entity?.Id}' and PublicKey='{entity?.PublicKey}'");
+            var logJwtMessage = expires == _envConfig.JwtExpires ? "JWT" : "Refresh JWT";
+            _logger.LogInformation($"Created {logJwtMessage} for {typeof(T).Name} with Id='{entity?.Id}' and PublicKey='{entity?.PublicKey}'");
 
             return new TokenResponse
             {
