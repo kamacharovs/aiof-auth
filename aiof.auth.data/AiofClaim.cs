@@ -26,6 +26,8 @@ namespace aiof.auth.data
         public const string Iss = "iss";
         public const string Sig = "sig";
 
+        public const string UserId = "user_id";
+        public const string ClientId = "client_id";
         public const string PublicKey = "public_key";
         public const string Role = "role";
         public const string GivenName = "given_name";
