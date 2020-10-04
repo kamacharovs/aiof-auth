@@ -6,7 +6,7 @@ All in one finance authentication API. Generates JWT for entities such as users 
 
 ## Documentation
 
-Overall documentation for the AIOF Auth Microservice
+Overall documentation for the aiof Auth microservice
 
 ### Authentication
 
