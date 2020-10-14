@@ -53,7 +53,10 @@ namespace aiof.auth.core
                 .AddAutoMapper(typeof(AutoMappingProfile).Assembly);
 
             if (_env.IsDevelopment())
+            {
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
+                services.AddCors();
+            }
             else
                 services.AddDbContext<AuthContext>(o => o.UseNpgsql(_config[Keys.PostgreSQL]));
             
@@ -119,6 +122,7 @@ namespace aiof.auth.core
             if (_env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(x => x.WithOrigins(_config[Keys.PortalCORS]).AllowAnyHeader().AllowAnyMethod());
 
                 services.GetRequiredService<FakeDataManager>()
                     .UseFakeContext();

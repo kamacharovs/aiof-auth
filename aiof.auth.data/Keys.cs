@@ -12,6 +12,7 @@ namespace aiof.auth.data
         public const string MemCacheTtl = nameof(MemCache) + ":" + nameof(Ttl);
 
         public const string PostgreSQL = nameof(PostgreSQL);
+        public const string PortalCORS = nameof(PortalCORS);
 
         public const string Jwt = nameof(Jwt);
         public const string Bearer = nameof(Bearer);
