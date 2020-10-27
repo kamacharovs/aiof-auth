@@ -241,7 +241,7 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Updated Password for User with Username='{username}'");
+            _logger.LogInformation("Updated Password for User with Username='{Username}'", username);
 
             return user;
         }
@@ -264,7 +264,9 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Revoked {nameof(UserRefreshToken)}='{token}' for UserId='{userId}'");
+            _logger.LogInformation("Revoked UserRefreshToken='{UserRefreshToken}' for UserId='{UserId}'",
+                token,
+                userId);
 
             return refreshToken;
         }
