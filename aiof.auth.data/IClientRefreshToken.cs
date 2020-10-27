@@ -18,6 +18,7 @@ namespace aiof.auth.data
         [MaxLength(100)]
         string Token { get; set; }
 
+        [JsonIgnore]
         [Required]
         int ClientId { get; set; }
 
