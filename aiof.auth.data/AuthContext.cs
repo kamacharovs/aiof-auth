@@ -21,7 +21,7 @@ namespace aiof.auth.data
         {
             modelBuilder.Entity<User>(e =>
             {
-                e.ToTable("user");
+                e.ToTable(Keys.Entity.User);
 
                 e.HasKey(x => x.Id);
 
@@ -54,7 +54,7 @@ namespace aiof.auth.data
 
             modelBuilder.Entity<Client>(e =>
             {
-                e.ToTable("client");
+                e.ToTable(Keys.Entity.Client);
 
                 e.HasKey(x => x.Id);
                 
@@ -77,7 +77,7 @@ namespace aiof.auth.data
 
             modelBuilder.Entity<UserRefreshToken>(e =>
             {
-                e.ToTable("user_refresh_token");
+                e.ToTable(Keys.Entity.UserRefreshToken);
 
                 e.HasKey(x => x.Id);
 
@@ -92,7 +92,7 @@ namespace aiof.auth.data
 
             modelBuilder.Entity<ClientRefreshToken>(e =>
             {
-                e.ToTable("client_refresh_token");
+                e.ToTable(Keys.Entity.ClientRefreshToken);
 
                 e.HasKey(x => x.Id);
 
@@ -113,7 +113,7 @@ namespace aiof.auth.data
 
             modelBuilder.Entity<Role>(e =>
             {
-                e.ToTable("role");
+                e.ToTable(Keys.Entity.Role);
 
                 e.HasKey(x => x.Id);
 
@@ -127,7 +127,7 @@ namespace aiof.auth.data
 
             modelBuilder.Entity<AiofClaim>(e =>
             {
-                e.ToTable("claim");
+                e.ToTable(Keys.Entity.Claim);
 
                 e.HasKey(x => x.Id);
 
