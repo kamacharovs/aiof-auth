@@ -6,15 +6,76 @@ All in one finance authentication API. Generates JWT for entities such as users 
 
 ## Documentation
 
-Overall documentation for the AIOF Auth Microservice
+Overall documentation for the aiof Auth microservice
+
+### Authentication
+
+Authentication can be done via the `/auth/token` endpoint. There are several ways an entity can authenticate:
+
+- `username` and `password` for `User`
+- `api_key` for `User` or `Client`
+- `refresh_token` for `User` or `Client`
+
+#### Example for `User`
+
+Request
+
+```json
+{
+    "username": "test",
+    "password": "test"
+}
+```
+
+Response
+
+```json
+{
+    "user": {
+        "id": 1,
+        "publicKey": "581f3ce6-cf2a-42a5-828f-157a2bfab763",
+        "firstName": "test",
+        "lastName": "test",
+        "email": "test@test.com",
+        "username": "test",
+        "role": {
+            "name": "Admin"
+        },
+        "created": "2020-09-08T15:54:08.277753"
+    },
+    "token_type": "Bearer",
+    "expires_in": 900,
+    "access_token": "jwt_access_token",
+    "refresh_token": "refresh_token"
+}
+```
+
+#### Example for `Client`
+
+Request
+
+```json
+{
+    "api_key": "api_key_here"
+}
+```
+
+Response
+
+```json
+{
+    "token_type": "Bearer",
+    "expires_in": 900,
+    "access_token": "jwt_access_token",
+    "refresh_token": "refresh_token"
+}
+```
 
 ### Tests
 
-Unit tests are ran on each pipeline build. The pipelines are built with `Azure DevOps` from the `azure-pipelines.yml` file
+Unit tests are ran on each pipeline build. The pipelines are built with `Azure DevOps` from the `azure-pipelines.yml` file. Additionally, as part of the build pipeline, there are test result coverage reports done by [Coverlet](https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core?view=azure-devops#collect-code-coverage-metrics-with-coverlet). Also, you can click on the build pipeline badge and check the unit test coverage for the latest run
 
-Additionally, as part of the build pipeline, there are test result coverage reports done by [Coverlet](https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core?view=azure-devops#collect-code-coverage-metrics-with-coverlet)
-
-The authentication microservice is built to additionally leverage the following libraries:
+### Libraries
 
 - [Fluent Validation](https://github.com/FluentValidation/FluentValidation#get-started) for validation
 

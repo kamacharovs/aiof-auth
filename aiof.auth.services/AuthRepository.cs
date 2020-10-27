@@ -116,6 +116,7 @@ namespace aiof.auth.services
         {
             var token = GenerateJwtToken<User>(new Claim[]
                 {
+                    new Claim(AiofClaims.UserId, user.Id.ToString()),
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
                     new Claim(AiofClaims.Role, user.Role.Name)
                 },
@@ -140,6 +141,7 @@ namespace aiof.auth.services
         {
             return GenerateJwtToken<Client>(new Claim[]
                 {
+                    new Claim(AiofClaims.ClientId, client.Id.ToString()),
                     new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
                     new Claim(AiofClaims.Role, client.Role.Name)
                 },
@@ -167,7 +169,8 @@ namespace aiof.auth.services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            _logger.LogInformation($"Created JWT for {typeof(T).Name} with Id='{entity?.Id}' and PublicKey='{entity?.PublicKey}'");
+            var logJwtMessage = expires == _envConfig.JwtExpires ? "JWT" : "Refresh JWT";
+            _logger.LogInformation($"Created {logJwtMessage} for {typeof(T).Name} with Id='{entity?.Id}' and PublicKey='{entity?.PublicKey}'");
 
             return new TokenResponse
             {

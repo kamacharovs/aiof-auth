@@ -131,6 +131,7 @@ namespace aiof.auth.services
         public async Task<IUser> GetUserByRefreshTokenAsync(string refreshToken)
         {
             return await _context.Users
+                .Include(x => x.Role)
                 .Include(x => x.RefreshTokens)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken))

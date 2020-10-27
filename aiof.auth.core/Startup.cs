@@ -39,18 +39,18 @@ namespace aiof.auth.core
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IClientRepository, ClientRepository>();
-            services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IUtilRepository, UtilRepository>();
-            services.AddScoped<FakeDataManager>();
-            services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
-            services.AddScoped<AbstractValidator<User>, UserValidator>();
-            services.AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>();
-            services.AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>();
-            services.AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
-            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
-            services.AddAutoMapper(typeof(AutoMappingProfile).Assembly);
+            services.AddScoped<IUserRepository, UserRepository>()
+                .AddScoped<IClientRepository, ClientRepository>()
+                .AddScoped<IAuthRepository, AuthRepository>()
+                .AddScoped<IUtilRepository, UtilRepository>()
+                .AddScoped<FakeDataManager>()
+                .AddScoped<AbstractValidator<UserDto>, UserDtoValidator>()
+                .AddScoped<AbstractValidator<User>, UserValidator>()
+                .AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>()
+                .AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>()
+                .AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>()
+                .AddSingleton<IEnvConfiguration, EnvConfiguration>()
+                .AddAutoMapper(typeof(AutoMappingProfile).Assembly);
 
             if (_env.IsDevelopment())
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
@@ -58,6 +58,7 @@ namespace aiof.auth.core
                 services.AddDbContext<AuthContext>(o => o.UseNpgsql(_config[Keys.PostgreSQL]));
             
             services.AddLogging();
+            services.AddApplicationInsightsTelemetry();
             services.AddHealthChecks();
             services.AddFeatureManagement();
             services.AddMemoryCache();
@@ -119,6 +120,7 @@ namespace aiof.auth.core
             if (_env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(x => x.WithOrigins(_config[Keys.PortalCORS]).AllowAnyHeader().AllowAnyMethod());
 
                 services.GetRequiredService<FakeDataManager>()
                     .UseFakeContext();
