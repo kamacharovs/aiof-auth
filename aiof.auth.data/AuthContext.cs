@@ -111,7 +111,7 @@ namespace aiof.auth.data
                     .WithMany()
                     .HasForeignKey(x => x.ClientId)
                     .IsRequired()
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Role>(e =>
