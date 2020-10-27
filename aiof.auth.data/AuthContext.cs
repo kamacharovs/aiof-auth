@@ -28,6 +28,8 @@ namespace aiof.auth.data
                 e.HasIndex(x => x.Username)
                     .IsUnique();
 
+                e.HasQueryFilter(x => !x.IsDeleted);
+
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.FirstName).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
@@ -39,6 +41,7 @@ namespace aiof.auth.data
                 e.Property(x => x.SecondaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.RoleId).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.IsDeleted).HasSnakeCaseColumnName().IsRequired();
 
                 e.HasMany(x => x.RefreshTokens)
                     .WithOne()

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace aiof.auth.data
 {
     public class User : IUser, 
-        IPublicKeyId, IApiKey
+        IPublicKeyId, IApiKey, IIsDeleted
     {
         [Required]
         public int Id { get; set; }
@@ -53,6 +53,9 @@ namespace aiof.auth.data
 
         [Required]
         public DateTime Created { get; set; } = DateTime.UtcNow;
+
+        [JsonIgnore]
+        public bool IsDeleted { get; set; } = false;
 
         [JsonIgnore]
         public ICollection<UserRefreshToken> RefreshTokens { get; set; } = new List<UserRefreshToken>();

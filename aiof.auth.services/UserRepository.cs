@@ -66,9 +66,11 @@ namespace aiof.auth.services
                     .AsQueryable();
         }
 
-        public async Task<IUser> GetUserAsync(int id)
+        public async Task<IUser> GetUserAsync(
+            int id,
+            bool asNoTracking = true)
         {
-            return await GetUsersQuery()
+            return await GetUsersQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new AuthNotFoundException($"{nameof(User)} with Id='{id}' was not found");
         }
@@ -244,6 +246,20 @@ namespace aiof.auth.services
             _logger.LogInformation("Updated Password for User with Username='{Username}'", username);
 
             return user;
+        }
+
+        public async Task SoftDeleteAsync(int id)
+        {
+            var user = await GetUserAsync(id, false) as User;
+
+            user.IsDeleted = true;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Soft Deleted {User} with Id={UserId}",
+                nameof(User),
+                id);
         }
 
         public async Task<IUserRefreshToken> RevokeTokenAsync(
