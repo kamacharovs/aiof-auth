@@ -25,10 +25,6 @@ namespace aiof.auth.data
         [Required]
         public int ClientId { get; set; }
 
-        [JsonIgnore]
-        [Required]
-        public Client Client { get; set; }
-
         [Required]
         public DateTime Created { get; set; } = DateTime.UtcNow;
         

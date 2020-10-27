@@ -22,10 +22,6 @@ namespace aiof.auth.data
         [Required]
         int ClientId { get; set; }
 
-        [JsonIgnore]
-        [Required]
-        Client Client { get; set; }
-
         [Required]
         DateTime Created { get; set; }
 

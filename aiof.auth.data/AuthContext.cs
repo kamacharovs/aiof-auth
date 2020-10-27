@@ -60,6 +60,8 @@ namespace aiof.auth.data
                 e.ToTable(Keys.Entity.Client);
 
                 e.HasKey(x => x.Id);
+
+                e.HasQueryFilter(x => x.Enabled);
                 
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
@@ -70,6 +72,11 @@ namespace aiof.auth.data
                 e.Property(x => x.SecondaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.RoleId).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
+
+                e.HasMany(x => x.RefreshTokens)
+                    .WithOne()
+                    .HasForeignKey(x => x.ClientId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 e.HasOne(x => x.Role)
                     .WithMany()
@@ -106,12 +113,6 @@ namespace aiof.auth.data
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Expires).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Revoked).HasColumnType("timestamp").HasSnakeCaseColumnName();
-
-                e.HasOne(x => x.Client)
-                    .WithMany()
-                    .HasForeignKey(x => x.ClientId)
-                    .IsRequired()
-                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Role>(e =>

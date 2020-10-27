@@ -14,10 +14,10 @@ namespace aiof.auth.services
         Task<IClient> GetAsync(
             string apiKey,
             bool asNoTracking = true);
-        Task<IClientRefreshToken> GetRefreshTokenAsync(
+        Task<IClient> GetByRefreshTokenAsync(
             string token,
             bool asNoTracking = true);
-        Task<IClientRefreshToken> GetClientRefreshTokenAsync(
+        Task<IClientRefreshToken> GetRefreshTokenAsync(
             int clientId, 
             string refreshToken, 
             bool asNoTracking = true);

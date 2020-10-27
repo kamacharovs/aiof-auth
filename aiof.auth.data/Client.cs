@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
@@ -43,6 +44,9 @@ namespace aiof.auth.data
 
         [Required]
         public DateTime Created { get; set; } = DateTime.UtcNow;
+
+        [JsonIgnore]
+        public ICollection<ClientRefreshToken> RefreshTokens { get; set; } = new List<ClientRefreshToken>();
     }
 
     public class ClientDto
