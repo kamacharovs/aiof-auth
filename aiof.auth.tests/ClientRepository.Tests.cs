@@ -69,7 +69,7 @@ namespace aiof.auth.tests
             int clientId, 
             string token)
         {
-            var clientRefreshTokenBefore = await _repo.GetClientRefreshTokenAsync(
+            var clientRefreshTokenBefore = await _repo.GetRefreshTokenAsync(
                 clientId,
                 token,
                 asNoTracking: true);
@@ -91,9 +91,7 @@ namespace aiof.auth.tests
             Assert.NotNull(client);
             Assert.False(client.Enabled);
 
-            var clientInDb = await _repo.GetAsync(id);
-
-            Assert.NotNull(clientInDb);
+            await Assert.ThrowsAsync<AuthNotFoundException>(() =>_repo.GetAsync(id));
         }
     }
 }

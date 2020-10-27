@@ -77,5 +77,15 @@ namespace aiof.auth.data
         {
             return $"{typeof(T).Name.ToLowerInvariant()}.apikey.{apiKey}";
         }
+
+        public static class Entity
+        {
+            public static string User = nameof(data.User).ToSnakeCase();
+            public static string Client = nameof(data.Client).ToSnakeCase();
+            public static string UserRefreshToken = nameof(data.UserRefreshToken).ToSnakeCase();
+            public static string ClientRefreshToken = nameof(data.ClientRefreshToken).ToSnakeCase();
+            public static string Role = nameof(data.Role).ToSnakeCase();
+            public static string Claim = "claim";
+        }
     }
 }

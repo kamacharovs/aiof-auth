@@ -15,15 +15,12 @@ namespace aiof.auth.data
         Guid PublicKey { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(200)]
         string Token { get; set; }
-
-        [Required]
-        int ClientId { get; set; }
 
         [JsonIgnore]
         [Required]
-        Client Client { get; set; }
+        int ClientId { get; set; }
 
         [Required]
         DateTime Created { get; set; }
