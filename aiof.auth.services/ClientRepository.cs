@@ -54,17 +54,13 @@ namespace aiof.auth.services
                     .AsQueryable();
         }
 
-        private IQueryable<ClientRefreshToken> GetClientRefreshTokenQuery(bool asNoTracking = true)
+        private IQueryable<ClientRefreshToken> GetRefreshTokensQuery(bool asNoTracking = true)
         {
             return asNoTracking
                 ? _context.ClientRefreshTokens
-                    .Include(x => x.Client)
-                        .ThenInclude(x => x.Role)
                     .AsNoTracking()
                     .AsQueryable()
                 : _context.ClientRefreshTokens
-                    .Include(x => x.Client)
-                        .ThenInclude(x => x.Role)
                     .AsQueryable();
         }
 
@@ -87,40 +83,69 @@ namespace aiof.auth.services
                 ?? throw new AuthNotFoundException($"{nameof(Client)} with ApiKey='{apiKey}' was not found");
         }
 
-        public async Task<IClientRefreshToken> GetRefreshTokenAsync(
+        public async Task<IClient> GetByRefreshTokenAsync(
             string token,
             bool asNoTracking = true)
         {
-            return await GetClientRefreshTokenQuery(asNoTracking)
-                .FirstOrDefaultAsync(x => x.Token == token
-                    && x.Client.Enabled)
+            return await GetClientQuery(asNoTracking)
+                .Include(x => x.RefreshTokens)
+                .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == token))
                 ?? throw new AuthNotFoundException($"RefreshToken='{token}' was not found");
         }
-        public async Task<IClientRefreshToken> GetClientRefreshTokenAsync(
+        public async Task<IClientRefreshToken> GetRefreshTokenAsync(
             int clientId, 
-            string refreshToken, 
+            string token, 
             bool asNoTracking = true)
         {
-            return await GetClientRefreshTokenQuery(asNoTracking)
+            return await GetRefreshTokensQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
-                    && x.Client.Enabled
-                    && x.Token == refreshToken);
+                    && x.Token == token);
         }
-        public async Task<IClientRefreshToken> GetClientRefreshTokenAsync(
+        public async Task<IClientRefreshToken> GetRefreshTokenAsync(
             int clientId,  
             bool asNoTracking = true)
         {
-            return await GetClientRefreshTokenQuery(asNoTracking)
+            return await GetRefreshTokensQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.ClientId == clientId
-                    && x.Client.Enabled
                     && DateTime.UtcNow < x.Expires);
         }
 
         public async Task<IEnumerable<IClientRefreshToken>> GetRefreshTokensAsync(int clientId)
         {
-            return await GetClientRefreshTokenQuery()
+            return await GetRefreshTokensQuery()
                 .Where(x => x.ClientId == clientId)
                 .ToListAsync();
+        }
+
+        public async Task<IClientRefreshToken> GetOrAddRefreshTokenAsync(string clientApiKey)
+        {
+            var client = await GetAsync(clientApiKey);
+
+            if (!client.Enabled)
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"The current Client with ApiKey='{clientApiKey}' is DISABLED");
+
+            var clientRefreshToken = await GetRefreshTokenAsync(client.Id)
+                ?? await AddRefreshTokenAsync(client.Id);
+
+            async Task<IClientRefreshToken> AddRefreshTokenAsync(int clientId)
+            {
+                var clientRefreshToken = new ClientRefreshToken
+                {
+                    ClientId = clientId,
+                    Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtRefreshExpires)
+                };
+
+                await _context.ClientRefreshTokens.AddAsync(clientRefreshToken);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Added ClientRefreshToken for ClientId='{ClientId}'",
+                    clientId);
+
+                return clientRefreshToken;
+            }
+
+            return clientRefreshToken;
         }
 
         public async Task<IClient> AddClientAsync(ClientDto clientDto)
@@ -132,12 +157,12 @@ namespace aiof.auth.services
 
             client.Role = await _utilRepo.GetRoleAsync<Client>(clientDto.RoleId) as Role;
 
-            await _context.Clients
-                .AddAsync(client);
-
+            await _context.Clients.AddAsync(client);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Created Client with Id='{client.Id}' and PublicKey='{client.PublicKey}'");
+            _logger.LogInformation("Created Client with Id='{ClientId}' and PublicKey='{ClientPublicKey}'",
+                client.Id,
+                client.PublicKey);
 
             return client;
         }
@@ -151,45 +176,9 @@ namespace aiof.auth.services
                 yield return await AddClientAsync(clientDto);
         }
 
-        public async Task<IClientRefreshToken> AddClientRefreshTokenAsync(string clientApiKey)
-        {
-            var client = await GetAsync(clientApiKey);
-
-            if (!client.Enabled)
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"The current Client with ApiKey='{clientApiKey}' is DISABLED");
-
-            var clientRefreshToken = await GetClientRefreshTokenAsync(client.Id)
-                ?? await AddClientRefreshTokenAsync(client.Id);
-
-            async Task<IClientRefreshToken> AddClientRefreshTokenAsync(int clientId)
-            {
-                var clientRefreshToken = new ClientRefreshToken
-                {
-                    ClientId = clientId,
-                    Expires = DateTime.UtcNow.AddSeconds(_envConfig.JwtRefreshExpires)
-                };
-
-                await _context.ClientRefreshTokens
-                    .AddAsync(clientRefreshToken);
-
-                await _context.SaveChangesAsync();
-
-                await _context.Entry(clientRefreshToken)
-                    .Reference(x => x.Client)
-                    .LoadAsync();
-
-                _logger.LogInformation($"Added Client refresh token for ClientId='{clientId}' and PublicKey='{clientRefreshToken.Client.PublicKey}'");
-
-                return clientRefreshToken;
-            }
-
-            return clientRefreshToken;
-        }
-
         public async Task<IClientRefreshToken> RevokeTokenAsync(int clientId, string token)
         {
-            var clientRefreshToken = await GetClientRefreshTokenAsync(
+            var clientRefreshToken = await GetRefreshTokenAsync(
                 clientId, 
                 token,
                 asNoTracking: false)

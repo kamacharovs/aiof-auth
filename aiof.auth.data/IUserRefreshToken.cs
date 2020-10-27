@@ -17,6 +17,7 @@ namespace aiof.auth.data
         Guid PublicKey { get; set; }
 
         [Required]
+        [MaxLength(200)]
         string Token { get; set; }
 
         [JsonIgnore]

@@ -66,9 +66,11 @@ namespace aiof.auth.services
                     .AsQueryable();
         }
 
-        public async Task<IUser> GetUserAsync(int id)
+        public async Task<IUser> GetUserAsync(
+            int id,
+            bool asNoTracking = true)
         {
-            return await GetUsersQuery()
+            return await GetUsersQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new AuthNotFoundException($"{nameof(User)} with Id='{id}' was not found");
         }
@@ -190,18 +192,16 @@ namespace aiof.auth.services
             user.Password = Hash(userDto.Password);
             user.Role = await _utilRepo.GetRoleAsync<User>(userDto.RoleId) as Role;
 
-            await _context.Users
-                .AddAsync(user);
-                
+            await _context.Users.AddAsync(user);           
             await _userValidator.ValidateAndThrowAsync(user);
-
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Created User with {nameof(User.Id)}='{user.Id}', {nameof(User.PublicKey)}='{user.PublicKey}', " +
-                $"{nameof(User.FirstName)}='{user.FirstName}', " +
-                $"{nameof(User.LastName)}='{user.LastName}', " +
-                $"{nameof(User.Email)}='{user.Email}' and " +
-                $"{nameof(User.Username)}='{user.Username}'");
+            _logger.LogInformation("Created User with UserId={UserId}, UserPublicKey={UserPublicKey}, " +
+                "UserFirstName={UserFirstName}, " +
+                "UserLastName={UserLastName}, " +
+                "UserEmail={UserEmail} and " +
+                "UserUsername={UserUsername}",
+                user.Id, user.PublicKey, user.FirstName, user.LastName, user.Email, user.Username);
 
             await AddRefreshTokenAsync(user.Id);
 
@@ -221,7 +221,8 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Created {nameof(UserRefreshToken)} for {nameof(User)} with UserId='{userId}'");
+            _logger.LogInformation("Created UserRefreshToken for User with UserId={UserId}",
+                userId);
 
             return refreshToken;
         }
@@ -241,9 +242,21 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Updated Password for User with Username='{username}'");
+            _logger.LogInformation("Updated Password for User with Username='{UserUsername}'", username);
 
             return user;
+        }
+
+        public async Task SoftDeleteAsync(int id)
+        {
+            var user = await GetUserAsync(id, false) as User;
+
+            user.IsDeleted = true;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Soft Deleted User with Id={UserId}", id);
         }
 
         public async Task<IUserRefreshToken> RevokeTokenAsync(
@@ -264,7 +277,9 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Revoked {nameof(UserRefreshToken)}='{token}' for UserId='{userId}'");
+            _logger.LogInformation("Revoked UserRefreshToken='{UserRefreshToken}' for UserId='{UserId}'",
+                token,
+                userId);
 
             return refreshToken;
         }

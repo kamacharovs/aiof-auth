@@ -8,7 +8,9 @@ namespace aiof.auth.services
 {
     public interface IUserRepository
     {
-        Task<IUser> GetUserAsync(int id);
+        Task<IUser> GetUserAsync(
+            int id,
+            bool asNoTracking = true);
         Task<IUser> GetUserAsync(Guid publicKey);
         Task<IUser> GetUserAsync(string apiKey);
         Task<IUser> GetUserByUsernameAsync(

@@ -56,6 +56,9 @@ namespace aiof.auth.data
         DateTime Created { get; set; }
 
         [JsonIgnore]
+        bool IsDeleted { get; set; }
+
+        [JsonIgnore]
         ICollection<UserRefreshToken> RefreshTokens { get; set; }
     }
 }
