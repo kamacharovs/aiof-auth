@@ -80,7 +80,7 @@ namespace aiof.auth.services
                         userRefreshToken.Token);
                 case nameof(Client):
                     var client = await _clientRepo.GetAsync(apiKey);
-                    var clientRefreshToken = await _clientRepo.AddClientRefreshTokenAsync(apiKey);
+                    var clientRefreshToken = await _clientRepo.GetOrAddRefreshTokenAsync(apiKey);
                     return GenerateJwtToken(
                         client,
                         clientRefreshToken.Token);

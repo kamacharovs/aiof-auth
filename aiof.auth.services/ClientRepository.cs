@@ -117,35 +117,7 @@ namespace aiof.auth.services
                 .ToListAsync();
         }
 
-        public async Task<IClient> AddClientAsync(ClientDto clientDto)
-        {
-            await _clientDtoValidator.ValidateAndThrowAsync(clientDto);
-
-            var client = _mapper.Map<Client>(clientDto)
-                .GenerateApiKeys();
-
-            client.Role = await _utilRepo.GetRoleAsync<Client>(clientDto.RoleId) as Role;
-
-            await _context.Clients.AddAsync(client);
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Created Client with Id='{ClientId}' and PublicKey='{ClientPublicKey}'",
-                client.Id,
-                client.PublicKey);
-
-            return client;
-        }
-        public async IAsyncEnumerable<IClient> AddClientsAsync(IEnumerable<ClientDto> clientDtos)
-        {
-            if (clientDtos.Count() > 15)
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Cannot add more than 15 Clients at a time");
-                    
-            foreach (var clientDto in clientDtos)
-                yield return await AddClientAsync(clientDto);
-        }
-
-        public async Task<IClientRefreshToken> AddClientRefreshTokenAsync(string clientApiKey)
+        public async Task<IClientRefreshToken> GetOrAddRefreshTokenAsync(string clientApiKey)
         {
             var client = await GetAsync(clientApiKey);
 
@@ -174,6 +146,34 @@ namespace aiof.auth.services
             }
 
             return clientRefreshToken;
+        }
+
+        public async Task<IClient> AddClientAsync(ClientDto clientDto)
+        {
+            await _clientDtoValidator.ValidateAndThrowAsync(clientDto);
+
+            var client = _mapper.Map<Client>(clientDto)
+                .GenerateApiKeys();
+
+            client.Role = await _utilRepo.GetRoleAsync<Client>(clientDto.RoleId) as Role;
+
+            await _context.Clients.AddAsync(client);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created Client with Id='{ClientId}' and PublicKey='{ClientPublicKey}'",
+                client.Id,
+                client.PublicKey);
+
+            return client;
+        }
+        public async IAsyncEnumerable<IClient> AddClientsAsync(IEnumerable<ClientDto> clientDtos)
+        {
+            if (clientDtos.Count() > 15)
+                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Cannot add more than 15 Clients at a time");
+                    
+            foreach (var clientDto in clientDtos)
+                yield return await AddClientAsync(clientDto);
         }
 
         public async Task<IClientRefreshToken> RevokeTokenAsync(int clientId, string token)
