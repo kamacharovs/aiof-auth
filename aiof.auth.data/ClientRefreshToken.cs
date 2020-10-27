@@ -18,7 +18,7 @@ namespace aiof.auth.data
         public Guid PublicKey { get; set; } = Guid.NewGuid();
         
         [Required]
-        [MaxLength(100)]
+        [MaxLength(200)]
         public string Token { get; set; } = Utils.GenerateApiKey<ClientRefreshToken>(64);
 
         [JsonIgnore]

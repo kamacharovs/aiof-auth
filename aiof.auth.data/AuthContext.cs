@@ -94,7 +94,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.UserId).HasSnakeCaseColumnName().IsRequired();
-                e.Property(x => x.Token).HasSnakeCaseColumnName().HasMaxLength(100).IsRequired();
+                e.Property(x => x.Token).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Expires).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Revoked).HasColumnType("timestamp").HasSnakeCaseColumnName();
@@ -109,7 +109,7 @@ namespace aiof.auth.data
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.ClientId).HasSnakeCaseColumnName().IsRequired();
-                e.Property(x => x.Token).HasSnakeCaseColumnName().HasMaxLength(100).IsRequired();
+                e.Property(x => x.Token).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
                 e.Property(x => x.Created).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Expires).HasColumnType("timestamp").HasSnakeCaseColumnName().IsRequired();
                 e.Property(x => x.Revoked).HasColumnType("timestamp").HasSnakeCaseColumnName();
