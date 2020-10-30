@@ -28,6 +28,7 @@ namespace aiof.auth.core
     {
         public readonly IConfiguration _config;
         public readonly IWebHostEnvironment _env;
+        public readonly IEnvConfiguration _envConfig;
 
         public Startup(
             IConfiguration configuration,
@@ -35,6 +36,7 @@ namespace aiof.auth.core
         {
             _config = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _env = env ?? throw new ArgumentNullException(nameof(env));
+            _envConfig = new EnvConfiguration(_config, null) ?? throw new ArgumentNullException(nameof(EnvConfiguration));
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -52,10 +54,10 @@ namespace aiof.auth.core
                 .AddSingleton<IEnvConfiguration, EnvConfiguration>()
                 .AddAutoMapper(typeof(AutoMappingProfile).Assembly);
 
-            if (_env.IsDevelopment())
+            if (_env.IsDevelopment() && _envConfig.DataInMemory)
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
-                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_config[Keys.PostgreSQL]));
+                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.DataPostgreSQL));
             
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
@@ -68,14 +70,14 @@ namespace aiof.auth.core
                 x =>
                 {
                     var rsa = RSA.Create();
-                    rsa.FromXmlString(_config[Keys.JwtPublicKey]);
+                    rsa.FromXmlString(_envConfig.JwtPublicKey);
 
                     x.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = _config[Keys.JwtIssuer],
+                        ValidIssuer = _envConfig.JwtIssuer,
                         ValidateAudience = true,
-                        ValidAudience = _config[Keys.JwtAudience],
+                        ValidAudience = _envConfig.JwtAudience,
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
                         IssuerSigningKey = new RsaSecurityKey(rsa)
@@ -84,21 +86,21 @@ namespace aiof.auth.core
 
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc(_config[Keys.OpenApiVersion], new OpenApiInfo
+                x.SwaggerDoc(_envConfig.OpenApiVersion, new OpenApiInfo
                 {
-                    Title = _config[Keys.OpenApiTitle],
-                    Version = _config[Keys.OpenApiVersion],
-                    Description = _config[Keys.OpenApiDescription],
+                    Title = _envConfig.OpenApiTitle,
+                    Version = _envConfig.OpenApiVersion,
+                    Description = _envConfig.OpenApiDescription,
                     Contact = new OpenApiContact
                     {
-                        Name = _config[Keys.OpenApiContactName],
-                        Email = _config[Keys.OpenApiContactEmail],
-                        Url = new Uri(_config[Keys.OpenApiContactUrl])
+                        Name = _envConfig.OpenApiContactName,
+                        Email = _envConfig.OpenApiContactEmail,
+                        Url = new Uri(_envConfig.OpenApiContactUrl)
                     },
                     License = new OpenApiLicense
                     {
-                        Name = _config[Keys.OpenApiLicenseName],
-                        Url = new Uri(_config[Keys.OpenApiLicenseUrl]),
+                        Name = _envConfig.OpenApiLicenseName,
+                        Url = new Uri(_envConfig.OpenApiLicenseUrl),
                     }
                 });
                 x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
@@ -119,11 +121,11 @@ namespace aiof.auth.core
         {
             if (_env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseCors(x => x.WithOrigins(_config[Keys.PortalCORS]).AllowAnyHeader().AllowAnyMethod());
+                app.UseCors(x => x.WithOrigins(_envConfig.CorsPortal).AllowAnyHeader().AllowAnyMethod());
 
-                services.GetRequiredService<FakeDataManager>()
-                    .UseFakeContext();
+                if (_envConfig.DataInMemory)
+                    services.GetRequiredService<FakeDataManager>()
+                        .UseFakeContext();
             }
 
             app.UseAuthExceptionMiddleware();

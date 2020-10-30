@@ -96,3 +96,60 @@ The service currently uses RSA256 algorithm to sign the JWT's. For this scenario
 - Run the command: `openssl rsa -in private-key.pem -outform PEM -pubout -out public-key.pem`
 
 A good article with detailed documentation can be found [here](https://dotnetuniversity.com/jwt-authentication-in-asp-net-core/). Also, a `.pem` to `XML` converter tool can be found [here](https://superdry.apphb.com/tools/online-rsa-key-converter)
+
+## How to run it
+
+From the root project directory
+
+```powershell
+dotnet run -p .\aiof.auth.core\
+```
+
+Or change directories and run from the core `.csproj`
+
+```powershell
+cd .\aiof.auth.core\
+dotnet run
+```
+
+Make API calls to
+
+```text
+http://localhost:5000
+```
+
+### Docker
+
+Pull the latest image from Docker Hub
+
+```powershell
+docker pull gkama/aiof-auth:latest
+```
+
+Run it
+
+```powershell
+docker run -it --rm -e ASPNETCORE_ENVIRONMENT='Development' -p 8000:80 gkama/aiof-api:latest
+```
+
+Make API calls to
+
+```text
+http://localhost:8000/
+```
+
+### Docker compose
+
+From the project root directory
+
+```powershell
+docker-compose up
+```
+
+Make API calls to
+
+```text
+http://localhost:8000   aiof-api
+http://localhost:8001   aiof-auth
+http://localhost:8002   aiof-metadata
+```

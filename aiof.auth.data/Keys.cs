@@ -9,10 +9,17 @@ namespace aiof.auth.data
 
         public const string MemCache = nameof(MemCache);
         public const string Ttl = nameof(Ttl);
-        public const string MemCacheTtl = nameof(MemCache) + ":" + nameof(Ttl);
+        public const string MemCacheTtl = MemCache + ":" + Ttl;
 
+        public const string Data = nameof(Data);
+        public const string InMemory = nameof(InMemory);
         public const string PostgreSQL = nameof(PostgreSQL);
-        public const string PortalCORS = nameof(PortalCORS);
+        public const string DataInMemory = Data + ":" + InMemory;
+        public const string DataPostgreSQL = Data + ":" + PostgreSQL;
+
+        public const string Cors = nameof(Cors);
+        public const string Portal = nameof(Portal);
+        public const string CorsPortal = Cors + ":" + Portal;
 
         public const string Jwt = nameof(Jwt);
         public const string Bearer = nameof(Bearer);
@@ -24,21 +31,21 @@ namespace aiof.auth.data
         public const string PrivateKey = nameof(PrivateKey);
         public const string PublicKey = nameof(PublicKey);
         public const string Default = nameof(Default);
-        public const string JwtExpires = nameof(Jwt) + ":" + nameof(Expires);
-        public const string JwtRefreshExpires = nameof(Jwt) + ":" + nameof(RefreshExpires);
-        public const string JwtType = nameof(Jwt) + ":" + nameof(Type);
-        public const string JwtIssuer = nameof(Jwt) + ":" + nameof(Issuer);
-        public const string JwtAudience = nameof(Jwt) + ":" + nameof(Audience);
-        public const string JwtPrivateKey = nameof(Jwt) + ":" + nameof(PrivateKey);
-        public const string JwtPublicKey = nameof(Jwt) + ":" + nameof(PublicKey);
+        public const string JwtExpires = Jwt + ":" + Expires;
+        public const string JwtRefreshExpires = Jwt + ":" + RefreshExpires;
+        public const string JwtType = Jwt + ":" + Type;
+        public const string JwtIssuer = Jwt + ":" + Issuer;
+        public const string JwtAudience = Jwt + ":" + Audience;
+        public const string JwtPrivateKey = Jwt + ":" + PrivateKey;
+        public const string JwtPublicKey = Jwt + ":" + PublicKey;
 
         public const string Hash = nameof(Hash);
         public const string Iterations = nameof(Iterations);
         public const string SaltSize = nameof(SaltSize);
         public const string KeySize = nameof(KeySize);
-        public const string HashIterations = nameof(Hash) + ":" + nameof(Iterations);
-        public const string HashSaltSize = nameof(Hash) + ":" + nameof(SaltSize);
-        public const string HashKeySize = nameof(Hash) + ":" + nameof(KeySize);
+        public const string HashIterations = Hash + ":" + Iterations;
+        public const string HashSaltSize = Hash + ":" + SaltSize;
+        public const string HashKeySize = Hash + ":" + KeySize;
 
         public const string OpenApi = nameof(OpenApi);
         public const string Version = nameof(Version);
@@ -49,14 +56,14 @@ namespace aiof.auth.data
         public const string Email = nameof(Email);
         public const string Url = nameof(Url);
         public const string License = nameof(License);
-        public const string OpenApiVersion = nameof(OpenApi) + ":" + nameof(Version);
-        public const string OpenApiTitle = nameof(OpenApi) + ":" + nameof(Title);
-        public const string OpenApiDescription = nameof(Description) + ":" + nameof(Description);
-        public const string OpenApiContactName = nameof(OpenApi) + ":" + nameof(Contact) + ":" + nameof(Name);
-        public const string OpenApiContactEmail = nameof(OpenApi) + ":" + nameof(Contact) + ":" + nameof(Email);
-        public const string OpenApiContactUrl = nameof(OpenApi) + ":" + nameof(Contact) + ":" + nameof(Url);
-        public const string OpenApiLicenseName = nameof(OpenApi) + ":" + nameof(License) + ":" + nameof(Name);
-        public const string OpenApiLicenseUrl = nameof(OpenApi) + ":" + nameof(License) + ":" + nameof(Url);
+        public const string OpenApiVersion = OpenApi + ":" + Version;
+        public const string OpenApiTitle = OpenApi + ":" + Title;
+        public const string OpenApiDescription = OpenApi + ":" + Description;
+        public const string OpenApiContactName = OpenApi + ":" + Contact + ":" + Name;
+        public const string OpenApiContactEmail = OpenApi + ":" + Contact + ":" + Email;
+        public const string OpenApiContactUrl = OpenApi + ":" + Contact + ":" + Url;
+        public const string OpenApiLicenseName = OpenApi + ":" + License + ":" + Name;
+        public const string OpenApiLicenseUrl = OpenApi + ":" + License + ":" + Url;
 
         public static string User = nameof(data.User);
         public static string Client = nameof(data.Client);

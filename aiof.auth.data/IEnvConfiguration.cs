@@ -5,9 +5,11 @@ namespace aiof.auth.data
 {
     public interface IEnvConfiguration
     {
-        int MemCacheTtl { get; }
+        bool DataInMemory { get; }
+        string DataPostgreSQL { get; }
 
-        string PostgreSQLConString { get; }
+        string CorsPortal { get; }
+        int MemCacheTtl { get; }
 
         int JwtExpires { get; }
         int JwtRefreshExpires { get; }
@@ -20,6 +22,15 @@ namespace aiof.auth.data
         int HashIterations { get; }
         int HashSaltSize { get; }
         int HashKeySize { get; }
+
+        string OpenApiVersion { get; }
+        string OpenApiTitle { get; }
+        string OpenApiDescription { get; }
+        string OpenApiContactName { get; }
+        string OpenApiContactEmail { get; }
+        string OpenApiContactUrl { get; }
+        string OpenApiLicenseName { get; }
+        string OpenApiLicenseUrl { get; }
 
         Task<bool> IsEnabledAsync(FeatureFlags featureFlag);
     }
