@@ -20,7 +20,7 @@ namespace aiof.auth.data
             _featureManager = featureManager;
         }
 
-        public bool DataInMemory => bool.Parse(_config[Keys.DataInMemory] ?? throw new KeyNotFoundException());
+        public bool DataInMemory => _config[Keys.DataInMemory] != null ? bool.Parse(_config[Keys.DataInMemory]) : false;
         public string DataPostgreSQL => _config[Keys.DataPostgreSQL] ?? throw new KeyNotFoundException();
 
         public string CorsPortal => _config[Keys.CorsPortal] ?? throw new KeyNotFoundException();
