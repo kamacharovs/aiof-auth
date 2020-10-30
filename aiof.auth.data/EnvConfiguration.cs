@@ -20,10 +20,10 @@ namespace aiof.auth.data
             _featureManager = featureManager;
         }
 
-        public bool DataInMemory => _config[Keys.DataInMemory] != null ? bool.Parse(_config[Keys.DataInMemory]) : false;
+        public bool DataInMemory => _config[Keys.DataInMemory] == null ? false : bool.Parse(_config[Keys.DataInMemory]);
         public string DataPostgreSQL => _config[Keys.DataPostgreSQL] ?? throw new KeyNotFoundException();
 
-        public string CorsPortal => _config[Keys.CorsPortal] ?? throw new KeyNotFoundException();
+        public string CorsPortal => _config[Keys.CorsPortal] == null ? "http://localhost:4100" : _config[Keys.CorsPortal];
         public int MemCacheTtl => int.Parse(_config[Keys.MemCacheTtl] ?? throw new KeyNotFoundException());
 
         public int JwtExpires => int.Parse(_config[Keys.JwtExpires] ?? throw new KeyNotFoundException());
