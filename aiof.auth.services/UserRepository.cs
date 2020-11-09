@@ -193,7 +193,6 @@ namespace aiof.auth.services
             user.Role = await _utilRepo.GetRoleAsync<User>(userDto.RoleId) as Role;
 
             await _context.Users.AddAsync(user);
-            await _userValidator.ValidateAndThrowAsync(user);
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Created User with UserId={UserId}, UserPublicKey={UserPublicKey}, " +
