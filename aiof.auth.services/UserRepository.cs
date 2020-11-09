@@ -192,7 +192,7 @@ namespace aiof.auth.services
             user.Password = Hash(userDto.Password);
             user.Role = await _utilRepo.GetRoleAsync<User>(userDto.RoleId) as Role;
 
-            await _context.Users.AddAsync(user);           
+            await _context.Users.AddAsync(user);
             await _userValidator.ValidateAndThrowAsync(user);
             await _context.SaveChangesAsync();
 
@@ -204,6 +204,13 @@ namespace aiof.auth.services
                 user.Id, user.PublicKey, user.FirstName, user.LastName, user.Email, user.Username);
 
             await AddRefreshTokenAsync(user.Id);
+
+            var profile = new UserProfile { UserId = user.Id };
+
+            await _context.UserProfiles.AddAsync(profile);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created Profile for UserId={UserId}", user.Id);
 
             return user;
         }

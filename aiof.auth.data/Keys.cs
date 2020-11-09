@@ -88,6 +88,7 @@ namespace aiof.auth.data
         public static class Entity
         {
             public static string User = nameof(data.User).ToSnakeCase();
+            public static string UserProfile = nameof(data.UserProfile).ToSnakeCase();
             public static string Client = nameof(data.Client).ToSnakeCase();
             public static string UserRefreshToken = nameof(data.UserRefreshToken).ToSnakeCase();
             public static string ClientRefreshToken = nameof(data.ClientRefreshToken).ToSnakeCase();

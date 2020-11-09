@@ -7,6 +7,7 @@ namespace aiof.auth.data
     public class AuthContext : DbContext
     {
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserProfile> UserProfiles { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         public virtual DbSet<ClientRefreshToken> ClientRefreshTokens { get; set; }
@@ -53,6 +54,17 @@ namespace aiof.auth.data
                     .HasForeignKey(x => x.RoleId)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<UserProfile>(e =>
+            {
+                e.ToTable(Keys.Entity.UserProfile);
+
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
+                e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();
+                e.Property(x => x.UserId).HasSnakeCaseColumnName().IsRequired();
             });
 
             modelBuilder.Entity<Client>(e =>
