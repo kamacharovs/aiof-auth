@@ -6,7 +6,7 @@ resources:
 
 variables:
   buildConfiguration: release
-  targetFramework: netcoreapp3.1
+  targetFramework: net5.0
   projectFile: aiof.auth.core/aiof.auth.core.csproj
   projectFileTest: aiof.auth.tests/aiof.auth.tests.csproj
   tag: $(Build.BuildId)
