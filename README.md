@@ -151,6 +151,12 @@ Make API calls to
 http://localhost:8001/
 ```
 
+(Optional) Clean up `none` images
+
+```powershell
+docker rmi $(docker images -f “dangling=true” -q)
+```
+
 ### Docker compose
 
 From the root project directory
