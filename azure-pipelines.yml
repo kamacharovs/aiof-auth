@@ -7,9 +7,10 @@ resources:
 variables:
   buildConfiguration: release
   targetFramework: net5.0
+  sdkVersion: 5.0.100
   projectFile: aiof.auth.core/aiof.auth.core.csproj
   projectFileTest: aiof.auth.tests/aiof.auth.tests.csproj
-  tag: $(Build.BuildId)
+  tag: latest
 
 stages:
 - stage: Build
@@ -21,10 +22,10 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: UseDotNet@2
-      displayName: install .Net 5 SDK
+      displayName: install .net5 sdk
       inputs:
         packageType: sdk
-        version: 5.0.100
+        version: $(sdkVersion)
 
     - task: DotNetCoreCLI@2
       displayName: build
@@ -62,4 +63,4 @@ stages:
         command: buildAndPush
         Dockerfile: $(Build.SourcesDirectory)/Dockerfile
         tags: |
-          latest
+          $(tag)
