@@ -57,7 +57,7 @@ namespace aiof.auth.core
             if (_env.IsDevelopment() && _envConfig.DataInMemory)
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
-                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.DataPostgreSQL));
+                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.DataPostgreSQL, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
             
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
