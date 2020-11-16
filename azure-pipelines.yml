@@ -20,6 +20,12 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
+    - task: UseDotNet@2
+      displayName: install .Net 5 SDK
+      inputs:
+        packageType: sdk
+        version: 5.0.100
+
     - task: DotNetCoreCLI@2
       displayName: build
       inputs:
