@@ -102,12 +102,4 @@ namespace aiof.auth.core
                 .WriteAsync(problemjson);
         }
     }
-
-    public static partial class HttpStatusCodeExceptionMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseAuthExceptionMiddleware(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<AuthExceptionMiddleware>();
-        }
-    }
 }

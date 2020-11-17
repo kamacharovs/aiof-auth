@@ -64,47 +64,8 @@ namespace aiof.auth.core
             services.AddHealthChecks();
             services.AddFeatureManagement();
             services.AddMemoryCache();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(
-                Keys.Bearer,
-                x =>
-                {
-                    var rsa = RSA.Create();
-                    rsa.FromXmlString(_envConfig.JwtPublicKey);
-
-                    x.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = _envConfig.JwtIssuer,
-                        ValidateAudience = true,
-                        ValidAudience = _envConfig.JwtAudience,
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new RsaSecurityKey(rsa)
-                    };
-                });
-
-            services.AddSwaggerGen(x =>
-            {
-                x.SwaggerDoc(_envConfig.OpenApiVersion, new OpenApiInfo
-                {
-                    Title = _envConfig.OpenApiTitle,
-                    Version = _envConfig.OpenApiVersion,
-                    Description = _envConfig.OpenApiDescription,
-                    Contact = new OpenApiContact
-                    {
-                        Name = _envConfig.OpenApiContactName,
-                        Email = _envConfig.OpenApiContactEmail,
-                        Url = new Uri(_envConfig.OpenApiContactUrl)
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = _envConfig.OpenApiLicenseName,
-                        Url = new Uri(_envConfig.OpenApiLicenseUrl),
-                    }
-                });
-                x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
-            });
+            services.AddAuthAuthentication(_envConfig);
+            services.AddAuthSwaggerGen(_envConfig);
 
             services.AddControllers();
             services.AddMvcCore()
