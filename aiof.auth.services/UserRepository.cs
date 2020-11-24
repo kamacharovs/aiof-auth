@@ -190,7 +190,7 @@ namespace aiof.auth.services
                     $"and Username='{userDto.Username}' already exists");
 
             user.Password = Hash(userDto.Password);
-            user.Role = await _utilRepo.GetRoleAsync<User>(userDto.RoleId) as Role;
+            user.RoleId = await _utilRepo.GetRoleIdAsync<User>();
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();

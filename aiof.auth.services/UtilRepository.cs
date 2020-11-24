@@ -73,6 +73,37 @@ namespace aiof.auth.services
         }
 
         /// <summary>
+        /// Get default Role
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="asNoTracking"></param>
+        /// <returns></returns>
+        public async Task<int> GetRoleIdAsync<T>(bool asNoTracking = true) where T : IPublicKeyId
+        {
+            var defaultRole = string.Empty;
+
+            switch (typeof(T).Name)
+            {
+                case nameof(User):
+                    defaultRole = Roles.User;
+                    break;
+                case nameof(Client):
+                    defaultRole = Roles.Client;
+                    break;
+                default:
+                    defaultRole = Roles.Basic;
+                    break;
+            }
+
+            var role = await GetRolesQuery(asNoTracking)
+                .FirstOrDefaultAsync(x => x.Name == defaultRole)
+                ?? throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                    $"Default role for Entity={typeof(T).Name}) was not found");
+
+            return role.Id;
+        }
+
+        /// <summary>
         /// Add Role in a quick and invalidated way
         /// </summary>
         /// <param name="name"></param>
