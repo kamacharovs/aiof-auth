@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
@@ -100,14 +99,6 @@ namespace aiof.auth.core
 
             await httpContext.Response
                 .WriteAsync(problemjson);
-        }
-    }
-
-    public static partial class HttpStatusCodeExceptionMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseAuthExceptionMiddleware(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<AuthExceptionMiddleware>();
         }
     }
 }

@@ -190,10 +190,9 @@ namespace aiof.auth.services
                     $"and Username='{userDto.Username}' already exists");
 
             user.Password = Hash(userDto.Password);
-            user.Role = await _utilRepo.GetRoleAsync<User>(userDto.RoleId) as Role;
+            user.RoleId = await _utilRepo.GetRoleIdAsync<User>();
 
-            await _context.Users.AddAsync(user);           
-            await _userValidator.ValidateAndThrowAsync(user);
+            await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Created User with UserId={UserId}, UserPublicKey={UserPublicKey}, " +
@@ -204,6 +203,13 @@ namespace aiof.auth.services
                 user.Id, user.PublicKey, user.FirstName, user.LastName, user.Email, user.Username);
 
             await AddRefreshTokenAsync(user.Id);
+
+            var profile = new UserProfile { UserId = user.Id };
+
+            await _context.UserProfiles.AddAsync(profile);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created Profile for UserId={UserId}", user.Id);
 
             return user;
         }

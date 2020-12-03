@@ -96,3 +96,73 @@ The service currently uses RSA256 algorithm to sign the JWT's. For this scenario
 - Run the command: `openssl rsa -in private-key.pem -outform PEM -pubout -out public-key.pem`
 
 A good article with detailed documentation can be found [here](https://dotnetuniversity.com/jwt-authentication-in-asp-net-core/). Also, a `.pem` to `XML` converter tool can be found [here](https://superdry.apphb.com/tools/online-rsa-key-converter)
+
+## How to run it
+
+The API is designed to be run as a standalone API leveraging in memory database. The fake data comes from the `FakeDataManager` class. This is achieved when this is enabled in conjunction with the `ASPNETCORE_ENVIRONMENT='Development'`. These configurations are configured in the `appsettings.Development.json`
+
+```json
+...
+"Data": {
+    "InMemory": false,
+    "PostgreSQL": "connectionstring"
+},
+...
+```
+
+The default value for the `InMemory` data is `false`. If changed to `true`, then the API can be ran locally as a standalone instance. Additionally, it can be ran in conjunction with `aiof-data` Docker image as a full API.
+
+From the root project directory
+
+```powershell
+dotnet run -p .\aiof.auth.core\
+```
+
+Or change directories and run from the core `.csproj`
+
+```powershell
+cd .\aiof.auth.core\
+dotnet run
+```
+
+Make API calls to
+
+```text
+http://localhost:5000
+```
+
+### Docker
+
+Pull the latest image from Docker Hub
+
+```powershell
+docker pull gkama/aiof-auth:latest
+```
+
+Run it
+
+```powershell
+docker run -it --rm -e ASPNETCORE_ENVIRONMENT='Development' -e Data__InMemory='true' -p 8001:80 gkama/aiof-auth:latest
+```
+
+Make API calls to
+
+```text
+http://localhost:8001/
+```
+
+(Optional) Clean up `none` images
+
+```powershell
+docker rmi $(docker images -f “dangling=true” -q)
+```
+
+### Docker compose
+
+From the root project directory
+
+```powershell
+docker-compose up
+```
+
+This will initialize the `aiof-data` database. Then you can run the API from the root project directory with `dotnet run -p .\aiof.auth.core\` as have it as a fully functioning local API

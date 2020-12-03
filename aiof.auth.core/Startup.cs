@@ -7,14 +7,11 @@ using System.Security.Cryptography;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
-using Microsoft.OpenApi.Models;
-using Microsoft.IdentityModel.Tokens;
 
 using AutoMapper;
 using FluentValidation;
@@ -28,6 +25,7 @@ namespace aiof.auth.core
     {
         public readonly IConfiguration _config;
         public readonly IWebHostEnvironment _env;
+        public readonly IEnvConfiguration _envConfig;
 
         public Startup(
             IConfiguration configuration,
@@ -35,6 +33,7 @@ namespace aiof.auth.core
         {
             _config = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _env = env ?? throw new ArgumentNullException(nameof(env));
+            _envConfig = new EnvConfiguration(_config, null) ?? throw new ArgumentNullException(nameof(EnvConfiguration));
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -52,57 +51,18 @@ namespace aiof.auth.core
                 .AddSingleton<IEnvConfiguration, EnvConfiguration>()
                 .AddAutoMapper(typeof(AutoMappingProfile).Assembly);
 
-            if (_env.IsDevelopment())
+            if (_env.IsDevelopment() && _envConfig.DataInMemory)
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
-                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_config[Keys.PostgreSQL]));
+                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.DataPostgreSQL, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
             
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
             services.AddHealthChecks();
             services.AddFeatureManagement();
             services.AddMemoryCache();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(
-                Keys.Bearer,
-                x =>
-                {
-                    var rsa = RSA.Create();
-                    rsa.FromXmlString(_config[Keys.JwtPublicKey]);
-
-                    x.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = _config[Keys.JwtIssuer],
-                        ValidateAudience = true,
-                        ValidAudience = _config[Keys.JwtAudience],
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new RsaSecurityKey(rsa)
-                    };
-                });
-
-            services.AddSwaggerGen(x =>
-            {
-                x.SwaggerDoc(_config[Keys.OpenApiVersion], new OpenApiInfo
-                {
-                    Title = _config[Keys.OpenApiTitle],
-                    Version = _config[Keys.OpenApiVersion],
-                    Description = _config[Keys.OpenApiDescription],
-                    Contact = new OpenApiContact
-                    {
-                        Name = _config[Keys.OpenApiContactName],
-                        Email = _config[Keys.OpenApiContactEmail],
-                        Url = new Uri(_config[Keys.OpenApiContactUrl])
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = _config[Keys.OpenApiLicenseName],
-                        Url = new Uri(_config[Keys.OpenApiLicenseUrl]),
-                    }
-                });
-                x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
-            });
+            services.AddAuthAuthentication(_envConfig);
+            services.AddAuthSwaggerGen(_envConfig);
 
             services.AddControllers();
             services.AddMvcCore()
@@ -119,11 +79,11 @@ namespace aiof.auth.core
         {
             if (_env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseCors(x => x.WithOrigins(_config[Keys.PortalCORS]).AllowAnyHeader().AllowAnyMethod());
+                app.UseCors(x => x.WithOrigins(_envConfig.CorsPortal).AllowAnyHeader().AllowAnyMethod());
 
-                services.GetRequiredService<FakeDataManager>()
-                    .UseFakeContext();
+                if (_envConfig.DataInMemory)
+                    services.GetRequiredService<FakeDataManager>()
+                        .UseFakeContext();
             }
 
             app.UseAuthExceptionMiddleware();

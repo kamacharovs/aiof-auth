@@ -15,8 +15,7 @@ namespace aiof.auth.data
                 .ForMember(x => x.LastName, o => o.Condition(s => s.LastName != null))
                 .ForMember(x => x.Email, o => o.Condition(s => s.Email != null))
                 .ForMember(x => x.Username, o => o.Condition(s => s.Username != null))
-                .ForMember(x => x.Password, o => o.Condition(s => s.Password != null))
-                .ForMember(x => x.RoleId, o => o.Condition(s => s.RoleId != null));
+                .ForMember(x => x.Password, o => o.Condition(s => s.Password != null));
 
             CreateMap<TokenResponse, TokenUserResponse>()
                 .ForMember(x => x.TokenType, o => o.MapFrom(s => s.TokenType))

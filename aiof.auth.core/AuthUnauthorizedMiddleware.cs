@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
 using aiof.auth.data;
@@ -63,14 +62,6 @@ namespace aiof.auth.core
             
             await httpContext.Response
                 .WriteAsync(authProblemJson);
-        }
-    }
-
-    public static partial class HttpStatusCodeExceptionMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseAuthUnauthorizedMiddleware(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<AuthUnauthorizedMiddleware>();
         }
     }
 }

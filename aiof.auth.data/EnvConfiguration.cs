@@ -20,9 +20,11 @@ namespace aiof.auth.data
             _featureManager = featureManager;
         }
 
-        public int MemCacheTtl => int.Parse(_config[Keys.MemCacheTtl] ?? throw new KeyNotFoundException());
+        public bool DataInMemory => _config[Keys.DataInMemory] == null ? false : bool.Parse(_config[Keys.DataInMemory]);
+        public string DataPostgreSQL => _config[Keys.DataPostgreSQL] ?? throw new KeyNotFoundException();
 
-        public string PostgreSQLConString => _config[Keys.PostgreSQL];
+        public string CorsPortal => _config[Keys.CorsPortal] == null ? "http://localhost:4100" : _config[Keys.CorsPortal];
+        public int MemCacheTtl => int.Parse(_config[Keys.MemCacheTtl] ?? throw new KeyNotFoundException());
 
         public int JwtExpires => int.Parse(_config[Keys.JwtExpires] ?? throw new KeyNotFoundException());
         public int JwtRefreshExpires => int.Parse(_config[Keys.JwtRefreshExpires] ?? throw new KeyNotFoundException());
@@ -35,6 +37,16 @@ namespace aiof.auth.data
         public int HashIterations => int.Parse(_config[Keys.HashIterations] ?? throw new KeyNotFoundException());
         public int HashSaltSize => int.Parse(_config[Keys.HashSaltSize] ?? throw new KeyNotFoundException());
         public int HashKeySize => int.Parse(_config[Keys.HashKeySize] ?? throw new KeyNotFoundException());
+
+        public string OpenApiVersion => _config[Keys.OpenApiVersion] ?? throw new KeyNotFoundException();
+        public string OpenApiTitle => _config[Keys.OpenApiTitle] ?? throw new KeyNotFoundException();
+        public string OpenApiDescription => _config[Keys.OpenApiDescription] ?? throw new KeyNotFoundException();
+        public string OpenApiContactName => _config[Keys.OpenApiContactName] ?? throw new KeyNotFoundException();
+        public string OpenApiContactEmail => _config[Keys.OpenApiContactEmail] ?? throw new KeyNotFoundException();
+        public string OpenApiContactUrl => _config[Keys.OpenApiContactUrl] ?? throw new KeyNotFoundException();
+        public string OpenApiLicenseName => _config[Keys.OpenApiLicenseName] ?? throw new KeyNotFoundException();
+        public string OpenApiLicenseUrl => _config[Keys.OpenApiLicenseUrl] ?? throw new KeyNotFoundException();
+
 
         public async Task<bool> IsEnabledAsync(FeatureFlags featureFlag)
         {
