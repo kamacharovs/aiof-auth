@@ -71,6 +71,28 @@ Response
 }
 ```
 
+### EF Core migrations
+
+Migrations are managed in the `ef-migrations` branch
+
+An example of creating a simple migration and generating the SQL script for it
+
+```powershell
+dotnet ef migrations add {migration name} -p .\aiof.auth.data
+dotnet ef migrations script -p .\aiof.auth.data
+dotnet ef migrations script {migration name} -p .\aiof.auth.data
+dotnet ef migrations remove
+```
+
+Additionally, below are more advanced `dotnet ef migrations` scripts. The last one is used to run a migration pointing to a specific database. This can be leveraged in Azure DevOps pipelines
+
+```powershell
+dotnet tool update --global dotnet-ef --version 5.0.0
+dotnet ef database update -p .\aiof.auth.data
+dotnet ef migrations list -p .\aiof.auth.data
+dotnet ef database update -s .\aiof.auth.core -p .\aiof.auth.data --connection "host=127.0.0.1;database=aiof;port=5432;username=postgres;password=postgres"
+```
+
 ### Tests
 
 Unit tests are ran on each pipeline build. The pipelines are built with `Azure DevOps` from the `azure-pipelines.yml` file. Additionally, as part of the build pipeline, there are test result coverage reports done by [Coverlet](https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core?view=azure-devops#collect-code-coverage-metrics-with-coverlet). Also, you can click on the build pipeline badge and check the unit test coverage for the latest run
