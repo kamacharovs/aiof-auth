@@ -41,6 +41,7 @@ stages:
         projects: $(projectFileTest)
         arguments: -c $(buildConfiguration)
         publishTestResults: true
+    
 
     - task: DotNetCoreCLI@2
       displayName: publish
