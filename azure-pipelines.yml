@@ -42,15 +42,15 @@ stages:
         arguments: -c $(buildConfiguration)
         publishTestResults: true
 
-    - task: CopyFiles@2
-      inputs:
-        SourceFolder: $(system.defaultworkingdirectory)
-        Contents: '**\bin\$(buildConfiguration)\**'
-        TargetFolder: $(build.artifactstagingdirectory)
-
     - task: DotNetCoreCLI@2
       displayName: publish
       inputs:
         command: publish
         arguments: -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/app/publish -f $(targetFramework)
         zipAfterPublish: false
+    
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
