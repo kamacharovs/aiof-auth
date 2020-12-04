@@ -48,8 +48,16 @@ stages:
         command: publish
         arguments: -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/app/publish -f $(targetFramework)
         zipAfterPublish: false
-    
+
+    - task: CopyFiles@2
+      displayName: copy Dockerfile
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: 'Dockerfile'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/app/publish'
+
     - task: PublishBuildArtifacts@1
+      displayName: publish artifacts
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
