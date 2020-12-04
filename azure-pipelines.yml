@@ -41,7 +41,12 @@ stages:
         projects: $(projectFileTest)
         arguments: -c $(buildConfiguration)
         publishTestResults: true
-    
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: $(system.defaultworkingdirectory)
+        Contents: '**\bin\$(buildConfiguration)\**'
+        TargetFolder: $(build.artifactstagingdirectory)
 
     - task: DotNetCoreCLI@2
       displayName: publish
