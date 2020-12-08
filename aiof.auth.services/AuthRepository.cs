@@ -254,6 +254,10 @@ namespace aiof.auth.services
             {
                 var clientRefresh = await _clientRepo.RevokeTokenAsync((int)clientId, token);
 
+                _logger.LogInformation("Revoked {EntityName} token={EntityToken}",
+                    nameof(ClientRefreshToken),
+                    clientRefresh.Token);
+
                 return new RevokeResponse
                 {
                     Token = clientRefresh.Token,
@@ -263,6 +267,10 @@ namespace aiof.auth.services
             else if (userId != null)
             {
                 var userRefresh = await _userRepo.RevokeTokenAsync((int)userId, token);
+
+                _logger.LogInformation("Revoked {EntityName} token={EntityToken}",
+                    nameof(UserRefreshToken),
+                    userRefresh.Token);
 
                 return new RevokeResponse
                 {

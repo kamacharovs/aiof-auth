@@ -199,12 +199,12 @@ namespace aiof.auth.services
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Created User with UserId={UserId}, UserPublicKey={UserPublicKey}, " +
+            _logger.LogInformation("Created {EntityName} with UserId={UserId}, UserPublicKey={UserPublicKey}, " +
                 "UserFirstName={UserFirstName}, " +
                 "UserLastName={UserLastName}, " +
                 "UserEmail={UserEmail} and " +
                 "UserUsername={UserUsername}",
-                user.Id, user.PublicKey, user.FirstName, user.LastName, user.Email, user.Username);
+                nameof(User), user.Id, user.PublicKey, user.FirstName, user.LastName, user.Email, user.Username);
 
             await AddRefreshTokenAsync(user.Id);
 
@@ -233,7 +233,8 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Created UserRefreshToken for User with UserId={UserId}",
+            _logger.LogInformation("Created {EntityName} for User with UserId={UserId}",
+                nameof(UserRefreshToken),
                 userId);
 
             return refreshToken;
@@ -254,7 +255,9 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Updated Password for User with Username='{UserUsername}'", username);
+            _logger.LogInformation("Updated Password for {EntityName} with Username={UserUsername}", 
+                nameof(User),
+                username);
 
             return user;
         }
@@ -268,7 +271,7 @@ namespace aiof.auth.services
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Soft Deleted {EntityName} with Id={UserId}",
+            _logger.LogInformation("Soft Deleted {EntityName} with UserId={UserId}",
                 nameof(User),
                 id);
         }
@@ -282,7 +285,7 @@ namespace aiof.auth.services
                 token,
                 asNoTracking: false)
                 as UserRefreshToken
-                ?? throw new AuthNotFoundException($"{nameof(UserRefreshToken)} with UserId='{userId}' and Token='{token}' was not found");
+                ?? throw new AuthNotFoundException($"{nameof(UserRefreshToken)} with UserId={userId} and Token={token} was not found");
 
             refreshToken.Revoked = DateTime.UtcNow;
 
@@ -291,7 +294,8 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Revoked UserRefreshToken='{UserRefreshToken}' for UserId='{UserId}'",
+            _logger.LogInformation("Revoked {EntityName}={UserRefreshToken} for UserId={UserId}",
+                nameof(UserRefreshToken),
                 token,
                 userId);
 
