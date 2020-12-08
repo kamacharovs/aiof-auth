@@ -41,7 +41,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetTokenAsync([FromBody, Required]TokenRequest req)
+        public async Task<IActionResult> GetTokenAsync([FromBody, Required] TokenRequest req)
         {
             return Ok(await _repo.GetTokenAsync(req));
         }
