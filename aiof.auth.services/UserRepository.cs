@@ -69,7 +69,6 @@ namespace aiof.auth.services
             bool asNoTracking = true)
         {
             return await GetQuery(asNoTracking)
-                .AsSingleQuery()
                 .FirstOrDefaultAsync(x => x.Id == tenant.UserId
                     && x.IsDeleted == false);
         }

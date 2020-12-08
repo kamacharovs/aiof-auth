@@ -51,7 +51,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Get User by Id
+        /// Get User by id
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpGet]

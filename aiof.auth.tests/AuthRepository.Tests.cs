@@ -28,7 +28,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
-        public async Task GenerateToken_With_Valid_User(int id)
+        public async Task GenerateToken_WithValidUser_IsSuccessful(int id)
         {
             var user = await _userRepo.GetAsync(id);
 
@@ -40,7 +40,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.UsersUsernamePassword), MemberType = typeof(Helper))]
-        public async Task Auth_User_With_Username_Password(string username, string password)
+        public async Task AuthUser_WithUsernamePassword_IsSuccessful(string username, string password)
         {
             var req = new TokenRequest
             {
@@ -57,7 +57,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
-        public async Task Auth_Client_With_ApiKey(string apiKey)
+        public async Task AuthClient_WithApiKey_IsSuccessful(string apiKey)
         {
             var req = new TokenRequest { ApiKey = apiKey };
             var token = await _repo.GetTokenAsync(req);
@@ -71,7 +71,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientRefreshToken), MemberType = typeof(Helper))]
-        public async Task Auth_Client_With_RefreshToken(string refreshToken)
+        public async Task AuthClient_WithRefreshToken_IsSuccessful(string refreshToken)
         {
             var req = new TokenRequest { Token = refreshToken };
             var token = await _repo.GetTokenAsync(req);
@@ -83,7 +83,7 @@ namespace aiof.auth.tests
         }
 
         [Fact]
-        public async Task Auth_With_EmptyCredentials_Throws_AuthValidationException()
+        public async Task Auth_WithEmptyCredentials_ThrowsAuthValidationException()
         {
             var req = new TokenRequest { };
 
@@ -101,7 +101,7 @@ namespace aiof.auth.tests
         
         [Theory]
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
-        public async Task ValidateToken_With_Valid_User(int id)
+        public async Task ValidateToken_WithValidUser_IsSuccessful(int id)
         {
             var user = await _userRepo.GetAsync(id);
 
@@ -114,7 +114,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType = typeof(Helper))]
-        public async Task RevokeTokenAsync(
+        public async Task RevokeTokenAsync_IsSuccessful(
             int clientId, 
             string token)
         {
@@ -167,7 +167,7 @@ namespace aiof.auth.tests
         }
 
         [Fact]
-        public void GetPublicJsonWebKey_Valid()
+        public void GetPublicJsonWebKey_IsSuccessful()
         {
             var jwk = _repo.GetPublicJsonWebKey();
 
@@ -179,7 +179,7 @@ namespace aiof.auth.tests
         [InlineData("testhost", true)]
         [InlineData("aiof-auth", true)]
         [InlineData("aiof-auth-dev", true)]
-        public void GetOpenIdConfig_Valid(string host, bool isHttps)
+        public void GetOpenIdConfig_IsSuccessful(string host, bool isHttps)
         {
             var openIdConfig = _repo.GetOpenIdConfig(
                 host,

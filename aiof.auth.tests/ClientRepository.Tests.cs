@@ -21,7 +21,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
-        public async Task GetClientAsync_By_Id(int id)
+        public async Task GetAsync_ById_IsSuccessful(int id)
         {
             var client = await _repo.GetAsync(id);
 
@@ -33,7 +33,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
-        public async Task GetClientAsync_By_ApiKey(string apiKey)
+        public async Task GetAsync_ByApiKey_IsSuccessful(string apiKey)
         {
             var client = await _repo.GetAsync(apiKey);
 
@@ -44,7 +44,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.RandomClientDtos), MemberType = typeof(Helper))]
-        public async Task AddClientAsync_Valid(
+        public async Task AddAsync_IsSuccessful(
             string name, 
             bool enabled)
         {
@@ -65,7 +65,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType = typeof(Helper))]
-        public async Task RevokeTokenAsync(
+        public async Task RevokeTokenAsync_IsSuccessful(
             int clientId, 
             string token)
         {
@@ -84,7 +84,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
-        public async Task SoftDeleteAsync_Valid(int id)
+        public async Task SoftDeleteAsync_IsSuccessful(int id)
         {
             var client = await _repo.SoftDeleteAsync(id);
 

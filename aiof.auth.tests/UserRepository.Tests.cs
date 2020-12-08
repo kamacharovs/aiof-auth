@@ -20,17 +20,34 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
+        public async Task GetAsync_ByTenant_IsSuccessful(int id)
+        {
+            var user = await _repo.GetAsync(Helper.GetMockTenant(userId: id));
+
+            Assert.NotNull(user);
+            Assert.NotNull(user.FirstName);
+            Assert.NotNull(user.LastName);
+            Assert.NotNull(user.Email);
+            Assert.NotNull(user.Username);
+            Assert.NotNull(user.Password);
+            Assert.NotEqual(0, user.RoleId);
+            Assert.NotEqual(new DateTime(), user.Created);
+            Assert.False(user.IsDeleted);
+        }
+
+        [Theory]
         [InlineData(333)]
         [InlineData(555)]
         [InlineData(999)]
-        public async Task GetUserAsync_By_Id_NotFound(int id)
+        public async Task GetAsync_ById_NotFound(int id)
         {
             await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetAsync(id));
         }
 
         [Theory]
         [MemberData(nameof(Helper.UsersPublicKey), MemberType = typeof(Helper))]
-        public async Task GetUserAsync_By_PublicKey(Guid publicKey)
+        public async Task GetAsync_ByPublicKey_IsSuccessful(Guid publicKey)
         {
             var user = await _repo.GetAsync(publicKey);
 
@@ -40,12 +57,14 @@ namespace aiof.auth.tests
             Assert.NotNull(user.Email);
             Assert.NotNull(user.Username);
             Assert.NotNull(user.Password);
+            Assert.NotEqual(0, user.RoleId);
             Assert.NotEqual(new DateTime(), user.Created);
+            Assert.False(user.IsDeleted);
         }
 
         [Theory]
         [MemberData(nameof(Helper.RandomUserDtos), MemberType = typeof(Helper))]
-        public async Task GetUserAsync_By_UserDto_NotFound(
+        public async Task GetAsync_ByUserDto_NotFound(
             string firstName,
             string lastName,
             string email,
@@ -76,7 +95,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.UserRefreshTokensToken), MemberType = typeof(Helper))]
-        public async Task GetUserAsync_ByRefreshToken_Valid(string refreshToken)
+        public async Task GetAsync_ByRefreshToken_IsSuccessful(string refreshToken)
         {
             var user = await _repo.GetByRefreshTokenAsync(refreshToken);
 
@@ -90,7 +109,7 @@ namespace aiof.auth.tests
         }
         [Theory]
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
-        public async Task GetRefreshTokenAsync_ByUserId_Valid(int userId)
+        public async Task GetRefreshTokenAsync_ById_IsSuccessful(int userId)
         {
             var refreshToken = await _repo.GetRefreshTokenAsync(userId);
 
@@ -103,7 +122,7 @@ namespace aiof.auth.tests
         }
         [Theory]
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
-        public async Task GetRefreshTokensAsync_Valid(int userId)
+        public async Task GetRefreshTokensAsync_IsSuccessful(int userId)
         {
             var refreshTokens = await _repo.GetRefreshTokensAsync(userId);
 
@@ -112,7 +131,7 @@ namespace aiof.auth.tests
         }
         [Theory]
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
-        public async Task GetOrAddRefreshTokenAsync_NotRevoked(int userId)
+        public async Task GetOrAddRefreshTokenAsync_NotRevoked_IsSuccessful(int userId)
         {
             var refreshToken = await _repo.GetOrAddRefreshTokenAsync(userId);
 
@@ -125,7 +144,7 @@ namespace aiof.auth.tests
         }
         [Theory]
         [MemberData(nameof(Helper.UserRefreshTokensUserIdToken), MemberType = typeof(Helper))]
-        public async Task RevokeTokenAsync(int userId, string token)
+        public async Task RevokeTokenAsync_IsSuccessful(int userId, string token)
         {
             var revokedToken = await _repo.RevokeTokenAsync(userId, token);
 
@@ -135,7 +154,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.RandomUserDtos), MemberType = typeof(Helper))]
-        public async Task AddUserAsync_Valid(
+        public async Task AddAsync_IsSuccessful(
             string firstName,
             string lastName,
             string email,
@@ -163,7 +182,7 @@ namespace aiof.auth.tests
         }
 
         [Fact]
-        public async Task AddUserAsync_Check_Password_Hash()
+        public async Task AddAsync_CheckPasswordHash_IsSuccessful()
         {
             var password = "Password123";
             var userDto = new UserDto
@@ -182,7 +201,7 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.UsersUsernamePassword), MemberType = typeof(Helper))]
-        public async Task UpdateUserPasswordAsync_Is_Successful(string username, string password)
+        public async Task UpdatePasswordAsync_IsSuccessful(string username, string password)
         {
             var newPassword = "newpassword123";
 
