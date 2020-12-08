@@ -143,7 +143,7 @@ namespace aiof.auth.services
             return await GetRefreshTokensQuery()
                 .Where(x => x.UserId == userId
                     && x.Revoked == null)
-                .OrderBy(x => x.Expires)
+                .OrderByDescending(x => x.Expires)
                 .Take(1)
                 .FirstOrDefaultAsync();
         }
