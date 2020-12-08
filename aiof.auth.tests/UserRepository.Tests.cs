@@ -25,14 +25,14 @@ namespace aiof.auth.tests
         [InlineData(999)]
         public async Task GetUserAsync_By_Id_NotFound(int id)
         {
-            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetUserAsync(id));
+            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetAsync(id));
         }
 
         [Theory]
         [MemberData(nameof(Helper.UsersPublicKey), MemberType = typeof(Helper))]
         public async Task GetUserAsync_By_PublicKey(Guid publicKey)
         {
-            var user = await _repo.GetUserAsync(publicKey);
+            var user = await _repo.GetAsync(publicKey);
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
@@ -61,11 +61,11 @@ namespace aiof.auth.tests
                 Password = password
             };
 
-            var user = await _repo.GetUserAsync(userDto);
+            var user = await _repo.GetAsync(userDto);
 
             Assert.Null(user);
 
-            var user2 = await _repo.GetUserAsync(
+            var user2 = await _repo.GetAsync(
                 firstName,
                 lastName,
                 email,
@@ -78,7 +78,7 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UserRefreshTokensToken), MemberType = typeof(Helper))]
         public async Task GetUserAsync_ByRefreshToken_Valid(string refreshToken)
         {
-            var user = await _repo.GetUserByRefreshTokenAsync(refreshToken);
+            var user = await _repo.GetByRefreshTokenAsync(refreshToken);
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
@@ -151,7 +151,7 @@ namespace aiof.auth.tests
                 Password = password
             };
 
-            var user = await _repo.AddUserAsync(userDto);
+            var user = await _repo.AddAsync(userDto);
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
@@ -175,7 +175,7 @@ namespace aiof.auth.tests
                 Password = password
             };
 
-            var user = await _repo.AddUserAsync(userDto);
+            var user = await _repo.AddAsync(userDto);
 
             Assert.True(_repo.Check(user.Password, password));
         }

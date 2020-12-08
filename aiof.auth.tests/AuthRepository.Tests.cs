@@ -30,7 +30,7 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
         public async Task GenerateToken_With_Valid_User(int id)
         {
-            var user = await _userRepo.GetUserAsync(id);
+            var user = await _userRepo.GetAsync(id);
 
             var token = _repo.GenerateJwtToken(user);
 
@@ -103,7 +103,7 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
         public async Task ValidateToken_With_Valid_User(int id)
         {
-            var user = await _userRepo.GetUserAsync(id);
+            var user = await _userRepo.GetAsync(id);
 
             var token = _repo.GenerateJwtToken(user);
             var tokenValidation = _repo.ValidateToken(token.AccessToken);

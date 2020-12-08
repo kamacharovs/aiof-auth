@@ -44,9 +44,9 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserAsync([FromRoute, Required] int id)
+        public async Task<IActionResult> GetAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.GetUserAsync(id));
+            return Ok(await _repo.GetAsync(id));
         }
 
         /// <summary>
@@ -58,9 +58,9 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserByUsernameAsync([FromQuery, Required] string username)
+        public async Task<IActionResult> GetByUsernameAsync([FromQuery, Required] string username)
         {
-            return Ok(await _repo.GetUserByUsernameAsync(username));
+            return Ok(await _repo.GetByUsernameAsync(username));
         }
 
         /// <summary>
@@ -73,11 +73,11 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserUsernamePasswordAsync(
+        public async Task<IActionResult> GetUsernamePasswordAsync(
             [FromRoute, Required] string username,
             [FromRoute, Required] string password)
         {
-            return Ok(await _repo.GetUserAsync(username, password));
+            return Ok(await _repo.GetAsync(username, password));
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IUserRefreshToken), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserRefreshTokenAsync([FromRoute, Required] int id)
+        public async Task<IActionResult> GetRefreshTokenAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetRefreshTokenAsync(id));
         }
@@ -104,7 +104,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IEnumerable<IUserRefreshToken>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserRefreshTokensAsync([FromRoute, Required] int id)
+        public async Task<IActionResult> GetRefreshTokensAsync([FromRoute, Required] int id)
         {
             return Ok(await _repo.GetRefreshTokensAsync(id));
         }
@@ -116,9 +116,9 @@ namespace aiof.auth.core.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ITokenUserResponse), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddUserAsync([FromBody, Required] UserDto userDto)
+        public async Task<IActionResult> AddAsync([FromBody, Required] UserDto userDto)
         {
-            return Created(nameof(User), _authRepo.GenerateJwtToken(await _repo.AddUserAsync(userDto)));
+            return Created(nameof(User), _authRepo.GenerateJwtToken(await _repo.AddAsync(userDto)));
         }
 
         /// <summary>
