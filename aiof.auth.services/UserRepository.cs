@@ -99,8 +99,7 @@ namespace aiof.auth.services
             string username, 
             string password)
         {
-            var user = await GetByUsernameAsync(
-                username);
+            var user = await GetByUsernameAsync(username);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -141,9 +140,12 @@ namespace aiof.auth.services
         }
         public async Task<IUserRefreshToken> GetRefreshTokenAsync(int userId)
         {
-            return (await GetRefreshTokensAsync(userId))
-                ?.Where(x => DateTime.UtcNow < x.Expires)
-                ?.FirstOrDefault();
+            return await GetRefreshTokensQuery()
+                .Where(x => x.UserId == userId
+                    && x.Revoked == null)
+                .OrderByDescending(x => x.Expires)
+                .Take(1)
+                .FirstOrDefaultAsync();
         }
         public async Task<IUserRefreshToken> GetRefreshTokenAsync(
             int userId,
@@ -157,8 +159,10 @@ namespace aiof.auth.services
         public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId)
         {
             return await GetRefreshTokensQuery()
-                .Where(x => x.UserId == userId && x.Revoked == null)
+                .Where(x => x.UserId == userId 
+                    && x.Revoked == null)
                 .OrderByDescending(x => x.Expires)
+                .Take(1)
                 .ToListAsync();
         }
         public async Task<IUserRefreshToken> GetOrAddRefreshTokenAsync(int userId)
