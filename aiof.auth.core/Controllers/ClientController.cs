@@ -34,7 +34,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Get an existing Client by Id
+        /// Get Client by Id
         /// </summary>
         [HttpGet]
         [Route("{id}")]
@@ -46,7 +46,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Disable an existing Client
+        /// Disable Client
         /// </summary>
         [HttpGet]
         [Route("{id}/disable")]
@@ -58,7 +58,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Enable an existing Client
+        /// Enable Client
         /// </summary>
         [HttpGet]
         [Route("{id}/enable")]
@@ -70,7 +70,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Regenerate PrimaryApiKey and SecondaryApiKey of an existing Client
+        /// Regenerate PrimaryApiKey and SecondaryApiKey of Client
         /// </summary>
         [HttpGet]
         [Route("{id}/regenerate/keys")]
@@ -82,7 +82,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Get Client Refresh Tokens of an existing Client
+        /// Get Client refresh tokens
         /// </summary>
         [HttpGet]
         [Route("{id}/refresh/tokens")]
@@ -93,7 +93,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Create a Client
+        /// Create Client
         /// </summary>
         [HttpPost]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]

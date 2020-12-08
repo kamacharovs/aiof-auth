@@ -8,15 +8,12 @@ using System.IO;
 using System.Security.Cryptography;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
+
+using FluentValidation;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -73,6 +70,17 @@ namespace aiof.auth.core
                 });
                 x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddAuthFluentValidators(this IServiceCollection services)
+        {
+            services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>()
+                .AddScoped<AbstractValidator<User>, UserValidator>()
+                .AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>()
+                .AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>()
+                .AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
 
             return services;
         }

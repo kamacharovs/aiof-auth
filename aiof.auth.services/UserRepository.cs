@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Caching.Memory;
 
 using AutoMapper;
 using FluentValidation;
@@ -46,24 +45,33 @@ namespace aiof.auth.services
 
         private IQueryable<User> GetQuery(bool asNoTracking = true)
         {
-            return asNoTracking
-                ? _context.Users
-                    .Include(x => x.Role)
-                    .AsNoTracking()
-                    .AsQueryable()
-                : _context.Users
+            var query = _context.Users
                     .Include(x => x.Role)
                     .AsQueryable();
+
+            return asNoTracking
+                ? query.AsNoTracking()
+                : query;
         }
 
         private IQueryable<UserRefreshToken> GetRefreshTokensQuery(bool asNoTracking = true)
         {
-            return asNoTracking
-                ? _context.UserRefreshTokens
-                    .AsNoTracking()
-                    .AsQueryable()
-                : _context.UserRefreshTokens
+            var query = _context.UserRefreshTokens
                     .AsQueryable();
+
+            return asNoTracking
+                ? query.AsNoTracking()
+                : query;
+        }
+
+        public async Task<IUser> GetAsync(
+            ITenant tenant,
+            bool asNoTracking = true)
+        {
+            return await GetQuery(asNoTracking)
+                .AsSingleQuery()
+                .FirstOrDefaultAsync(x => x.Id == tenant.UserId
+                    && x.IsDeleted == false);
         }
 
         public async Task<IUser> GetAsync(

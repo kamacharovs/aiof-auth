@@ -25,17 +25,33 @@ namespace aiof.auth.core.Controllers
     {
         private readonly IUserRepository _repo;
         private readonly IAuthRepository _authRepo;
+        private readonly ITenant _tenant;
 
         public UserController(
             IUserRepository repo,
-            IAuthRepository authRepo)
+            IAuthRepository authRepo,
+            ITenant tenant)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _authRepo = authRepo ?? throw new ArgumentNullException(nameof(authRepo));
+            _tenant = tenant;
         }
 
         /// <summary>
-        /// Get an existing User by Id
+        /// Get User
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAsync()
+        {
+            return Ok(await _repo.GetAsync(_tenant));
+        }
+
+        /// <summary>
+        /// Get User by Id
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpGet]
@@ -50,38 +66,21 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Get an existing User by Username
+        /// Get User by username
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
-        [HttpGet]
+        [HttpGet("username/{username}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetByUsernameAsync([FromQuery, Required] string username)
+        public async Task<IActionResult> GetByUsernameAsync([FromRoute, Required] string username)
         {
             return Ok(await _repo.GetByUsernameAsync(username));
         }
 
         /// <summary>
-        /// Get an existing User by Username and Password
-        /// </summary>
-        [Authorize(Roles = Roles.Admin)]
-        [HttpGet]
-        [Route("{username}/{password}")]
-        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUsernamePasswordAsync(
-            [FromRoute, Required] string username,
-            [FromRoute, Required] string password)
-        {
-            return Ok(await _repo.GetAsync(username, password));
-        }
-
-        /// <summary>
-        /// Get a User first non-revoked refresh token
+        /// Get User first non-revoked refresh token
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpGet]
@@ -96,7 +95,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Get a User refresh tokens
+        /// Get User refresh tokens
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpGet]
@@ -110,7 +109,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Create a User
+        /// Create User
         /// </summary>
         [AllowAnonymous]
         [HttpPost]
@@ -122,7 +121,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Hash a Password
+        /// Hash password
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpGet]

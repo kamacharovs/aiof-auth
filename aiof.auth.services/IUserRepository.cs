@@ -11,6 +11,9 @@ namespace aiof.auth.services
         Task<IUser> GetAsync(
             int id,
             bool asNoTracking = true);
+        Task<IUser> GetAsync(
+            ITenant tenant,
+            bool asNoTracking = true);
         Task<IUser> GetAsync(Guid publicKey);
         Task<IUser> GetAsync(string apiKey);
         Task<IUser> GetByUsernameAsync(

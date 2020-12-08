@@ -33,7 +33,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Generate a JWT
+        /// Generate JWT
         /// </summary>
         [AllowAnonymous]
         [HttpPost]
@@ -47,7 +47,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Validate a JWT
+        /// Validate JWT
         /// </summary>
         [AllowAnonymous]
         [HttpPost]
@@ -61,7 +61,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Generate a refresh JWT for Client
+        /// Generate refresh JWT for Client
         /// </summary>
         [FeatureGate(FeatureFlags.RefreshToken)]
         [AllowAnonymous]
@@ -76,7 +76,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Revoke an existing Client refresh token
+        /// Revoke Client refresh token
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpPut]
@@ -92,7 +92,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Revoke an existing User refresh token
+        /// Revoke User refresh token
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpPut]
@@ -108,7 +108,7 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Get all available claims for JWT
+        /// Get all claims for JWT
         /// </summary>
         [AllowAnonymous]
         [HttpGet]
