@@ -14,5 +14,6 @@ namespace aiof.auth.services
             bool asNoTracking = false)
             where T : IPublicKeyId;
         Task<int> GetRoleIdAsync<T>(bool asNoTracking = false) where T : IPublicKeyId;
+        Task<IRole> QuickAddRoleAsync(string name);
     }
 }

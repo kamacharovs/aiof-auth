@@ -190,6 +190,13 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> RoleNames()
+        {
+            return _Fake.GetFakeRolesData(
+                name: true
+            );
+        }
+
         public static IEnumerable<object[]> ApiKeyLength()
         {
             return new List<object[]>

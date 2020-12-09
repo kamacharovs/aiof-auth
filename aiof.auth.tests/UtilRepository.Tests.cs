@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Microsoft.EntityFrameworkCore;
+
 using Xunit;
 
 using aiof.auth.data;
@@ -29,6 +31,8 @@ namespace aiof.auth.tests
             var role = await _repo.GetRoleAsync<User>(id);
 
             Assert.NotNull(role);
+            Assert.NotEqual(0, role.Id);
+            Assert.NotEqual(Guid.Empty, role.PublicKey);
             Assert.Equal(role.Name, Roles.User);
         }
 
@@ -42,6 +46,8 @@ namespace aiof.auth.tests
             var role = await _repo.GetRoleAsync<Client>(id);
 
             Assert.NotNull(role);
+            Assert.NotEqual(0, role.Id);
+            Assert.NotEqual(Guid.Empty, role.PublicKey);
             Assert.Equal(role.Name, Roles.Client);
         }
 
@@ -55,7 +61,59 @@ namespace aiof.auth.tests
             var role = await _repo.GetRoleAsync<Helper.TestPublicKeyId>(id);
 
             Assert.NotNull(role);
+            Assert.NotEqual(0, role.Id);
+            Assert.NotEqual(Guid.Empty, role.PublicKey);
             Assert.Equal(Roles.Basic, role.Name);
+        }
+
+        [Fact]
+        public async Task GetRoleIdAsync_User_IsSuccessful()
+        {
+            var roleId = await _repo.GetRoleIdAsync<User>();
+
+            Assert.NotEqual(0, roleId);
+        }
+
+        [Fact]
+        public async Task GetRoleIdAsync_Client_IsSuccessful()
+        {
+            var roleId = await _repo.GetRoleIdAsync<Client>();
+
+            Assert.NotEqual(0, roleId);
+        }
+
+        [Fact]
+        public async Task GetRoleIdAsync_NonUserClient_Defaults()
+        {
+            var roleId = await _repo.GetRoleIdAsync<Role>();
+
+            Assert.NotEqual(0, roleId);
+        }
+
+        [Theory]
+        [InlineData("Test")]
+        [InlineData("AdminUser")]
+        [InlineData("Administrator")]
+        public async Task QuickAddRoleAsync_IsSuccessful(string name)
+        {
+            var role = await _repo.QuickAddRoleAsync(name);
+
+            Assert.NotNull(role);
+            Assert.NotEqual(0, role.Id);
+            Assert.NotEqual(Guid.Empty, role.PublicKey);
+            Assert.Equal(name, role.Name);
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.RoleNames), MemberType = typeof(Helper))]
+        public async Task QuickAddRoleAsync_ExistingRoles_IsSuccessful(string name)
+        {
+            var role = await _repo.QuickAddRoleAsync(name);
+
+            Assert.NotNull(role);
+            Assert.NotEqual(0, role.Id);
+            Assert.NotEqual(Guid.Empty, role.PublicKey);
+            Assert.Equal(name, role.Name);
         }
     }
 }

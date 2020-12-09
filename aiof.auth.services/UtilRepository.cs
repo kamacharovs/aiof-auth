@@ -108,8 +108,7 @@ namespace aiof.auth.services
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public async Task<IRole> QuickAddRoleAsync(
-            string name)
+        public async Task<IRole> QuickAddRoleAsync(string name)
         {
             var role = new Role { Name = name };
             

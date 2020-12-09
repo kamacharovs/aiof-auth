@@ -473,6 +473,35 @@ namespace aiof.auth.data
             return toReturn;
         }
 
+        public IEnumerable<object[]> GetFakeRolesData(
+            bool id = false,
+            bool name = false)
+        {
+            var roles = GetFakeRoles()
+                .ToArray();
+
+            var toReturn = new List<object[]>();
+
+            if (id)
+            {
+                foreach (var roleId in roles.Select(x => x.Id))
+                    toReturn.Add(new object[]
+                    {
+                        roleId
+                    });
+            }
+            else if (name)
+            {
+                foreach (var roleName in roles.Select(x => x.Name))
+                    toReturn.Add(new object[]
+                    {
+                        roleName
+                    });
+            }
+
+            return toReturn;
+        }
+
         public IEnumerable<object[]> GetFakeClaimsData()
         {
             var fakeClaims = GetFakeClaims()
