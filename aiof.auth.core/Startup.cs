@@ -42,27 +42,25 @@ namespace aiof.auth.core
                 .AddScoped<IClientRepository, ClientRepository>()
                 .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IUtilRepository, UtilRepository>()
-                .AddScoped<FakeDataManager>()
-                .AddScoped<AbstractValidator<UserDto>, UserDtoValidator>()
-                .AddScoped<AbstractValidator<User>, UserValidator>()
-                .AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>()
-                .AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>()
-                .AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>()
                 .AddSingleton<IEnvConfiguration, EnvConfiguration>()
-                .AddAutoMapper(typeof(AutoMappingProfile).Assembly);
+                .AddScoped<ITenant, Tenant>()
+                .AddScoped<FakeDataManager>()
+                .AddAutoMapper(typeof(AutoMappingProfile).Assembly)
+                .AddAuthFluentValidators();
 
             if (_env.IsDevelopment() && _envConfig.DataInMemory)
                 services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
             else
                 services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.DataPostgreSQL, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
-            
-            services.AddLogging();
-            services.AddApplicationInsightsTelemetry();
+
             services.AddHealthChecks();
             services.AddFeatureManagement();
-            services.AddMemoryCache();
-            services.AddAuthAuthentication(_envConfig);
-            services.AddAuthSwaggerGen(_envConfig);
+            services.AddLogging()
+                .AddApplicationInsightsTelemetry()
+                .AddHttpContextAccessor()
+                .AddMemoryCache()
+                .AddAuthAuthentication(_envConfig)
+                .AddAuthSwaggerGen(_envConfig);
 
             services.AddControllers();
             services.AddMvcCore()

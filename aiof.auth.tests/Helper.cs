@@ -11,6 +11,7 @@ using Microsoft.FeatureManagement;
 using AutoMapper;
 using FluentValidation;
 using Bogus;
+using Moq;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -60,20 +61,20 @@ namespace aiof.auth.tests
                 return configurationBuilder.Build();
             });
 
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IClientRepository, ClientRepository>();
-            services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddScoped<IUtilRepository, UtilRepository>();
-            services.AddScoped<FakeDataManager>();
-            services.AddSingleton<IEnvConfiguration, EnvConfiguration>();
+            services.AddScoped<IUserRepository, UserRepository>()
+                .AddScoped<IClientRepository, ClientRepository>()
+                .AddScoped<IAuthRepository, AuthRepository>()
+                .AddScoped<IUtilRepository, UtilRepository>()
+                .AddScoped<FakeDataManager>()
+                .AddSingleton<IEnvConfiguration, EnvConfiguration>();
 
             services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
 
-            services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>();
-            services.AddScoped<AbstractValidator<User>, UserValidator>();
-            services.AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>();
-            services.AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>();
-            services.AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
+            services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>()
+                .AddScoped<AbstractValidator<User>, UserValidator>()
+                .AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>()
+                .AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>()
+                .AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
 
             services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
@@ -82,6 +83,20 @@ namespace aiof.auth.tests
             services.AddMemoryCache();
 
             return services.BuildServiceProvider();
+        }
+
+        public static ITenant GetMockTenant(
+            int? userId = null,
+            int? clientId = null)
+        {
+            var mockedTenant = new Mock<ITenant>();
+            var uId = userId ?? 1;
+            var cId = clientId ?? 1;
+
+            mockedTenant.Setup(x => x.UserId).Returns(uId);
+            mockedTenant.Setup(x => x.ClientId).Returns(cId);
+
+            return mockedTenant.Object;
         }
 
         #region Unit Tests
@@ -172,6 +187,13 @@ namespace aiof.auth.tests
         {
             return _Fake.GetFakeClientRefreshTokensData(
                 token: true
+            );
+        }
+
+        public static IEnumerable<object[]> RoleNames()
+        {
+            return _Fake.GetFakeRolesData(
+                name: true
             );
         }
 
