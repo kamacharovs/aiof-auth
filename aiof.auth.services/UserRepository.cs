@@ -70,7 +70,8 @@ namespace aiof.auth.services
         {
             return await GetQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == tenant.UserId
-                    && x.IsDeleted == false);
+                    && x.IsDeleted == false)
+                ?? throw new AuthNotFoundException($"User with Tenant={tenant?.Log} was not found");
         }
 
         public async Task<IUser> GetAsync(
