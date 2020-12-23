@@ -110,7 +110,7 @@ namespace aiof.auth.services
             }
         }
 
-        public ITokenUserResponse GenerateJwtToken(
+        public ITokenResponse GenerateJwtToken(
             IUser user,
             string refreshToken = null,
             int? expiresIn = null)
@@ -125,13 +125,12 @@ namespace aiof.auth.services
                 refreshToken: refreshToken,
                 expiresIn: expiresIn);
 
-            return new TokenUserResponse
+            return new TokenResponse
             {
                 TokenType = token.TokenType,
                 ExpiresIn = token.ExpiresIn,
                 AccessToken = token.AccessToken,
-                RefreshToken = token.RefreshToken,
-                User = user
+                RefreshToken = token.RefreshToken
             };
         }
 
