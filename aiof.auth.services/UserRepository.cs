@@ -70,7 +70,8 @@ namespace aiof.auth.services
         {
             return await GetQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == tenant.UserId
-                    && x.IsDeleted == false);
+                    && x.IsDeleted == false)
+                ?? throw new AuthNotFoundException($"{nameof(User)} with Tenant={tenant?.Log} was not found");
         }
 
         public async Task<IUser> GetAsync(
@@ -79,20 +80,20 @@ namespace aiof.auth.services
         {
             return await GetQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new AuthNotFoundException($"{nameof(User)} with Id='{id}' was not found");
+                ?? throw new AuthNotFoundException($"{nameof(User)} with Id={id} was not found");
         }
         public async Task<IUser> GetAsync(Guid publicKey)
         {
             return await GetQuery()
                 .FirstOrDefaultAsync(x => x.PublicKey == publicKey)
-                ?? throw new AuthNotFoundException($"{nameof(User)} with publicKey='{publicKey}' was not found");
+                ?? throw new AuthNotFoundException($"{nameof(User)} with publicKey={publicKey} was not found");
         }
         public async Task<IUser> GetAsync(string apiKey)
         {
             return await GetQuery()
                 .FirstOrDefaultAsync(x => x.PrimaryApiKey == apiKey
                     || x.SecondaryApiKey == apiKey)
-                ?? throw new AuthNotFoundException($"{nameof(User)} with ApiKey='{apiKey}' was not found");
+                ?? throw new AuthNotFoundException($"{nameof(User)} with ApiKey={apiKey} was not found");
         }
         public async Task<IUser> GetByUsernameAsync(
             string username, 
@@ -100,7 +101,7 @@ namespace aiof.auth.services
         {
             return await GetQuery(asNoTracking)
                 .FirstOrDefaultAsync(x => x.Username == username)
-                ?? throw new AuthNotFoundException($"User with Username='{username}' was not found");
+                ?? throw new AuthNotFoundException($"User with Username={username} was not found");
         }
         public async Task<IUser> GetAsync(
             string username, 
@@ -110,7 +111,7 @@ namespace aiof.auth.services
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Incorrect password for User with Username='{username}'");
+                    $"Incorrect password for User with Username={username}");
 
             return user;
         }
@@ -143,7 +144,7 @@ namespace aiof.auth.services
                 .Include(x => x.RefreshTokens)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken))
-                ?? throw new AuthNotFoundException($"{nameof(User)} with RefreshToken='{refreshToken}' was not found");
+                ?? throw new AuthNotFoundException($"{nameof(User)} with RefreshToken={refreshToken} was not found");
         }
         public async Task<IUserRefreshToken> GetRefreshTokenAsync(int userId)
         {
@@ -190,15 +191,15 @@ namespace aiof.auth.services
 
             if (await DoesUsernameExistAsync(userDto.Username))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"{nameof(User)} with Username='{userDto.Username}' already exists");
+                    $"{nameof(User)} with Username={userDto.Username} already exists");
 
             var user = await GetAsync(userDto) is null
                 ? _mapper.Map<User>(userDto)
                 : throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"User with FirstName='{userDto.FirstName}', " +
-                    $"LastName='{userDto.LastName}', " +
-                    $"Email='{userDto.Email}' " +
-                    $"and Username='{userDto.Username}' already exists");
+                    $"User with FirstName={userDto.FirstName}, " +
+                    $"LastName={userDto.LastName}, " +
+                    $"Email={userDto.Email} " +
+                    $"and Username='{userDto.Username} already exists");
 
             user.Password = Hash(userDto.Password);
             user.RoleId = await _utilRepo.GetRoleIdAsync<User>();
@@ -256,7 +257,7 @@ namespace aiof.auth.services
 
             if (!Check(user.Password, oldPassword))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Incorrect password for User with Username='{username}'");
+                    $"Incorrect password for User with Username={username}");
 
             user.Password = Hash(newPassword);
 

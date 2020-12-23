@@ -12,7 +12,7 @@ namespace aiof.auth.services
     public interface IAuthRepository
     {
         Task<ITokenResponse> GetTokenAsync(ITokenRequest request);
-        ITokenUserResponse GenerateJwtToken(
+        ITokenResponse GenerateJwtToken(
             IUser user,
             string refreshToken = null,
             int? expiresIn = null);

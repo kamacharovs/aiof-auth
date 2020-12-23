@@ -40,6 +40,15 @@ namespace aiof.auth.tests
         [InlineData(333)]
         [InlineData(555)]
         [InlineData(999)]
+        public async Task GetAsync_ByTenant_NotFound_Throws(int id)
+        {
+            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetAsync(Helper.GetMockTenant(userId: id)));
+        }
+
+        [Theory]
+        [InlineData(333)]
+        [InlineData(555)]
+        [InlineData(999)]
         public async Task GetAsync_ById_NotFound(int id)
         {
             await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetAsync(id));
