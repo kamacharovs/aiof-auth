@@ -14,8 +14,8 @@ namespace aiof.auth.core
     {
         private readonly RequestDelegate _next;
 
-        private const string _defaultUnauthorizedMessage = "You don't have access to this API";
-        private const string _defaultForbiddenMessage = "You don't have permission to access this API";
+        private const string _defaultUnauthorizedMessage = "Unauthorized. Missing, invalid or expired credentials provided";
+        private const string _defaultForbiddenMessage = "Forbidden. You don't have enough permissions to access this API";
         private IEnumerable<int> _vallowedStatusCodes = new int[] 
         { 
             StatusCodes.Status401Unauthorized, 
