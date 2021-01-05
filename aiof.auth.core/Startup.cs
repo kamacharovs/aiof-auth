@@ -48,7 +48,7 @@ namespace aiof.auth.core
                 .AddAutoMapper(typeof(AutoMappingProfile).Assembly)
                 .AddAuthFluentValidators();
 
-            services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.PostgreSQL, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+            services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.PostgreSQLConnection, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
             services.AddHealthChecks();
             services.AddFeatureManagement();

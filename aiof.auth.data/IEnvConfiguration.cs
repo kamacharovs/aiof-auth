@@ -5,7 +5,7 @@ namespace aiof.auth.data
 {
     public interface IEnvConfiguration
     {
-        string PostgreSQL { get; }
+        string PostgreSQLConnection { get; }
 
         string CorsPortal { get; }
         int MemCacheTtl { get; }
