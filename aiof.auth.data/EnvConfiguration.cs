@@ -20,7 +20,7 @@ namespace aiof.auth.data
             _featureManager = featureManager;
         }
 
-        public string PostgreSQLConnection => _config["POSTGRESQLCONNSTR_PostgreSQLConnection"] ?? throw new KeyNotFoundException();
+        public string PostgreSQLConnection => _config[Keys.PostgreSQLConnection] ?? throw new KeyNotFoundException();
 
         public string CorsPortal => _config[Keys.CorsPortal] == null ? "http://localhost:4100" : _config[Keys.CorsPortal];
         public int MemCacheTtl => int.Parse(_config[Keys.MemCacheTtl] ?? throw new KeyNotFoundException());

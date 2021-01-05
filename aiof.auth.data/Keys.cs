@@ -4,7 +4,7 @@ namespace aiof.auth.data
 {
     public static class Keys
     {
-        public const string PostgreSQLConnection = nameof(PostgreSQLConnection);
+        public const string PostgreSQLConnection = "POSTGRESQLCONNSTR_" + nameof(PostgreSQLConnection);
 
         public const string ApplicationJson = "application/json";
         public const string ApplicationProblemJson = "application/problem+json";
