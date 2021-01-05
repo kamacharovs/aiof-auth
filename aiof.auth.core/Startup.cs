@@ -48,10 +48,7 @@ namespace aiof.auth.core
                 .AddAutoMapper(typeof(AutoMappingProfile).Assembly)
                 .AddAuthFluentValidators();
 
-            if (_env.IsDevelopment() && _envConfig.DataInMemory)
-                services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(nameof(AuthContext)));
-            else
-                services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.DataPostgreSQL, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+            services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.PostgreSQL, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
             services.AddHealthChecks();
             services.AddFeatureManagement();
@@ -78,10 +75,6 @@ namespace aiof.auth.core
             if (_env.IsDevelopment())
             {
                 app.UseCors(x => x.WithOrigins(_envConfig.CorsPortal).AllowAnyHeader().AllowAnyMethod());
-
-                if (_envConfig.DataInMemory)
-                    services.GetRequiredService<FakeDataManager>()
-                        .UseFakeContext();
             }
 
             app.UseAuthExceptionMiddleware();
