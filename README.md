@@ -1,12 +1,12 @@
 # Overview
 
-All in one finance authentication API. Generates JWT for entities such as users and clients. Full documentation of the API can be found at [aiof-auth](https://kamacharovs.github.io/aiof-auth/)
+All in one finance authentication API
 
 [![Build Status](https://gkamacharov.visualstudio.com/gkama-cicd/_apis/build/status/kamacharovs.aiof-auth?branchName=master)](https://gkamacharov.visualstudio.com/gkama-cicd/_build/latest?definitionId=22&branchName=master)
 
 ## Documentation
 
-Overall documentation for the aiof Auth microservice
+aiof authentication API overall documentation
 
 ### Authentication
 
@@ -99,19 +99,6 @@ A good article with detailed documentation can be found [here](https://dotnetuni
 
 ## How to run it
 
-The API is designed to be run as a standalone API leveraging in memory database. The fake data comes from the `FakeDataManager` class. This is achieved when this is enabled in conjunction with the `ASPNETCORE_ENVIRONMENT='Development'`. These configurations are configured in the `appsettings.Development.json`
-
-```json
-...
-"Data": {
-    "InMemory": false,
-    "PostgreSQL": "connectionstring"
-},
-...
-```
-
-The default value for the `InMemory` data is `false`. If changed to `true`, then the API can be ran locally as a standalone instance. Additionally, it can be ran in conjunction with `aiof-data` Docker image as a full API.
-
 From the root project directory
 
 ```powershell
@@ -142,7 +129,7 @@ docker pull gkama/aiof-auth:latest
 Run it
 
 ```powershell
-docker run -it --rm -e ASPNETCORE_ENVIRONMENT='Development' -e Data__InMemory='true' -p 8001:80 gkama/aiof-auth:latest
+docker run -it --rm -e ASPNETCORE_ENVIRONMENT='Development' -p 8001:80 gkama/aiof-auth:latest
 ```
 
 Make API calls to
