@@ -26,10 +26,6 @@ namespace aiof.auth.data
         [MaxLength(200)]
         string Email { get; set; }
 
-        [Required]
-        [MaxLength(200)]
-        string Username { get; set; }
-
         [JsonIgnore]
         [Required]
         [MaxLength(100)]

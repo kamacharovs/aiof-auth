@@ -106,31 +106,6 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData("gkama")]
-        [InlineData("john.doe@yahoo.com")]
-        [InlineData("jeff.bezos")]
-        [InlineData("test@fb.com")]
-        public void UserDto_Validate_Username_IsSuccessful(string username)
-        {
-            var userDto = Helper.FakerUserDtos().First();
-
-            userDto.Username = username;
-
-            Assert.True(_userDtoValidator.Validate(userDto).IsValid);
-        }
-        [Theory]
-        [InlineData("")]
-        [InlineData(null)]
-        public void UserDto_Validate_Username_Fails(string username)
-        {
-            var userDto = Helper.FakerUserDtos().First();
-
-            userDto.Username = username;
-
-            Assert.False(_userDtoValidator.Validate(userDto).IsValid);
-        }
-
-        [Theory]
         [InlineData("test client")]
         [InlineData("Client 1")]
         public void ClientDto_Validate_Valid(string name)
@@ -157,17 +132,17 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData("test", "test", null)]
+        [InlineData("test@aiof.com", "test", null)]
         [InlineData(null, null, "test")]
-        public void TokenRequest_Valid(
-            string username, 
+        public void TokenRequest_Validate_IsSuccessful(
+            string email, 
             string password, 
             string apiKey)
         {
             var validation = _tokenRequestValidator
                 .Validate(new TokenRequest
                 {
-                    Username = username,
+                    Email = email,
                     Password = password,
                     ApiKey = apiKey
                 });
@@ -176,21 +151,21 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData("username", "pass", "apikey")]
-        [InlineData("username", null, null)]
+        [InlineData("email@aiof.com", "pass", "apikey")]
+        [InlineData("email@aiof.com", null, null)]
         [InlineData(null, "pass", null)]
-        [InlineData("username", null, "apikey")]
+        [InlineData("email@aiof.com", null, "apikey")]
         [InlineData(null, "pass", "apikey")]
         [InlineData(null, null, null)]
-        public void TokenRequest_Invalid(
-            string username, 
+        public void TokenRequest_Validate_IsInvalid(
+            string email, 
             string password, 
             string apiKey)
         {
             var validation = _tokenRequestValidator
                 .Validate(new TokenRequest
                 {
-                    Username = username,
+                    Email = email,
                     Password = password,
                     ApiKey = apiKey
                 });

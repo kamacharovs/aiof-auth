@@ -93,7 +93,6 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [InlineData(nameof(User.Username))]
         [InlineData(nameof(User.Password))]
         [InlineData(nameof(User.Email))]
         [InlineData(nameof(Client.Name))]

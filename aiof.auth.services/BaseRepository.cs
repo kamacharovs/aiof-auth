@@ -76,7 +76,10 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Soft delete {typeof(T).Name} with Id='{entity.Id}' and PublicKey='{entity.PublicKey}'");
+            _logger.LogInformation("Soft Deleted {EntityName} with Id={EntityId} and PublicKey={EntityPublicKey}",
+                typeof(T).Name,
+                entity.Id,
+                entity.PublicKey);
 
             return entity;
         }
@@ -94,7 +97,10 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Deleted {typeof(T).Name}. {typeof(T).Name}Json='{entityJson}'");
+            _logger.LogInformation("Deleted {EntityName}. {EntityName}Json='{EntityJson}'",
+                typeof(T).Name,
+                typeof(T).Name,
+                entityJson);
         }
 
         public async Task<T> RegenerateKeysAync<T>(int id)
@@ -107,7 +113,9 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Regenerated Keys for {typeof(T).Name} with Id='{id}' and PublicKey='{entity.PublicKey}'");
+            _logger.LogInformation("Regenerated Keys for {EntityName} with Id='{id}' and PublicKey='{EntityPublicKey}'",
+                typeof(T).Name,
+                entity.PublicKey);
 
             return entity;
         }

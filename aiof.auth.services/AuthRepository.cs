@@ -53,7 +53,7 @@ namespace aiof.auth.services
             switch (request.Type)
             {
                 case TokenType.User:
-                    var user = await _userRepo.GetUserAsync(request.Username, request.Password);
+                    var user = await _userRepo.GetAsync(request.Email, request.Password);
                     var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
                     return GenerateJwtToken(
                         user,
@@ -73,7 +73,7 @@ namespace aiof.auth.services
             switch (apiKey.DecodeKey())
             {
                 case nameof(User):
-                    var user = await _userRepo.GetUserAsync(apiKey);
+                    var user = await _userRepo.GetAsync(apiKey);
                     var userRefreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
                     return GenerateJwtToken(
                         user,
@@ -95,7 +95,7 @@ namespace aiof.auth.services
             switch (refreshToken.DecodeKey())
             {
                 case nameof(User):
-                    var user = await _userRepo.GetUserByRefreshTokenAsync(refreshToken);
+                    var user = await _userRepo.GetByRefreshTokenAsync(refreshToken);
                     return GenerateJwtToken(
                         user: user,
                         expiresIn: _envConfig.JwtRefreshExpires);
@@ -110,7 +110,7 @@ namespace aiof.auth.services
             }
         }
 
-        public ITokenUserResponse GenerateJwtToken(
+        public ITokenResponse GenerateJwtToken(
             IUser user,
             string refreshToken = null,
             int? expiresIn = null)
@@ -125,13 +125,12 @@ namespace aiof.auth.services
                 refreshToken: refreshToken,
                 expiresIn: expiresIn);
 
-            return new TokenUserResponse
+            return new TokenResponse
             {
                 TokenType = token.TokenType,
                 ExpiresIn = token.ExpiresIn,
                 AccessToken = token.AccessToken,
-                RefreshToken = token.RefreshToken,
-                User = user
+                RefreshToken = token.RefreshToken
             };
         }
 
@@ -254,6 +253,10 @@ namespace aiof.auth.services
             {
                 var clientRefresh = await _clientRepo.RevokeTokenAsync((int)clientId, token);
 
+                _logger.LogInformation("Revoked {EntityName} token={EntityToken}",
+                    nameof(ClientRefreshToken),
+                    clientRefresh.Token);
+
                 return new RevokeResponse
                 {
                     Token = clientRefresh.Token,
@@ -263,6 +266,10 @@ namespace aiof.auth.services
             else if (userId != null)
             {
                 var userRefresh = await _userRepo.RevokeTokenAsync((int)userId, token);
+
+                _logger.LogInformation("Revoked {EntityName} token={EntityToken}",
+                    nameof(UserRefreshToken),
+                    userRefresh.Token);
 
                 return new RevokeResponse
                 {

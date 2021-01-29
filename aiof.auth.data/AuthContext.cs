@@ -29,7 +29,7 @@ namespace aiof.auth.data
 
                 e.HasKey(x => x.Id);
 
-                e.HasIndex(x => x.Username)
+                e.HasIndex(x => x.Email)
                     .IsUnique();
 
                 e.HasQueryFilter(x => !x.IsDeleted);
@@ -39,7 +39,6 @@ namespace aiof.auth.data
                 e.Property(x => x.FirstName).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
                 e.Property(x => x.LastName).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
                 e.Property(x => x.Email).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
-                e.Property(x => x.Username).HasSnakeCaseColumnName().HasMaxLength(200).IsRequired();
                 e.Property(x => x.Password).HasSnakeCaseColumnName().HasMaxLength(100).IsRequired();
                 e.Property(x => x.PrimaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);
                 e.Property(x => x.SecondaryApiKey).HasSnakeCaseColumnName().HasMaxLength(100);

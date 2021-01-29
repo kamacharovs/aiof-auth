@@ -139,7 +139,8 @@ namespace aiof.auth.services
                 await _context.ClientRefreshTokens.AddAsync(clientRefreshToken);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Added ClientRefreshToken for ClientId='{ClientId}'",
+                _logger.LogInformation("Added {EntityName} for ClientId={ClientId}",
+                    nameof(ClientRefreshToken),
                     clientId);
 
                 return clientRefreshToken;
@@ -160,7 +161,8 @@ namespace aiof.auth.services
             await _context.Clients.AddAsync(client);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Created Client with Id='{ClientId}' and PublicKey='{ClientPublicKey}'",
+            _logger.LogInformation("Created {EntityName} with Id={ClientId} and PublicKey={ClientPublicKey}",
+                nameof(Client),
                 client.Id,
                 client.PublicKey);
 
@@ -193,7 +195,10 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Revoked token='{token}' for cliendId='{clientId}'");
+            _logger.LogInformation("Revoked {EntityName}={ClientRefreshToken} for CliendId={ClientId}",
+                nameof(ClientRefreshToken),
+                token,
+                clientId);
 
             return clientRefreshToken;
         }

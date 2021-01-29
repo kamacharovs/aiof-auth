@@ -108,15 +108,16 @@ namespace aiof.auth.services
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public async Task<IRole> QuickAddRoleAsync(
-            string name)
+        public async Task<IRole> QuickAddRoleAsync(string name)
         {
             var role = new Role { Name = name };
             
             await _context.Roles.AddAsync(role);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Created {nameof(Role)}='{name}'");
+            _logger.LogInformation("Created {EntityName}={RoleName}",
+                nameof(Role),
+                name);
 
             return role;
         }
