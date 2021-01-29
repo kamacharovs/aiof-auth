@@ -78,8 +78,8 @@ Migrations are managed in the `ef-migrations` branch
 An example of creating a simple migration and generating the SQL script for it
 
 ```powershell
-dotnet ef migrations add {migration name} -p .\aiof.auth.data
-dotnet ef migrations script -p .\aiof.auth.data
+dotnet ef migrations add {migration name} -p .\aiof.auth.data -s .\aiof.auth.core\
+dotnet ef migrations script -p .\aiof.auth.data -s .\aiof.auth.core\
 dotnet ef migrations script {migration name} -p .\aiof.auth.data
 dotnet ef migrations remove
 ```
