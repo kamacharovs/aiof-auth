@@ -12,7 +12,7 @@ Overall documentation for the aiof Auth microservice
 
 Authentication can be done via the `/auth/token` endpoint. There are several ways an entity can authenticate:
 
-- `username` and `password` for `User`
+- `email` and `password` for `User`
 - `api_key` for `User` or `Client`
 - `refresh_token` for `User` or `Client`
 
@@ -22,7 +22,7 @@ Request
 
 ```json
 {
-    "username": "test",
+    "email": "test@test.com",
     "password": "test"
 }
 ```
@@ -37,7 +37,6 @@ Response
         "firstName": "test",
         "lastName": "test",
         "email": "test@test.com",
-        "username": "test",
         "role": {
             "name": "Admin"
         },
