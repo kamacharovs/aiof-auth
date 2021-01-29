@@ -27,10 +27,6 @@ namespace aiof.auth.data
         [MaxLength(200)]
         public string Email { get; set; }
 
-        [Required]
-        [MaxLength(200)]
-        public string Username { get; set; }
-
         [JsonIgnore]
         [Required]
         [MaxLength(100)]
@@ -74,10 +70,6 @@ namespace aiof.auth.data
         [Required]
         [MaxLength(200)]
         public string Email { get; set; }
-
-        [Required]
-        [MaxLength(200)]
-        public string Username { get; set; }
 
         [Required]
         [MaxLength(100)]

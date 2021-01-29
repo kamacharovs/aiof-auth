@@ -16,23 +16,22 @@ namespace aiof.auth.services
             bool asNoTracking = true);
         Task<IUser> GetAsync(Guid publicKey);
         Task<IUser> GetAsync(string apiKey);
-        Task<IUser> GetByUsernameAsync(
-            string username, 
+        Task<IUser> GetByEmailAsync(
+            string email, 
             bool asNoTracking = false);
         Task<IUser> GetAsync(
-            string username, 
+            string email, 
             string password);
         Task<IUser> GetAsync(
             string firstName,
             string lastName,
-            string email,
-            string username);
+            string email);
         Task<IUser> GetAsync(UserDto userDto);
         Task<IUser> GetByRefreshTokenAsync(string refreshToken);
         Task<IUserRefreshToken> GetRefreshTokenAsync(int userId);
         Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId);
         Task<IUserRefreshToken> GetOrAddRefreshTokenAsync(int userId);
-        Task<bool> DoesUsernameExistAsync(string username);
+        Task<bool> DoesEmailExistAsync(string email);
         Task<IUser> AddAsync(UserDto userDto);
         Task<IUser> UpdatePasswordAsync(
             string username, 

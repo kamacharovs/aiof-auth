@@ -66,17 +66,17 @@ namespace aiof.auth.core.Controllers
         }
 
         /// <summary>
-        /// Get User by username
+        /// Get User by email
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
-        [HttpGet("username/{username}")]
+        [HttpGet("email/{email}")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetByUsernameAsync([FromRoute, Required] string username)
+        public async Task<IActionResult> GetByEmailAsync([FromRoute, Required] string email)
         {
-            return Ok(await _repo.GetByUsernameAsync(username));
+            return Ok(await _repo.GetByEmailAsync(email));
         }
 
         /// <summary>

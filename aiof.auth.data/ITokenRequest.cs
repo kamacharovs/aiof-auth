@@ -7,7 +7,7 @@ namespace aiof.auth.data
     {
         string ApiKey { get; set; }
         string Token { get; set; }
-        string Username { get; set; }
+        string Email { get; set; }
         string Password { get; set; }
         T Entity { get; set; }
         string EntityType { get; }
@@ -17,7 +17,7 @@ namespace aiof.auth.data
     {
         string ApiKey { get; set; }
         string Token { get; set; }
-        string Username { get; set; }
+        string Email { get; set; }
         string Password { get; set; }
         TokenType Type { get; set; }
     }

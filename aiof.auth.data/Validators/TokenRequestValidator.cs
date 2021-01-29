@@ -13,11 +13,11 @@ namespace aiof.auth.data
             RuleFor(x => x)
                 .NotNull();
 
-            // Either Username, Password is provided, ApiKey (Client or User) is provided or RefreshToken
+            // Either Email, Password is provided, ApiKey (Client or User) is provided or RefreshToken
             RuleFor(x => x)
                 .Must(x => 
                 {
-                    if (!string.IsNullOrWhiteSpace(x.Username)
+                    if (!string.IsNullOrWhiteSpace(x.Email)
                         && !string.IsNullOrWhiteSpace(x.Password)
                         && string.IsNullOrWhiteSpace(x.Token)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
@@ -27,14 +27,14 @@ namespace aiof.auth.data
                     }
                     else if (!string.IsNullOrWhiteSpace(x.ApiKey)
                         && string.IsNullOrWhiteSpace(x.Token)
-                        && string.IsNullOrWhiteSpace(x.Username)
+                        && string.IsNullOrWhiteSpace(x.Email)
                         && string.IsNullOrWhiteSpace(x.Password))
                     {
                         x.Type = TokenType.ApiKey;
                         return true;
                     }
                     else if (!string.IsNullOrWhiteSpace(x.Token)
-                        && string.IsNullOrWhiteSpace(x.Username)
+                        && string.IsNullOrWhiteSpace(x.Email)
                         && string.IsNullOrWhiteSpace(x.Password)
                         && string.IsNullOrWhiteSpace(x.ApiKey))
                     {
@@ -44,7 +44,7 @@ namespace aiof.auth.data
 
                     return false;
                 })
-                .WithMessage("Invalid token request. Please provide the following: a Username/Password, ApiKey or Token");
+                .WithMessage("Invalid token request. Please provide the following: a Email/Password, ApiKey or Token");
         }
     }
 }

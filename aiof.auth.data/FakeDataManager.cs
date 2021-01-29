@@ -46,8 +46,7 @@ namespace aiof.auth.data
                     PublicKey = Guid.Parse("581f3ce6-cf2a-42a5-828f-157a2bfab763"),
                     FirstName = "Georgi",
                     LastName = "Kamacharov",
-                    Email = "gkama@test.com",
-                    Username = "gkama",
+                    Email = "gkama@aiof.com",
                     Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=", //pass1234
                     RoleId = 1
                 },
@@ -57,8 +56,7 @@ namespace aiof.auth.data
                     PublicKey = Guid.Parse("8e17276c-88ac-43bd-a9e8-5fdf5381dbd5"),
                     FirstName = "Jessie",
                     LastName = "Brown",
-                    Email = "jessie@test.com",
-                    Username = "jbro",
+                    Email = "jessie@aiof.com",
                     Password = "10000.nBfnY+XzDhvP7Z2RcTLTtA==.rj6rCGGLRz5bvTxZj+cB8X+GbYf1nTu0x9iW2v3wEYc=", //password123
                     RoleId = 2,
                 },
@@ -68,8 +66,7 @@ namespace aiof.auth.data
                     PublicKey = Guid.Parse("7c135230-2889-4cbb-bb0e-ab4237d89367"),
                     FirstName = "George",
                     LastName = "Best",
-                    Email = "george.best@auth.com",
-                    Username = "gbest",
+                    Email = "george.best@aiof.com",
                     Password = "10000.JiFzc3Ijb5vBrCb8COiNzA==.BzdHomm3RMu0sMHaBfTpY0B2WtbjFqi9tN7T//N+khA=", //pass1234
                     PrimaryApiKey = "VXNlcg==.x0sHnNHFytELB6FkLb/L6Q/YXPoXAZ4bAHvztgr6vIU=",
                     SecondaryApiKey = "VXNlcg==.VmNKkE4o6zxCq8Ut1BzkSU2R7RcCqo8y/jTklcTU6m8=",
@@ -263,7 +260,6 @@ namespace aiof.auth.data
             bool firstName = false,
             bool lastName = false,
             bool email = false,
-            bool username = false,
             bool apiKeys = false)
         {
             var fakeUsers = GetFakeUsers()
@@ -273,24 +269,22 @@ namespace aiof.auth.data
 
             if (firstName
                 && lastName
-                && email
-                && username)
+                && email)
                 foreach (var fakeUser in fakeUsers)
                 {
                     toReturn.Add(new object[] 
                     { 
                         fakeUser.FirstName, 
                         fakeUser.LastName, 
-                        fakeUser.Email, 
-                        fakeUser.Username
+                        fakeUser.Email
                     });
                 }
-            else if (username 
+            else if (email 
                 && password)
                 return new List<object[]>
                 {
-                    new object[] { fakeUsers[0].Username, "pass1234" },
-                    new object[] { fakeUsers[1].Username, "password123" }
+                    new object[] { fakeUsers[0].Email, "pass1234" },
+                    new object[] { fakeUsers[1].Email, "password123" }
                 };
             else if (id)
                 foreach (var fakeUserId in fakeUsers.Select(x => x.Id))

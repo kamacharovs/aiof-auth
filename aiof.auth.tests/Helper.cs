@@ -117,10 +117,10 @@ namespace aiof.auth.tests
             );
         }
 
-        public static IEnumerable<object[]> UsersUsernamePassword()
+        public static IEnumerable<object[]> UsersEmailPassword()
         {
             return _Fake.GetFakeUsersData(
-                username: true,
+                email: true,
                 password: true
             );
         }
@@ -213,7 +213,6 @@ namespace aiof.auth.tests
                 .RuleFor(x => x.FirstName, f => f.Name.FirstName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())
                 .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
                 .RuleFor(x => x.Password, f => _Fake.HashedPassword)
                 .Generate(RandomGenerations);
 
@@ -225,8 +224,7 @@ namespace aiof.auth.tests
                 { 
                     fakeUser.FirstName, 
                     fakeUser.LastName, 
-                    fakeUser.Email, 
-                    fakeUser.Username,
+                    fakeUser.Email,
                     fakeUser.Password
                 });
             }
@@ -240,7 +238,6 @@ namespace aiof.auth.tests
                 .RuleFor(x => x.FirstName, f => f.Name.FirstName())
                 .RuleFor(x => x.LastName, f => f.Name.LastName())
                 .RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-                .RuleFor(x => x.Username, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
                 .RuleFor(x => x.Password, f => _Fake.HashedPassword)
                 .Generate(RandomGenerations);
         }
@@ -255,8 +252,7 @@ namespace aiof.auth.tests
                 { 
                     fakeUserDto.FirstName, 
                     fakeUserDto.LastName, 
-                    fakeUserDto.Email, 
-                    fakeUserDto.Username,
+                    fakeUserDto.Email,
                     fakeUserDto.Password
                 });
             }
