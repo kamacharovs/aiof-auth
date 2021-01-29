@@ -34,7 +34,7 @@ namespace aiof.auth.services
         Task<bool> DoesEmailExistAsync(string email);
         Task<IUser> AddAsync(UserDto userDto);
         Task<IUser> UpdatePasswordAsync(
-            string username, 
+            string email, 
             string oldPassword, 
             string newPassword);
         Task<IUserRefreshToken> RevokeTokenAsync(
