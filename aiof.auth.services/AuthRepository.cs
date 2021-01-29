@@ -53,7 +53,7 @@ namespace aiof.auth.services
             switch (request.Type)
             {
                 case TokenType.User:
-                    var user = await _userRepo.GetAsync(request.Username, request.Password);
+                    var user = await _userRepo.GetAsync(request.Email, request.Password);
                     var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
                     return GenerateJwtToken(
                         user,

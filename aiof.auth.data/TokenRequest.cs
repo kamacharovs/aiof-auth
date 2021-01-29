@@ -13,8 +13,8 @@ namespace aiof.auth.data
         [JsonPropertyName("refresh_token")]
         public string Token { get; set; }
 
-        [JsonPropertyName("username")]
-        public string Username { get; set; }
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
 
         [JsonPropertyName("password")]
         public string Password { get; set; }
@@ -27,7 +27,7 @@ namespace aiof.auth.data
     }
 
     /// <summary>
-    /// Request for authentication. The combinations of requests are: ApiKey or Token or Username and Password
+    /// Request for authentication. The combinations of requests are: ApiKey or Token or Email and Password
     /// </summary>
     public class TokenRequest : ITokenRequest
     {
@@ -39,9 +39,9 @@ namespace aiof.auth.data
         [MaxLength(128)]
         public string Token { get; set; }
 
-        [JsonPropertyName("username")]
+        [JsonPropertyName("email")]
         [MaxLength(200)]
-        public string Username { get; set; }
+        public string Email { get; set; }
 
         [JsonPropertyName("password")]
         [MaxLength(100)]

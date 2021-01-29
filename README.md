@@ -1,6 +1,6 @@
 # Overview
 
-All in one finance authentication API. Generates JWT for entities such as users and clients. Full documentation of the API can be found at [aiof-auth](https://kamacharovs.github.io/aiof-auth/)
+All in one finance authentication API
 
 [![Build Status](https://gkamacharov.visualstudio.com/gkama-cicd/_apis/build/status/kamacharovs.aiof-auth?branchName=master)](https://gkamacharov.visualstudio.com/gkama-cicd/_build/latest?definitionId=22&branchName=master)
 
@@ -12,7 +12,7 @@ Overall documentation for the aiof Auth microservice
 
 Authentication can be done via the `/auth/token` endpoint. There are several ways an entity can authenticate:
 
-- `username` and `password` for `User`
+- `email` and `password` for `User`
 - `api_key` for `User` or `Client`
 - `refresh_token` for `User` or `Client`
 
@@ -22,7 +22,7 @@ Request
 
 ```json
 {
-    "username": "test",
+    "email": "test@test.com",
     "password": "test"
 }
 ```
@@ -31,18 +31,6 @@ Response
 
 ```json
 {
-    "user": {
-        "id": 1,
-        "publicKey": "581f3ce6-cf2a-42a5-828f-157a2bfab763",
-        "firstName": "test",
-        "lastName": "test",
-        "email": "test@test.com",
-        "username": "test",
-        "role": {
-            "name": "Admin"
-        },
-        "created": "2020-09-08T15:54:08.277753"
-    },
     "token_type": "Bearer",
     "expires_in": 900,
     "access_token": "jwt_access_token",
@@ -99,18 +87,7 @@ A good article with detailed documentation can be found [here](https://dotnetuni
 
 ## How to run it
 
-The API is designed to be run as a standalone API leveraging in memory database. The fake data comes from the `FakeDataManager` class. This is achieved when this is enabled in conjunction with the `ASPNETCORE_ENVIRONMENT='Development'`. These configurations are configured in the `appsettings.Development.json`
-
-```json
-...
-"Data": {
-    "InMemory": false,
-    "PostgreSQL": "connectionstring"
-},
-...
-```
-
-The default value for the `InMemory` data is `false`. If changed to `true`, then the API can be ran locally as a standalone instance. Additionally, it can be ran in conjunction with `aiof-data` Docker image as a full API.
+The best and recommended way to run it is using `docker-compose`. Additionally, below are some quick commands/tips to run it locally.
 
 From the root project directory
 
@@ -142,7 +119,7 @@ docker pull gkama/aiof-auth:latest
 Run it
 
 ```powershell
-docker run -it --rm -e ASPNETCORE_ENVIRONMENT='Development' -e Data__InMemory='true' -p 8001:80 gkama/aiof-auth:latest
+docker run -it --rm -e ASPNETCORE_ENVIRONMENT='Development' -p 8001:80 gkama/aiof-auth:latest
 ```
 
 Make API calls to
@@ -164,5 +141,3 @@ From the root project directory
 ```powershell
 docker-compose up
 ```
-
-This will initialize the `aiof-data` database. Then you can run the API from the root project directory with `dotnet run -p .\aiof.auth.core\` as have it as a fully functioning local API

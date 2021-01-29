@@ -29,7 +29,6 @@ namespace aiof.auth.tests
             Assert.NotNull(user.FirstName);
             Assert.NotNull(user.LastName);
             Assert.NotNull(user.Email);
-            Assert.NotNull(user.Username);
             Assert.NotNull(user.Password);
             Assert.NotEqual(0, user.RoleId);
             Assert.NotEqual(new DateTime(), user.Created);
@@ -64,7 +63,6 @@ namespace aiof.auth.tests
             Assert.NotNull(user.FirstName);
             Assert.NotNull(user.LastName);
             Assert.NotNull(user.Email);
-            Assert.NotNull(user.Username);
             Assert.NotNull(user.Password);
             Assert.NotEqual(0, user.RoleId);
             Assert.NotEqual(new DateTime(), user.Created);
@@ -77,7 +75,6 @@ namespace aiof.auth.tests
             string firstName,
             string lastName,
             string email,
-            string username,
             string password)
         {
             var userDto = new UserDto
@@ -85,7 +82,6 @@ namespace aiof.auth.tests
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                Username = username,
                 Password = password
             };
 
@@ -96,8 +92,7 @@ namespace aiof.auth.tests
             var user2 = await _repo.GetAsync(
                 firstName,
                 lastName,
-                email,
-                username);
+                email);
 
             Assert.Null(user2);
         }
@@ -112,7 +107,6 @@ namespace aiof.auth.tests
             Assert.NotNull(user.FirstName);
             Assert.NotNull(user.LastName);
             Assert.NotNull(user.Email);
-            Assert.NotNull(user.Username);
             Assert.NotNull(user.Password);
             Assert.NotEqual(new DateTime(), user.Created);
         }
@@ -167,7 +161,6 @@ namespace aiof.auth.tests
             string firstName,
             string lastName,
             string email,
-            string username,
             string password)
         {
             var userDto = new UserDto
@@ -175,7 +168,6 @@ namespace aiof.auth.tests
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                Username = username,
                 Password = password
             };
 
@@ -185,7 +177,6 @@ namespace aiof.auth.tests
             Assert.NotNull(user.FirstName);
             Assert.NotNull(user.LastName);
             Assert.NotNull(user.Email);
-            Assert.NotNull(user.Username);
             Assert.NotNull(user.Password);
             Assert.NotEqual(new DateTime(), user.Created);
         }
@@ -199,7 +190,6 @@ namespace aiof.auth.tests
                 FirstName = "Test",
                 LastName = "McTest",
                 Email = "notanemail@email.com",
-                Username = "test.mctest",
                 Password = password
             };
 
@@ -209,13 +199,13 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType = typeof(Helper))]
-        public async Task UpdatePasswordAsync_IsSuccessful(string username, string password)
+        [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
+        public async Task UpdatePasswordAsync_IsSuccessful(string email, string password)
         {
             var newPassword = "newpassword123";
 
             var user = await _repo.UpdatePasswordAsync(
-                username,
+                email,
                 password,
                 newPassword);
 

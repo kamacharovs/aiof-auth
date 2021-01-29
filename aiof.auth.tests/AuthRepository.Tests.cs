@@ -39,12 +39,12 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType = typeof(Helper))]
-        public async Task AuthUser_WithUsernamePassword_IsSuccessful(string username, string password)
+        [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
+        public async Task AuthUser_WithEmailPassword_IsSuccessful(string email, string password)
         {
             var req = new TokenRequest
             {
-                Username = username,
+                Email = email,
                 Password = password
             };
             var token = await _repo.GetTokenAsync(req);
@@ -140,10 +140,10 @@ namespace aiof.auth.tests
             Assert.Equal(TokenResultStatus.Valid.ToString(), validation.Status);
         }
         [Theory]
-        [MemberData(nameof(Helper.UsersUsernamePassword), MemberType = typeof(Helper))]
-        public async Task ValidateUserToken_IsAuthenticated(string username, string password)
+        [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
+        public async Task ValidateUserToken_IsAuthenticated(string email, string password)
         {
-            var tokenReq = new TokenRequest { Username = username, Password = password };
+            var tokenReq = new TokenRequest { Email = email, Password = password };
             var token = await _repo.GetTokenAsync(tokenReq);
             var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
             var validation = _repo.ValidateToken(validationReq.AccessToken);

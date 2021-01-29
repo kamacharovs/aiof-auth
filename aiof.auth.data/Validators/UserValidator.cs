@@ -39,11 +39,6 @@ namespace aiof.auth.data
                 .EmailAddress()
                 .MaximumLength(200);
 
-            RuleFor(x => x.Username)
-                .NotNull()
-                .NotEmpty()
-                .MaximumLength(200);
-
             RuleFor(x => x.Password)
                 .NotNull()
                 .NotEmpty()
