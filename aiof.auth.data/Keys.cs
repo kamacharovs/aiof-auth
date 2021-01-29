@@ -12,9 +12,7 @@ namespace aiof.auth.data
         public const string MemCacheTtl = MemCache + ":" + Ttl;
 
         public const string Data = nameof(Data);
-        public const string InMemory = nameof(InMemory);
         public const string PostgreSQL = nameof(PostgreSQL);
-        public const string DataInMemory = Data + ":" + InMemory;
         public const string DataPostgreSQL = Data + ":" + PostgreSQL;
 
         public const string Cors = nameof(Cors);
