@@ -27,6 +27,9 @@ namespace aiof.auth.data
         public Dictionary<string, string> Claims { get; set; } = new Dictionary<string, string>();
 
         [JsonIgnore]
+        public string Token { get; set; }
+
+        [JsonIgnore]
         public string Log
         {
             get
@@ -52,13 +55,22 @@ namespace aiof.auth.data
             ClientId = clientId;
             PublicKey = publicKey;
 
-            // Get the claims
+            // Set the claims
             foreach (var claim in user.Claims)
             {
                 if (JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.ContainsKey(claim.Type))
                     Claims.Add(JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap[claim.Type], claim.Value);
                 else
                     Claims.Add(claim.Type, claim.Value);
+            }
+
+            // Set the token
+            var request = _httpContextAccessor.HttpContext?.Request;
+            if (request != null &&
+                request.Headers.ContainsKey(Constants.AuthHeader) &&
+                request.Headers[Constants.AuthHeader].ToString().StartsWith(Keys.Bearer))
+            {
+                Token = request.Headers[Constants.AuthHeader].ToString().Replace($"{Keys.Bearer} ", string.Empty);
             }
         }
     }

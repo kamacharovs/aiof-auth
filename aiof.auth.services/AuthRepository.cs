@@ -292,6 +292,11 @@ namespace aiof.auth.services
                 Claims = _tenant.Claims
             };
 
+            var tokenValidation = ValidateToken(_tenant.Token);
+
+            if (tokenValidation.IsAuthenticated)
+                result.Status = AccessTokenStatus.Valid.ToString();
+
             return result;
         }
 

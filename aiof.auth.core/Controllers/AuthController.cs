@@ -119,9 +119,13 @@ namespace aiof.auth.core.Controllers
             return Ok(AiofClaims.All);
         }
 
+        /// <summary>
+        /// Instrospect an access token
+        /// </summary>
         [Authorize]
         [HttpGet]
         [Route("introspect")]
+        [ProducesResponseType(typeof(IIntrospectTokenResult), StatusCodes.Status200OK)]
         public IActionResult Introspect()
         {
             return Ok(_repo.Introspect());

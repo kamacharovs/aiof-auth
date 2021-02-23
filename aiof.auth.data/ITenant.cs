@@ -19,6 +19,9 @@ namespace aiof.auth.data
         Dictionary<string, string> Claims { get; set; }
 
         [JsonIgnore]
+        string Token { get; set; }
+
+        [JsonIgnore]
         string Log { get; }
     }
 }

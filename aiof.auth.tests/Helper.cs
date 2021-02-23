@@ -66,8 +66,8 @@ namespace aiof.auth.tests
                 .AddScoped<IClientRepository, ClientRepository>()
                 .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IUtilRepository, UtilRepository>()
-                .AddScoped<ITenant>(x => GetMockTenant())
                 .AddScoped<FakeDataManager>()
+                .AddScoped(x => GetMockTenant())
                 .AddSingleton<IEnvConfiguration, EnvConfiguration>();
 
             services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
@@ -106,6 +106,7 @@ namespace aiof.auth.tests
             mockedTenant.Setup(x => x.ClientId).Returns(cId);
             mockedTenant.Setup(x => x.PublicKey).Returns(publicKey);
             mockedTenant.Setup(x => x.Claims).Returns(claims);
+            mockedTenant.Setup(x => x.Token).Returns(string.Empty);
 
             return mockedTenant.Object;
         }
