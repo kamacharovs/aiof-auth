@@ -32,7 +32,7 @@ namespace aiof.auth.services
             string token,
             int? userId = null,
             int? clientId = null);
-        IntrospectTokenResult Introspect();
+        IIntrospectTokenResult Introspect();
         JsonWebKey GetPublicJsonWebKey();
         IOpenIdConfig GetOpenIdConfig(
              string host,

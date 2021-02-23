@@ -285,7 +285,7 @@ namespace aiof.auth.services
                     $"Couldn't revoke Token='{token}' for UserId='{userId}' or ClientId='{clientId}'");
         }
 
-        public IntrospectTokenResult Introspect()
+        public IIntrospectTokenResult Introspect()
         {
             var result = new IntrospectTokenResult
             {

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,6 +66,7 @@ namespace aiof.auth.tests
                 .AddScoped<IClientRepository, ClientRepository>()
                 .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IUtilRepository, UtilRepository>()
+                .AddScoped<ITenant>(x => GetMockTenant())
                 .AddScoped<FakeDataManager>()
                 .AddSingleton<IEnvConfiguration, EnvConfiguration>();
 
@@ -78,9 +80,10 @@ namespace aiof.auth.tests
 
             services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
-            services.AddLogging();
             services.AddFeatureManagement();
-            services.AddMemoryCache();
+            services.AddLogging()
+                .AddMemoryCache()
+                .AddHttpContextAccessor();
 
             return services.BuildServiceProvider();
         }
@@ -90,11 +93,19 @@ namespace aiof.auth.tests
             int? clientId = null)
         {
             var mockedTenant = new Mock<ITenant>();
+
             var uId = userId ?? 1;
             var cId = clientId ?? 1;
+            var publicKey = Guid.NewGuid();
+            var claims = new Dictionary<string, string>
+            {
+                { AiofClaims.Role, "User" }
+            };
 
             mockedTenant.Setup(x => x.UserId).Returns(uId);
             mockedTenant.Setup(x => x.ClientId).Returns(cId);
+            mockedTenant.Setup(x => x.PublicKey).Returns(publicKey);
+            mockedTenant.Setup(x => x.Claims).Returns(claims);
 
             return mockedTenant.Object;
         }
