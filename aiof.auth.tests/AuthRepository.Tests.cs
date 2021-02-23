@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Xunit;
 using FluentValidation;
 
@@ -164,6 +166,37 @@ namespace aiof.auth.tests
             var validationReq = new ValidationRequest { AccessToken = token };
 
             Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(validationReq.AccessToken));
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
+        public async Task Introspect_IsSuccessful(string email, string password)
+        {
+            var req = new TokenRequest
+            {
+                Email = email,
+                Password = password
+            };
+            var mockTenant = Helper.GetMockTenant();
+            var token = (await _repo.GetTokenAsync(req)).AccessToken;
+
+            mockTenant.Setup(x => x.Token).Returns(token);
+
+            var provider = Helper.Provider(token);
+            var repo = provider.GetRequiredService<IAuthRepository>();
+
+            var introspectResult = repo.Introspect();
+
+            Assert.NotNull(introspectResult);
+            Assert.Equal(TokenStatus.Valid.ToString(), introspectResult.Status);
+        }
+        [Fact]
+        public void Introspect_Invalid()
+        {
+            var introspectResult = _repo.Introspect();
+
+            Assert.NotNull(introspectResult);
+            Assert.Equal(TokenStatus.Invalid.ToString(), introspectResult.Status);
         }
 
         [Fact]

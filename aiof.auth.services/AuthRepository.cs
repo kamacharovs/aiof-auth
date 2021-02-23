@@ -245,6 +245,14 @@ namespace aiof.auth.services
                 throw new AuthFriendlyException(HttpStatusCode.Unauthorized,
                     $"Invalid signature");
             }
+            catch (Exception)
+            {
+                return new TokenResult
+                {
+                    IsAuthenticated = false,
+                    Status = TokenStatus.Invalid
+                };
+            }
         }
 
         public async Task<IRevokeResponse> RevokeTokenAsync(

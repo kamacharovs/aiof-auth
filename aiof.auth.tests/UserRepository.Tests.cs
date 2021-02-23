@@ -23,7 +23,7 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
         public async Task GetAsync_ByTenant_IsSuccessful(int id)
         {
-            var user = await _repo.GetAsync(Helper.GetMockTenant(userId: id));
+            var user = await _repo.GetAsync(Helper.GetMockedTenant(userId: id));
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
@@ -41,7 +41,7 @@ namespace aiof.auth.tests
         [InlineData(999)]
         public async Task GetAsync_ByTenant_NotFound_Throws(int id)
         {
-            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetAsync(Helper.GetMockTenant(userId: id)));
+            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetAsync(Helper.GetMockedTenant(userId: id)));
         }
 
         [Theory]

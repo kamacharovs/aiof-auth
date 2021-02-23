@@ -1,12 +1,11 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Caching;
 using Microsoft.FeatureManagement;
 
 using AutoMapper;
@@ -50,15 +49,18 @@ namespace aiof.auth.tests
             return provider.GetRequiredService<T>();
         }
 
-        private static IServiceProvider Provider()
+        [ExcludeFromCodeCoverage]
+        public static IServiceProvider Provider(string token = null)
         {
             var services = new ServiceCollection();
 
             services.AddScoped<IConfiguration>(x =>
             {
                 IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-                configurationBuilder.AddInMemoryCollection(ConfigurationDict);
-                configurationBuilder.AddEnvironmentVariables();
+
+                configurationBuilder.AddInMemoryCollection(ConfigurationDict)
+                    .AddEnvironmentVariables();
+
                 return configurationBuilder.Build();
             });
 
@@ -67,7 +69,7 @@ namespace aiof.auth.tests
                 .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IUtilRepository, UtilRepository>()
                 .AddScoped<FakeDataManager>()
-                .AddScoped(x => GetMockTenant())
+                .AddScoped(x => GetMockedTenant(token: token))
                 .AddSingleton<IEnvConfiguration, EnvConfiguration>();
 
             services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
@@ -88,9 +90,17 @@ namespace aiof.auth.tests
             return services.BuildServiceProvider();
         }
 
-        public static ITenant GetMockTenant(
+        public static ITenant GetMockedTenant(
             int? userId = null,
-            int? clientId = null)
+            int? clientId = null,
+            string token = null)
+        {
+            return GetMockTenant(userId, clientId, token).Object;
+        }
+        public static Mock<ITenant> GetMockTenant(
+            int? userId = null,
+            int? clientId = null,
+            string token = null)
         {
             var mockedTenant = new Mock<ITenant>();
 
@@ -101,14 +111,15 @@ namespace aiof.auth.tests
             {
                 { AiofClaims.Role, "User" }
             };
+            var tToken = token ?? string.Empty;
 
             mockedTenant.Setup(x => x.UserId).Returns(uId);
             mockedTenant.Setup(x => x.ClientId).Returns(cId);
             mockedTenant.Setup(x => x.PublicKey).Returns(publicKey);
             mockedTenant.Setup(x => x.Claims).Returns(claims);
-            mockedTenant.Setup(x => x.Token).Returns(string.Empty);
+            mockedTenant.Setup(x => x.Token).Returns(tToken);
 
-            return mockedTenant.Object;
+            return mockedTenant;
         }
 
         #region Unit Tests
