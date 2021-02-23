@@ -15,6 +15,9 @@ namespace aiof.auth.data
         [JsonPropertyName("public_key")]
         Guid PublicKey { get; set; }
 
+        [JsonPropertyName("claims")]
+        Dictionary<string, string> Claims { get; set; }
+
         [JsonIgnore]
         string Log { get; }
     }

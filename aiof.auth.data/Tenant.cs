@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,9 @@ namespace aiof.auth.data
 {
     public class Tenant : ITenant
     {
+        [JsonIgnore]
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         [JsonPropertyName("user_id")]
         public int UserId { get; set; }
 
@@ -18,6 +22,9 @@ namespace aiof.auth.data
 
         [JsonPropertyName("public_key")]
         public Guid PublicKey { get; set; }
+
+        [JsonPropertyName("claims")]
+        public Dictionary<string, string> Claims { get; set; } = new Dictionary<string, string>();
 
         [JsonIgnore]
         public string Log
@@ -30,15 +37,10 @@ namespace aiof.auth.data
 
         public Tenant(IHttpContextAccessor httpContextAccessor)
         {
-            Set(httpContextAccessor.HttpContext?.User);
-        }
-        public Tenant(HttpContext httpContext)
-        {
-            Set(httpContext?.User);
-        }
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 
-        public void Set(ClaimsPrincipal user)
-        {
+            var user = _httpContextAccessor.HttpContext?.User;
+
             int userId, clientId;
             Guid publicKey;
 
@@ -46,9 +48,18 @@ namespace aiof.auth.data
             int.TryParse(user?.FindFirst(AiofClaims.ClientId)?.Value, out clientId);
             Guid.TryParse(user?.FindFirst(AiofClaims.PublicKey)?.Value, out publicKey);
 
-            this.UserId = userId;
-            this.ClientId = clientId;
-            this.PublicKey = publicKey;
+            UserId = userId;
+            ClientId = clientId;
+            PublicKey = publicKey;
+
+            // Get the claims
+            foreach (var claim in user.Claims)
+            {
+                if (JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.ContainsKey(claim.Type))
+                    Claims.Add(JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap[claim.Type], claim.Value);
+                else
+                    Claims.Add(claim.Type, claim.Value);
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ namespace aiof.auth.services
     {
         private readonly ILogger<AuthRepository> _logger;
         private readonly IEnvConfiguration _envConfig;
+        private readonly ITenant _tenant;
         private readonly IUserRepository _userRepo;
         private readonly IClientRepository _clientRepo;
         private readonly AbstractValidator<TokenRequest> _tokenRequestValidator;
@@ -32,12 +33,14 @@ namespace aiof.auth.services
         public AuthRepository(
             ILogger<AuthRepository> logger,
             IEnvConfiguration envConfig,
+            ITenant tenant,
             IUserRepository userRepo,
             IClientRepository clientRepo,
             AbstractValidator<TokenRequest> tokenRequestValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
+            _tenant = tenant ?? throw new ArgumentNullException(nameof(tenant));
             _userRepo = userRepo ?? throw new ArgumentNullException(nameof(userRepo));
             _clientRepo = clientRepo ?? throw new ArgumentNullException(nameof(clientRepo));
             _tokenRequestValidator = tokenRequestValidator ?? throw new ArgumentNullException(nameof(tokenRequestValidator));
@@ -280,6 +283,16 @@ namespace aiof.auth.services
             else
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
                     $"Couldn't revoke Token='{token}' for UserId='{userId}' or ClientId='{clientId}'");
+        }
+
+        public IntrospectTokenResult Introspect()
+        {
+            var result = new IntrospectTokenResult
+            {
+                Claims = _tenant.Claims
+            };
+
+            return result;
         }
 
         public JsonWebKey GetPublicJsonWebKey()

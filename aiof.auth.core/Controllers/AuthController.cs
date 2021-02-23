@@ -119,6 +119,14 @@ namespace aiof.auth.core.Controllers
             return Ok(AiofClaims.All);
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("introspect")]
+        public IActionResult Introspect()
+        {
+            return Ok(_repo.Introspect());
+        }
+
         /// <summary>
         /// Get JWKS for JWT creation
         /// </summary>
