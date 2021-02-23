@@ -137,7 +137,7 @@ namespace aiof.auth.tests
 
             Assert.NotNull(validation);
             Assert.True(validation.IsAuthenticated);
-            Assert.Equal(TokenResultStatus.Valid.ToString(), validation.Status);
+            Assert.Equal(TokenStatus.Valid, validation.Status);
         }
         [Theory]
         [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
@@ -150,7 +150,7 @@ namespace aiof.auth.tests
 
             Assert.NotNull(validation);
             Assert.True(validation.IsAuthenticated);
-            Assert.Equal(TokenResultStatus.Valid.ToString(), validation.Status);
+            Assert.Equal(TokenStatus.Valid, validation.Status);
         }
         [Fact]
         public void ValidateToken_Expired()

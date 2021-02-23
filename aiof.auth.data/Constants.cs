@@ -104,9 +104,9 @@ namespace aiof.auth.data
         }
     }
 
-    public enum AccessTokenStatus
+    public enum TokenStatus
     {
-        Valid,
+        Valid = 1,
         Invalid,
         Expired
     }

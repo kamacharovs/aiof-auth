@@ -232,7 +232,7 @@ namespace aiof.auth.services
                 return new TokenResult
                 {
                     IsAuthenticated = result.Identity.IsAuthenticated,
-                    Status = TokenResultStatus.Valid.ToString()
+                    Status = TokenStatus.Valid
                 };
             }
             catch (SecurityTokenExpiredException)
@@ -287,17 +287,11 @@ namespace aiof.auth.services
 
         public IIntrospectTokenResult Introspect()
         {
-            var result = new IntrospectTokenResult
+            return new IntrospectTokenResult
             {
-                Claims = _tenant.Claims
+                Claims = _tenant.Claims,
+                Status = ValidateToken(_tenant.Token).Status.ToString()
             };
-
-            var tokenValidation = ValidateToken(_tenant.Token);
-
-            if (tokenValidation.IsAuthenticated)
-                result.Status = AccessTokenStatus.Valid.ToString();
-
-            return result;
         }
 
         public JsonWebKey GetPublicJsonWebKey()

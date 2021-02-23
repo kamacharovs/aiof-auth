@@ -125,6 +125,7 @@ namespace aiof.auth.core.Controllers
         [Authorize]
         [HttpGet]
         [Route("introspect")]
+        [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IIntrospectTokenResult), StatusCodes.Status200OK)]
         public IActionResult Introspect()
         {

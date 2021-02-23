@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-public class IntrospectTokenResult : IIntrospectTokenResult
+namespace aiof.auth.data
 {
-    [Required]
-    public Dictionary<string, string> Claims { get; set; } = new Dictionary<string, string>();
+    public class IntrospectTokenResult : IIntrospectTokenResult
+    {
+        [Required]
+        public Dictionary<string, string> Claims { get; set; } = new Dictionary<string, string>();
 
-    [Required]
-    public string Status { get; set; }
+        [Required]
+        public string Status { get; set; }
+    }
 }

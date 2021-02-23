@@ -9,17 +9,9 @@ namespace aiof.auth.data
         public bool IsAuthenticated { get; set; }
         
         [Required]
-        public string Status { get; set; }
+        public TokenStatus Status { get; set; }
 
         [Required]
         public string EntityType { get; set; }
-    }
-    
-    public enum TokenResultStatus
-    {
-        Valid,
-        Expired,
-        Error,
-        NoToken
     }
 }

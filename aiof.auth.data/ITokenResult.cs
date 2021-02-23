@@ -9,7 +9,7 @@ namespace aiof.auth.data
         bool IsAuthenticated { get; set; }
         
         [Required]
-        string Status { get; set; }
+        TokenStatus Status { get; set; }
 
         [Required]
         string EntityType { get; set; }
