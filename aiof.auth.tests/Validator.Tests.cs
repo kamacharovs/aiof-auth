@@ -19,10 +19,12 @@ namespace aiof.auth.tests
 
         public ValidatorTests()
         {
-            _userDtoValidator = Helper.GetRequiredService<AbstractValidator<UserDto>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<UserDto>));
-            _clientDtoValidator = Helper.GetRequiredService<AbstractValidator<ClientDto>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<ClientDto>));
-            _tokenRequestValidator = Helper.GetRequiredService<AbstractValidator<TokenRequest>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<TokenRequest>));
-            _claimValidator = Helper.GetRequiredService<AbstractValidator<AiofClaim>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<AiofClaim>));
+            var serviceHelper = new ServiceHelper();
+
+            _userDtoValidator = serviceHelper.GetRequiredService<AbstractValidator<UserDto>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<UserDto>));
+            _clientDtoValidator = serviceHelper.GetRequiredService<AbstractValidator<ClientDto>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<ClientDto>));
+            _tokenRequestValidator = serviceHelper.GetRequiredService<AbstractValidator<TokenRequest>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<TokenRequest>));
+            _claimValidator = serviceHelper.GetRequiredService<AbstractValidator<AiofClaim>>() ?? throw new ArgumentNullException(nameof(AbstractValidator<AiofClaim>));
         }
 
         [Theory]

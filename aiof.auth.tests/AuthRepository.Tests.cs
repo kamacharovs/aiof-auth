@@ -15,26 +15,17 @@ namespace aiof.auth.tests
     [Trait(Helper.Category, Helper.UnitTest)]
     public class AuthRepositoryTests
     {
-        private readonly IAuthRepository _repo;
-        private readonly IUserRepository _userRepo;
-        private readonly IClientRepository _clientRepo;
-        private readonly IEnvConfiguration _envConfig;
-
-        public AuthRepositoryTests()
-        {
-            _repo = Helper.GetRequiredService<IAuthRepository>() ?? throw new ArgumentNullException(nameof(IAuthRepository));
-            _userRepo = Helper.GetRequiredService<IUserRepository>() ?? throw new ArgumentNullException(nameof(IUserRepository));
-            _clientRepo = Helper.GetRequiredService<IClientRepository>() ?? throw new ArgumentNullException(nameof(IClientRepository));
-            _envConfig = Helper.GetRequiredService<IEnvConfiguration>() ?? throw new ArgumentNullException(nameof(IEnvConfiguration));
-        }
-
         [Theory]
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
         public async Task GenerateToken_WithValidUser_IsSuccessful(int id)
         {
-            var user = await _userRepo.GetAsync(id);
+            var serviceHelper = new ServiceHelper { UserId = id };
+            var userRepo = serviceHelper.GetRequiredService<IUserRepository>();
+            var repo = serviceHelper.GetRequiredService<IAuthRepository>();
 
-            var token = _repo.GenerateJwtToken(user);
+            var user = await userRepo.GetAsync(id);
+
+            var token = repo.GenerateJwtToken(user);
 
             Assert.NotNull(token);
             Assert.True(token.AccessToken.Length > 10);
@@ -44,16 +35,20 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
         public async Task AuthUser_WithEmailPassword_IsSuccessful(string email, string password)
         {
+            var serviceHelper = new ServiceHelper();
+            var envConfig = serviceHelper.GetRequiredService<IEnvConfiguration>();
+            var repo = serviceHelper.GetRequiredService<IAuthRepository>();
+
             var req = new TokenRequest
             {
                 Email = email,
                 Password = password
             };
-            var token = await _repo.GetTokenAsync(req);
+            var token = await repo.GetTokenAsync(req);
 
             Assert.NotNull(token);
             Assert.NotNull(token.AccessToken);
-            Assert.Equal(_envConfig.JwtExpires, token.ExpiresIn);
+            Assert.Equal(envConfig.JwtExpires, token.ExpiresIn);
             Assert.Equal("Bearer", token.TokenType);
         }
 
@@ -61,41 +56,53 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
         public async Task AuthClient_WithApiKey_IsSuccessful(string apiKey)
         {
+            var serviceHelper = new ServiceHelper();
+            var envConfig = serviceHelper.GetRequiredService<IEnvConfiguration>();
+            var repo = serviceHelper.GetRequiredService<IAuthRepository>();
+
             var req = new TokenRequest { ApiKey = apiKey };
-            var token = await _repo.GetTokenAsync(req);
+            var token = await repo.GetTokenAsync(req);
 
             Assert.NotNull(token);
             Assert.NotNull(token.AccessToken);
             Assert.NotNull(token.RefreshToken);
-            Assert.Equal(_envConfig.JwtExpires, token.ExpiresIn);
-            Assert.Equal(_envConfig.JwtType, token.TokenType);
+            Assert.Equal(envConfig.JwtExpires, token.ExpiresIn);
+            Assert.Equal(envConfig.JwtType, token.TokenType);
         }
 
         [Theory]
         [MemberData(nameof(Helper.ClientRefreshToken), MemberType = typeof(Helper))]
         public async Task AuthClient_WithRefreshToken_IsSuccessful(string refreshToken)
         {
+            var serviceHelper = new ServiceHelper();
+            var envConfig = serviceHelper.GetRequiredService<IEnvConfiguration>();
+            var repo = serviceHelper.GetRequiredService<IAuthRepository>();
+
             var req = new TokenRequest { Token = refreshToken };
-            var token = await _repo.GetTokenAsync(req);
+            var token = await repo.GetTokenAsync(req);
 
             Assert.NotNull(token);
             Assert.NotNull(token.AccessToken);
-            Assert.Equal(_envConfig.JwtRefreshExpires, token.ExpiresIn);
-            Assert.Equal(_envConfig.JwtType, token.TokenType);
+            Assert.Equal(envConfig.JwtRefreshExpires, token.ExpiresIn);
+            Assert.Equal(envConfig.JwtType, token.TokenType);
         }
 
         [Fact]
         public async Task Auth_WithEmptyCredentials_ThrowsAuthValidationException()
         {
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
             var req = new TokenRequest { };
 
-            await Assert.ThrowsAsync<ValidationException>(() => _repo.GetTokenAsync(req));
+            await Assert.ThrowsAsync<ValidationException>(() => repo.GetTokenAsync(req));
         }
 
         [Fact]
         public void GetRsaKey_Public()
         {
-            var rsaSecKey = _repo.GetRsaKey(RsaKeyType.Public);
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
+            var rsaSecKey = repo.GetRsaKey(RsaKeyType.Public);
 
             Assert.NotNull(rsaSecKey);
             Assert.Equal("RSA", rsaSecKey.Rsa.SignatureAlgorithm);
@@ -105,10 +112,14 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
         public async Task ValidateToken_WithValidUser_IsSuccessful(int id)
         {
-            var user = await _userRepo.GetAsync(id);
+            var serviceHelper = new ServiceHelper { UserId = id };
+            var userRepo = serviceHelper.GetRequiredService<IUserRepository>();
+            var repo = serviceHelper.GetRequiredService<IAuthRepository>();
 
-            var token = _repo.GenerateJwtToken(user);
-            var tokenValidation = _repo.ValidateToken(token.AccessToken);
+            var user = await userRepo.GetAsync(id);
+
+            var token = repo.GenerateJwtToken(user);
+            var tokenValidation = repo.ValidateToken(token.AccessToken);
 
             Assert.NotNull(tokenValidation);
             Assert.True(tokenValidation.IsAuthenticated);
@@ -120,7 +131,9 @@ namespace aiof.auth.tests
             int clientId, 
             string token)
         {
-            var revokedTokenResp = await _repo.RevokeTokenAsync(token, clientId: clientId);
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
+            var revokedTokenResp = await repo.RevokeTokenAsync(token, clientId: clientId);
 
             Assert.NotNull(revokedTokenResp);
             Assert.Equal(token, revokedTokenResp.Token);
@@ -132,10 +145,12 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
         public async Task ValidateClientToken_IsAuthenticated(string apiKey)
         {
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
             var tokenReq = new TokenRequest { ApiKey = apiKey };
-            var token = await _repo.GetTokenAsync(tokenReq);
+            var token = await repo.GetTokenAsync(tokenReq);
             var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
-            var validation = _repo.ValidateToken(validationReq.AccessToken);
+            var validation = repo.ValidateToken(validationReq.AccessToken);
 
             Assert.NotNull(validation);
             Assert.True(validation.IsAuthenticated);
@@ -145,10 +160,12 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
         public async Task ValidateUserToken_IsAuthenticated(string email, string password)
         {
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
             var tokenReq = new TokenRequest { Email = email, Password = password };
-            var token = await _repo.GetTokenAsync(tokenReq);
+            var token = await repo.GetTokenAsync(tokenReq);
             var validationReq = new ValidationRequest { AccessToken = token.AccessToken };
-            var validation = _repo.ValidateToken(validationReq.AccessToken);
+            var validation = repo.ValidateToken(validationReq.AccessToken);
 
             Assert.NotNull(validation);
             Assert.True(validation.IsAuthenticated);
@@ -157,33 +174,36 @@ namespace aiof.auth.tests
         [Fact]
         public void ValidateToken_Expired()
         {
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(Helper.ExpiredJwtToken));
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
+            Assert.Throws<AuthFriendlyException>(() => repo.ValidateToken(Helper.ExpiredJwtToken));
         }
         [Fact]
         public void ValidateClientToken_Expired_ThrowsUnauthorized()
         {
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
             var token = Helper.ExpiredJwtToken;
             var validationReq = new ValidationRequest { AccessToken = token };
 
-            Assert.Throws<AuthFriendlyException>(() => _repo.ValidateToken(validationReq.AccessToken));
+            Assert.Throws<AuthFriendlyException>(() => repo.ValidateToken(validationReq.AccessToken));
         }
 
         [Theory]
         [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
         public async Task Introspect_IsSuccessful(string email, string password)
         {
+            var serviceHelper = new ServiceHelper();
+            var repo = serviceHelper.GetRequiredService<IAuthRepository>();
             var req = new TokenRequest
             {
                 Email = email,
                 Password = password
             };
-            var mockTenant = Helper.GetMockTenant();
-            var token = (await _repo.GetTokenAsync(req)).AccessToken;
+            var token = (await repo.GetTokenAsync(req)).AccessToken;
 
-            mockTenant.Setup(x => x.Token).Returns(token);
-
-            var provider = Helper.Provider(token);
-            var repo = provider.GetRequiredService<IAuthRepository>();
+            serviceHelper.Token = token;
+            repo = serviceHelper.GetRequiredService<IAuthRepository>();
 
             var introspectResult = repo.Introspect();
 
@@ -193,7 +213,9 @@ namespace aiof.auth.tests
         [Fact]
         public void Introspect_Invalid()
         {
-            var introspectResult = _repo.Introspect();
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
+            var introspectResult = repo.Introspect();
 
             Assert.NotNull(introspectResult);
             Assert.Equal(TokenStatus.Invalid.ToString(), introspectResult.Status);
@@ -202,7 +224,9 @@ namespace aiof.auth.tests
         [Fact]
         public void GetPublicJsonWebKey_IsSuccessful()
         {
-            var jwk = _repo.GetPublicJsonWebKey();
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
+            var jwk = repo.GetPublicJsonWebKey();
 
             Assert.NotNull(jwk);
             Assert.Equal(AiofClaims.Sig, jwk.Use);
@@ -214,7 +238,9 @@ namespace aiof.auth.tests
         [InlineData("aiof-auth-dev", true)]
         public void GetOpenIdConfig_IsSuccessful(string host, bool isHttps)
         {
-            var openIdConfig = _repo.GetOpenIdConfig(
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
+            var openIdConfig = repo.GetOpenIdConfig(
                 host,
                 isHttps);
 

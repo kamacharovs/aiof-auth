@@ -12,18 +12,13 @@ namespace aiof.auth.tests
     [Trait(Helper.Category, Helper.UnitTest)]
     public class ClientRepositoryTests
     {
-        private readonly IClientRepository _repo;
-
-        public ClientRepositoryTests()
-        {
-            _repo = Helper.GetRequiredService<IClientRepository>() ?? throw new ArgumentNullException(nameof(IUserRepository));
-        }
-
         [Theory]
         [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
         public async Task GetAsync_ById_IsSuccessful(int id)
         {
-            var client = await _repo.GetAsync(id);
+            var repo = new ServiceHelper() { ClientId = id }.GetRequiredService<IClientRepository>();
+
+            var client = await repo.GetAsync(id);
 
             Assert.NotNull(client);
             Assert.Equal(id, client.Id);
@@ -35,7 +30,9 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
         public async Task GetAsync_ByApiKey_IsSuccessful(string apiKey)
         {
-            var client = await _repo.GetAsync(apiKey);
+            var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
+
+            var client = await repo.GetAsync(apiKey);
 
             Assert.NotNull(client);
             Assert.NotNull(client.PrimaryApiKey);
@@ -48,7 +45,9 @@ namespace aiof.auth.tests
             string name, 
             bool enabled)
         {
-            var client = await _repo.AddClientAsync(new ClientDto
+            var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
+
+            var client = await repo.AddClientAsync(new ClientDto
             {
                 Name = name,
                 Enabled = enabled
@@ -69,7 +68,9 @@ namespace aiof.auth.tests
             int clientId, 
             string token)
         {
-            var clientRefreshTokenBefore = await _repo.GetRefreshTokenAsync(
+            var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
+
+            var clientRefreshTokenBefore = await repo.GetRefreshTokenAsync(
                 clientId,
                 token,
                 asNoTracking: true);
@@ -77,7 +78,7 @@ namespace aiof.auth.tests
             Assert.True(DateTime.UtcNow < clientRefreshTokenBefore.Expires);
 
             Thread.Sleep(1);
-            var clientRefreshTokenAfter = await _repo.RevokeTokenAsync(clientId, token);
+            var clientRefreshTokenAfter = await repo.RevokeTokenAsync(clientId, token);
 
             Assert.False(DateTime.UtcNow < clientRefreshTokenAfter.Expires);
         }
@@ -86,12 +87,14 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
         public async Task SoftDeleteAsync_IsSuccessful(int id)
         {
-            var client = await _repo.SoftDeleteAsync(id);
+            var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
+
+            var client = await repo.SoftDeleteAsync(id);
 
             Assert.NotNull(client);
             Assert.False(client.Enabled);
 
-            await Assert.ThrowsAsync<AuthNotFoundException>(() =>_repo.GetAsync(id));
+            await Assert.ThrowsAsync<AuthNotFoundException>(() => repo.GetAsync(id));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace aiof.auth.tests
 
         public UtilRepositoryTests()
         {
-            _repo = Helper.GetRequiredService<IUtilRepository>() ?? throw new ArgumentNullException(nameof(IUtilRepository));
+            _repo = new ServiceHelper().GetRequiredService<IUtilRepository>() ?? throw new ArgumentNullException(nameof(IUtilRepository));
         }
 
         [Theory]

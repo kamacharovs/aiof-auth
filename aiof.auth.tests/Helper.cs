@@ -18,9 +18,15 @@ using aiof.auth.services;
 
 namespace aiof.auth.tests
 {
-    public static class Helper
+    [ExcludeFromCodeCoverage]
+    public class ServiceHelper
     {
-        public static Dictionary<string, string> ConfigurationDict
+        public int? UserId { get; set; }
+        public int? ClientId { get; set; }
+        public Guid? PublicKey { get; set; }
+        public string Token { get; set; }
+
+        public Dictionary<string, string> ConfigurationDict
             => new Dictionary<string, string>()
         {
             { "MemCache:Ttl", "900" },
@@ -39,9 +45,9 @@ namespace aiof.auth.tests
             { "Hash:KeySize", "32" }
         };
 
-        public static T GetRequiredService<T>()
+        public T GetRequiredService<T>()
         {
-            var provider = Provider();
+            var provider = Services().BuildServiceProvider();
 
             provider.GetRequiredService<FakeDataManager>()
                 .UseFakeContext();
@@ -49,8 +55,7 @@ namespace aiof.auth.tests
             return provider.GetRequiredService<T>();
         }
 
-        [ExcludeFromCodeCoverage]
-        public static IServiceProvider Provider(string token = null)
+        public ServiceCollection Services(string token = null)
         {
             var services = new ServiceCollection();
 
@@ -69,9 +74,9 @@ namespace aiof.auth.tests
                 .AddScoped<IAuthRepository, AuthRepository>()
                 .AddScoped<IUtilRepository, UtilRepository>()
                 .AddScoped<FakeDataManager>()
-                .AddScoped(x => GetMockedTenant(token: token))
                 .AddSingleton<IEnvConfiguration, EnvConfiguration>();
 
+            services.AddScoped(x => GetMockTenant());
             services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
 
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>()
@@ -87,44 +92,34 @@ namespace aiof.auth.tests
                 .AddMemoryCache()
                 .AddHttpContextAccessor();
 
-            return services.BuildServiceProvider();
+            return services;
         }
 
-        public static ITenant GetMockedTenant(
-            int? userId = null,
-            int? clientId = null,
-            string token = null)
-        {
-            return GetMockTenant(userId, clientId, token).Object;
-        }
-        public static Mock<ITenant> GetMockTenant(
-            int? userId = null,
-            int? clientId = null,
-            string token = null)
+        public ITenant GetMockTenant()
         {
             var mockedTenant = new Mock<ITenant>();
 
-            var uId = userId ?? 1;
-            var cId = clientId ?? 1;
-            var publicKey = Guid.NewGuid();
-            var claims = new Dictionary<string, string>
-            {
-                { AiofClaims.Role, "User" }
-            };
-            var tToken = token ?? string.Empty;
+            var userId = UserId ?? 1;
+            var clientId = ClientId ?? 1;
+            var publicKey = PublicKey ?? Guid.NewGuid();
+            var claims = new Dictionary<string, string> { { AiofClaims.Role, "User" } };
+            var token = Token ?? string.Empty;
 
-            mockedTenant.Setup(x => x.UserId).Returns(uId);
-            mockedTenant.Setup(x => x.ClientId).Returns(cId);
+            mockedTenant.Setup(x => x.UserId).Returns(userId);
+            mockedTenant.Setup(x => x.ClientId).Returns(clientId);
             mockedTenant.Setup(x => x.PublicKey).Returns(publicKey);
             mockedTenant.Setup(x => x.Claims).Returns(claims);
-            mockedTenant.Setup(x => x.Token).Returns(tToken);
+            mockedTenant.Setup(x => x.Token).Returns(token);
 
-            return mockedTenant;
+            return mockedTenant.Object;
         }
+    }
 
+    public static class Helper
+    {
         #region Unit Tests
         static FakeDataManager _Fake
-            => Helper.GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
+            => new ServiceHelper().GetRequiredService<FakeDataManager>() ?? throw new ArgumentNullException(nameof(FakeDataManager));
 
         public static IEnumerable<object[]> UsersId()
         {

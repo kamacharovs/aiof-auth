@@ -12,18 +12,15 @@ namespace aiof.auth.tests
     [Trait(Helper.Category, Helper.UnitTest)]
     public class UserRepositoryTests
     {
-        private readonly IUserRepository _repo;
-
-        public UserRepositoryTests()
-        {
-            _repo = Helper.GetRequiredService<IUserRepository>() ?? throw new ArgumentNullException(nameof(IUserRepository));
-        }
-
         [Theory]
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
         public async Task GetAsync_ByTenant_IsSuccessful(int id)
         {
-            var user = await _repo.GetAsync(Helper.GetMockedTenant(userId: id));
+            var serviceHelper = new ServiceHelper() { UserId = id };
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+            var tenant = serviceHelper.GetRequiredService<ITenant>();
+
+            var user = await repo.GetAsync(tenant);
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
@@ -41,7 +38,11 @@ namespace aiof.auth.tests
         [InlineData(999)]
         public async Task GetAsync_ByTenant_NotFound_Throws(int id)
         {
-            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetAsync(Helper.GetMockedTenant(userId: id)));
+            var serviceHelper = new ServiceHelper() { UserId = id };
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+            var tenant = serviceHelper.GetRequiredService<ITenant>();
+
+            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => repo.GetAsync(tenant));
         }
 
         [Theory]
@@ -50,14 +51,20 @@ namespace aiof.auth.tests
         [InlineData(999)]
         public async Task GetAsync_ById_NotFound(int id)
         {
-            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => _repo.GetAsync(id));
+            var serviceHelper = new ServiceHelper() { UserId = id };
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+
+            await Assert.ThrowsAnyAsync<AuthNotFoundException>(() => repo.GetAsync(id));
         }
 
         [Theory]
         [MemberData(nameof(Helper.UsersPublicKey), MemberType = typeof(Helper))]
         public async Task GetAsync_ByPublicKey_IsSuccessful(Guid publicKey)
         {
-            var user = await _repo.GetAsync(publicKey);
+            var serviceHelper = new ServiceHelper() { PublicKey = publicKey };
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+
+            var user = await repo.GetAsync(publicKey);
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
@@ -77,6 +84,9 @@ namespace aiof.auth.tests
             string email,
             string password)
         {
+            var serviceHelper = new ServiceHelper();
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+
             var userDto = new UserDto
             {
                 FirstName = firstName,
@@ -85,11 +95,11 @@ namespace aiof.auth.tests
                 Password = password
             };
 
-            var user = await _repo.GetAsync(userDto);
+            var user = await repo.GetAsync(userDto);
 
             Assert.Null(user);
 
-            var user2 = await _repo.GetAsync(
+            var user2 = await repo.GetAsync(
                 firstName,
                 lastName,
                 email);
@@ -101,7 +111,9 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UserRefreshTokensToken), MemberType = typeof(Helper))]
         public async Task GetAsync_ByRefreshToken_IsSuccessful(string refreshToken)
         {
-            var user = await _repo.GetByRefreshTokenAsync(refreshToken);
+            var repo = new ServiceHelper().GetRequiredService<IUserRepository>();
+
+            var user = await repo.GetByRefreshTokenAsync(refreshToken);
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
@@ -114,7 +126,9 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
         public async Task GetRefreshTokenAsync_ById_IsSuccessful(int userId)
         {
-            var refreshToken = await _repo.GetRefreshTokenAsync(userId);
+            var repo = new ServiceHelper() { UserId = userId }.GetRequiredService<IUserRepository>();
+
+            var refreshToken = await repo.GetRefreshTokenAsync(userId);
 
             Assert.NotNull(refreshToken);
             Assert.NotNull(refreshToken.Token);
@@ -127,7 +141,9 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
         public async Task GetRefreshTokensAsync_IsSuccessful(int userId)
         {
-            var refreshTokens = await _repo.GetRefreshTokensAsync(userId);
+            var repo = new ServiceHelper() { UserId = userId }.GetRequiredService<IUserRepository>();
+
+            var refreshTokens = await repo.GetRefreshTokensAsync(userId);
 
             Assert.NotNull(refreshTokens);
             Assert.NotEmpty(refreshTokens);
@@ -136,7 +152,9 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
         public async Task GetOrAddRefreshTokenAsync_NotRevoked_IsSuccessful(int userId)
         {
-            var refreshToken = await _repo.GetOrAddRefreshTokenAsync(userId);
+            var repo = new ServiceHelper() { UserId = userId }.GetRequiredService<IUserRepository>();
+
+            var refreshToken = await repo.GetOrAddRefreshTokenAsync(userId);
 
             Assert.NotNull(refreshToken);
             Assert.NotNull(refreshToken.Token);
@@ -149,7 +167,9 @@ namespace aiof.auth.tests
         [MemberData(nameof(Helper.UserRefreshTokensUserIdToken), MemberType = typeof(Helper))]
         public async Task RevokeTokenAsync_IsSuccessful(int userId, string token)
         {
-            var revokedToken = await _repo.RevokeTokenAsync(userId, token);
+            var repo = new ServiceHelper() { UserId = userId }.GetRequiredService<IUserRepository>();
+
+            var revokedToken = await repo.RevokeTokenAsync(userId, token);
 
             Assert.NotNull(revokedToken);
             Assert.NotNull(revokedToken.Revoked);
@@ -163,6 +183,8 @@ namespace aiof.auth.tests
             string email,
             string password)
         {
+            var repo = new ServiceHelper().GetRequiredService<IUserRepository>();
+
             var userDto = new UserDto
             {
                 FirstName = firstName,
@@ -171,7 +193,7 @@ namespace aiof.auth.tests
                 Password = password
             };
 
-            var user = await _repo.AddAsync(userDto);
+            var user = await repo.AddAsync(userDto);
 
             Assert.NotNull(user);
             Assert.NotNull(user.FirstName);
@@ -184,6 +206,8 @@ namespace aiof.auth.tests
         [Fact]
         public async Task AddAsync_CheckPasswordHash_IsSuccessful()
         {
+            var repo = new ServiceHelper().GetRequiredService<IUserRepository>();
+
             var password = "Password123";
             var userDto = new UserDto
             {
@@ -193,23 +217,24 @@ namespace aiof.auth.tests
                 Password = password
             };
 
-            var user = await _repo.AddAsync(userDto);
+            var user = await repo.AddAsync(userDto);
 
-            Assert.True(_repo.Check(user.Password, password));
+            Assert.True(repo.Check(user.Password, password));
         }
 
         [Theory]
         [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
         public async Task UpdatePasswordAsync_IsSuccessful(string email, string password)
         {
-            var newPassword = "newpassword123";
+            var repo = new ServiceHelper().GetRequiredService<IUserRepository>();
 
-            var user = await _repo.UpdatePasswordAsync(
+            var newPassword = "newpassword123";
+            var user = await repo.UpdatePasswordAsync(
                 email,
                 password,
                 newPassword);
 
-            Assert.True(_repo.Check(user.Password, newPassword));
+            Assert.True(repo.Check(user.Password, newPassword));
         }
     }
 }
