@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-public class IntrospectTokenResult
+public class IntrospectTokenResult : IIntrospectTokenResult
 {
     [Required]
     public Dictionary<string, string> Claims { get; set; } = new Dictionary<string, string>();

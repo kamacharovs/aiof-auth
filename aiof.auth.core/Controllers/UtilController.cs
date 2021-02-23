@@ -18,8 +18,8 @@ namespace aiof.auth.core.Controllers
     [AllowAnonymous]
     [ApiController]
     [Route("util")]
-    [Produces(Keys.ApplicationJson)]
-    [Consumes(Keys.ApplicationJson)]
+    [Produces(Constants.ApplicationJson)]
+    [Consumes(Constants.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]
     public class UtilController : ControllerBase
     {

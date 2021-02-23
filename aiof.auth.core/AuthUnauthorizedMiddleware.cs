@@ -58,7 +58,7 @@ namespace aiof.auth.core
             var authProblemJson = JsonSerializer
                 .Serialize(authProblem, new JsonSerializerOptions { IgnoreNullValues = true });
 
-            httpContext.Response.ContentType = Keys.ApplicationProblemJson;
+            httpContext.Response.ContentType = Constants.ApplicationProblemJson;
             
             await httpContext.Response
                 .WriteAsync(authProblemJson);
