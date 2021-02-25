@@ -208,6 +208,7 @@ namespace aiof.auth.tests
             var introspectResult = repo.Introspect();
 
             Assert.NotNull(introspectResult);
+            Assert.NotEmpty(introspectResult.Claims);
             Assert.Equal(TokenStatus.Valid, introspectResult.Status);
         }
         [Fact]
@@ -218,6 +219,7 @@ namespace aiof.auth.tests
             var introspectResult = repo.Introspect();
 
             Assert.NotNull(introspectResult);
+            Assert.NotEmpty(introspectResult.Claims);
             Assert.Equal(TokenStatus.Invalid, introspectResult.Status);
         }
 
