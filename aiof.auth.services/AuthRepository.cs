@@ -298,7 +298,7 @@ namespace aiof.auth.services
             return new IntrospectTokenResult
             {
                 Claims = _tenant.Claims,
-                Status = ValidateToken(_tenant.Token).Status.ToString()
+                Status = ValidateToken(_tenant.Token).Status
             };
         }
 

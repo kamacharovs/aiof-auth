@@ -11,6 +11,7 @@ namespace aiof.auth.data
         public Dictionary<string, string> Claims { get; set; } = new Dictionary<string, string>();
 
         [Required]
-        public string Status { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public TokenStatus Status { get; set; }
     }
 }

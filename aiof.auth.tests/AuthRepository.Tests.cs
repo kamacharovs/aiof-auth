@@ -208,7 +208,7 @@ namespace aiof.auth.tests
             var introspectResult = repo.Introspect();
 
             Assert.NotNull(introspectResult);
-            Assert.Equal(TokenStatus.Valid.ToString(), introspectResult.Status);
+            Assert.Equal(TokenStatus.Valid, introspectResult.Status);
         }
         [Fact]
         public void Introspect_Invalid()
@@ -218,7 +218,7 @@ namespace aiof.auth.tests
             var introspectResult = repo.Introspect();
 
             Assert.NotNull(introspectResult);
-            Assert.Equal(TokenStatus.Invalid.ToString(), introspectResult.Status);
+            Assert.Equal(TokenStatus.Invalid, introspectResult.Status);
         }
 
         [Fact]

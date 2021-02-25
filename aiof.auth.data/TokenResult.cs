@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
@@ -9,6 +10,7 @@ namespace aiof.auth.data
         public bool IsAuthenticated { get; set; }
         
         [Required]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public TokenStatus Status { get; set; }
 
         [Required]
