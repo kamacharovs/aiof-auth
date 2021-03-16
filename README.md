@@ -116,6 +116,12 @@ Pull the latest image from Docker Hub
 docker pull gkama/aiof-auth:latest
 ```
 
+Or build the local `Dockerfile.local`
+
+```powershell
+docker build -t aiof-api:latest -f Dockerfile.local .
+```
+
 Run it
 
 ```powershell
