@@ -245,23 +245,24 @@ namespace aiof.auth.services
         }
 
         public async Task<IUser> UpdatePasswordAsync(
-            string email, 
+            ITenant tenant,
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetByEmailAsync(email, asNoTracking: false);
+            var user = await GetAsync(tenant);
 
             if (!Check(user.Password, oldPassword))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Incorrect password for User with Email={email}");
+                    $"Incorrect password for User with Email={user.Email}");
 
             user.Password = Hash(newPassword);
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Updated Password for {EntityName} with Email={UserEmail}", 
+            _logger.LogInformation("{Tenant} | Updated Password for {EntityName} with Email={UserEmail}", 
+                tenant.Log,
                 nameof(User),
-                email);
+                user.Email);
 
             return user;
         }

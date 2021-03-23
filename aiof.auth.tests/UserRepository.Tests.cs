@@ -223,18 +223,33 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
-        public async Task UpdatePasswordAsync_IsSuccessful(string email, string password)
+        [MemberData(nameof(Helper.UsersIdPassword), MemberType = typeof(Helper))]
+        public async Task UpdatePasswordAsync_WithTenant_IsSuccessful(int id, string password)
         {
-            var repo = new ServiceHelper().GetRequiredService<IUserRepository>();
+            var serviceHelper = new ServiceHelper() { UserId = id };
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+            var tenant = serviceHelper.GetRequiredService<ITenant>();
 
-            var newPassword = "newpassword123";
+            var newPassword = "6j1mWDopz8@";
             var user = await repo.UpdatePasswordAsync(
-                email,
+                tenant,
                 password,
                 newPassword);
 
             Assert.True(repo.Check(user.Password, newPassword));
+        }
+        [Theory]
+        [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
+        public async Task UpdatePasswordAsync_WithTenant_IncorrectPassword_ThrowsBadRequest(int id)
+        {
+            var serviceHelper = new ServiceHelper() { UserId = id };
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+            var tenant = serviceHelper.GetRequiredService<ITenant>();
+
+            await Assert.ThrowsAsync<AuthFriendlyException>(() => repo.UpdatePasswordAsync(
+                tenant,
+                "completelyfakepassword",
+                "6j1mWDopz8@"));
         }
     }
 }

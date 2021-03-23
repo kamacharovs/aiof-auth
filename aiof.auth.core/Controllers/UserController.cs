@@ -24,7 +24,6 @@ namespace aiof.auth.core.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repo;
-        private readonly IAuthRepository _authRepo;
         private readonly ITenant _tenant;
 
         public UserController(
@@ -33,7 +32,6 @@ namespace aiof.auth.core.Controllers
             ITenant tenant)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
-            _authRepo = authRepo ?? throw new ArgumentNullException(nameof(authRepo));
             _tenant = tenant;
         }
 
@@ -114,10 +112,25 @@ namespace aiof.auth.core.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ITokenUserResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(IUser), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddAsync([FromBody, Required] UserDto userDto)
         {
-            return Created(nameof(User), _authRepo.GenerateJwtToken(await _repo.AddAsync(userDto)));
+            return Created(nameof(User), await _repo.AddAsync(userDto));
+        }
+
+        /// <summary>
+        /// Update password (Authenticated User) 
+        /// </summary>
+        [Authorize]
+        [HttpPut]
+        [Route("password")]
+        [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdatePasswordAsync([FromBody, Required] UpdatePasswordRequest req)
+        {
+            return Ok(await _repo.UpdatePasswordAsync(_tenant, req.OldPassword, req.NewPassword));
         }
 
         /// <summary>

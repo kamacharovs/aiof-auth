@@ -135,6 +135,14 @@ namespace aiof.auth.tests
             );
         }
 
+        public static IEnumerable<object[]> UsersIdPassword()
+        {
+            return _Fake.GetFakeUsersData(
+                id: true,
+                password: true
+            );
+        }
+
         public static IEnumerable<object[]> UsersEmailPassword()
         {
             return _Fake.GetFakeUsersData(

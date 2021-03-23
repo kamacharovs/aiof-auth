@@ -286,6 +286,13 @@ namespace aiof.auth.data
                     new object[] { fakeUsers[0].Email, "pass1234" },
                     new object[] { fakeUsers[1].Email, "password123" }
                 };
+            else if (id 
+                && password)
+                return new List<object[]>
+                {
+                    new object[] { fakeUsers[0].Id, "pass1234" },
+                    new object[] { fakeUsers[1].Id, "password123" }
+                };
             else if (id)
                 foreach (var fakeUserId in fakeUsers.Select(x => x.Id))
                 {
