@@ -249,7 +249,7 @@ namespace aiof.auth.services
             string oldPassword, 
             string newPassword)
         {
-            var user = await GetAsync(tenant);
+            var user = await GetAsync(tenant, false) as User;
 
             if (!Check(user.Password, oldPassword))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -257,6 +257,7 @@ namespace aiof.auth.services
 
             user.Password = Hash(newPassword);
 
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("{Tenant} | Updated Password for {EntityName} with Email={UserEmail}", 
