@@ -126,8 +126,8 @@ namespace aiof.auth.core.Controllers
         [Route("password")]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdatePasswordAsync([FromBody, Required] UpdatePasswordRequest req)
         {
@@ -142,9 +142,10 @@ namespace aiof.auth.core.Controllers
         [Route("unauthenticated/password")]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdatePasswordUnauthorizedAsync([FromBody, Required] UpdatePasswordUnauthenticatedRequest req)
+        public async Task<IActionResult> UpdatePasswordUnauthenticatedAsync([FromBody, Required] UpdatePasswordUnauthenticatedRequest req)
         {
             return Ok(await _repo.UpdatePasswordAsync(req.Email, req.OldPassword, req.NewPassword));
         }

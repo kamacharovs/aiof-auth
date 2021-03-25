@@ -236,20 +236,121 @@ namespace aiof.auth.tests
                 password,
                 newPassword);
 
+            Assert.NotNull(user);
             Assert.True(repo.Check(user.Password, newPassword));
         }
         [Theory]
         [MemberData(nameof(Helper.UsersId), MemberType = typeof(Helper))]
-        public async Task UpdatePasswordAsync_WithTenant_IncorrectPassword_ThrowsBadRequest(int id)
+        public async Task UpdatePasswordAsync_WithTenant_IncorrectPassword_Throws_400(int id)
         {
             var serviceHelper = new ServiceHelper() { UserId = id };
             var repo = serviceHelper.GetRequiredService<IUserRepository>();
             var tenant = serviceHelper.GetRequiredService<ITenant>();
 
-            await Assert.ThrowsAsync<AuthFriendlyException>(() => repo.UpdatePasswordAsync(
+            var exception = await Assert.ThrowsAsync<AuthFriendlyException>(() => repo.UpdatePasswordAsync(
                 tenant,
                 "completelyfakepassword",
                 "6j1mWDopz8@"));
+
+            Assert.Equal(400, exception.StatusCode);
+            Assert.Contains("incorrect", exception.Message, StringComparison.InvariantCultureIgnoreCase);
+        }
+        [Theory]
+        [MemberData(nameof(Helper.UsersIdPassword), MemberType = typeof(Helper))]
+        public async Task UpdatePasswordAsync_WithTenant_NotFound_Throws_404(int id, string password)
+        {
+            var serviceHelper = new ServiceHelper() { UserId = id * 100 };
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+            var tenant = serviceHelper.GetRequiredService<ITenant>();
+
+            var exception = await Assert.ThrowsAsync<AuthNotFoundException>(() => repo.UpdatePasswordAsync(
+                tenant,
+                password + "notfound",
+                "6j1mWDopz8@"));
+
+            Assert.Equal(404, exception.StatusCode);
+            Assert.Contains("not found", exception.Message, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
+        public async Task UpdatePasswordUnauthenticatedAsync_IsSuccessful(string email, string password)
+        {
+            var serviceHelper = new ServiceHelper();
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+
+            var newPassword = "6j1mWDopz8@";
+            var user = await repo.UpdatePasswordAsync(
+                email,
+                password,
+                newPassword);
+
+            Assert.NotNull(user);
+            Assert.True(repo.Check(user.Password, newPassword));
+        }
+        [Theory]
+        [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
+        public async Task UpdatePasswordUnauthenticatedAsync_BadRequest_Throws_400(string email, string password)
+        {
+            var serviceHelper = new ServiceHelper();
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+
+            var exception = await Assert.ThrowsAsync<AuthFriendlyException>(() => repo.UpdatePasswordAsync(
+                email,
+                password + "incorrect",
+                ""));
+
+            Assert.Equal(400, exception.StatusCode);
+            Assert.Contains("incorrect", exception.Message, StringComparison.InvariantCultureIgnoreCase);
+        }
+        [Theory]
+        [MemberData(nameof(Helper.UsersEmailPassword), MemberType = typeof(Helper))]
+        public async Task UpdatePasswordUnauthenticatedAsync_NotFound_Throws_404(string email, string password)
+        {
+            var serviceHelper = new ServiceHelper();
+            var repo = serviceHelper.GetRequiredService<IUserRepository>();
+
+            var exception = await Assert.ThrowsAsync<AuthNotFoundException>(() => repo.UpdatePasswordAsync(
+                email + "not found",
+                password,
+                "6j1mWDopz8@"));
+
+            Assert.Equal(404, exception.StatusCode);
+            Assert.Contains("not found", exception.Message, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.RandomPasswords), MemberType = typeof(Helper))]
+        public void Hash_IsSuccessful(string password)
+        {
+            var repo = new ServiceHelper().GetRequiredService<IUserRepository>();
+
+            var hashedPassword = repo.Hash(password);
+
+            Assert.NotNull(hashedPassword);
+            Assert.True(hashedPassword.Length > 0);
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.RandomPasswords), MemberType = typeof(Helper))]
+        public void Check_IsSuccessful(string password)
+        {
+            var repo = new ServiceHelper().GetRequiredService<IUserRepository>();
+
+            var hashedPassword = repo.Hash(password);
+            var check = repo.Check(hashedPassword, password);
+
+            Assert.True(check);
+        }
+        [Theory]
+        [MemberData(nameof(Helper.RandomPasswords), MemberType = typeof(Helper))]
+        public void Check_InvalidFormat_Throws_FormatException(string password)
+        {
+            var repo = new ServiceHelper().GetRequiredService<IUserRepository>();
+
+            var check = Assert.Throws<FormatException>(() => repo.Check($"incorrectpassword", password));
+
+            Assert.Contains("unexpected hash format", check.Message, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

@@ -310,6 +310,17 @@ namespace aiof.auth.tests
             return toReturn;
         }
 
+        public static IEnumerable<object[]> RandomPasswords()
+        {
+            return new List<object[]>
+            {
+                new object[] { "test" },
+                new object[] { "Password123" },
+                new object[] { "6j1mWDopz8@" },
+                new object[] { "F94h7ehL003mHPV934h9B3jpaJ8Wn9wC" }
+            };
+        }
+
         public static string ExpiredJwtToken =>
             _Fake.ExpiredJwtToken;
 
