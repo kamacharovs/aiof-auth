@@ -18,10 +18,11 @@ namespace aiof.auth.services
         Task<IUser> GetAsync(string apiKey);
         Task<IUser> GetByEmailAsync(
             string email, 
-            bool asNoTracking = false);
+            bool asNoTracking = true);
         Task<IUser> GetAsync(
             string email, 
-            string password);
+            string password,
+            bool asNoTracking = true);
         Task<IUser> GetAsync(
             string firstName,
             string lastName,
@@ -36,6 +37,10 @@ namespace aiof.auth.services
         Task<IUser> UpdatePasswordAsync(
             ITenant tenant,
             string oldPassword, 
+            string newPassword);
+        Task<IUser> UpdatePasswordAsync(
+            string email,
+            string oldPassword,
             string newPassword);
         Task<IUserRefreshToken> RevokeTokenAsync(
             int userId,

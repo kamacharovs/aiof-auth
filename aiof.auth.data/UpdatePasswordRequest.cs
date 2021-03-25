@@ -15,4 +15,20 @@ namespace aiof.auth.data
         [MaxLength(100)]
         public string NewPassword { get; set; }
     }
+
+    public class UpdatePasswordUnauthenticatedRequest : IUpdatePasswordUnauthenticatedRequest
+    {
+        [Required]
+        [EmailAddress]
+        [MaxLength(200)]
+        public string Email { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string OldPassword { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string NewPassword { get; set; }
+    }
 }

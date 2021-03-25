@@ -105,9 +105,10 @@ namespace aiof.auth.services
         }
         public async Task<IUser> GetAsync(
             string email, 
-            string password)
+            string password,
+            bool asNoTracking = true)
         {
-            var user = await GetByEmailAsync(email);
+            var user = await GetByEmailAsync(email, asNoTracking);
 
             if (!Check(user.Password, password))
                 throw new AuthFriendlyException(HttpStatusCode.BadRequest,
@@ -264,6 +265,25 @@ namespace aiof.auth.services
                 tenant.Log,
                 nameof(User),
                 user.Email);
+
+            return user;
+        }
+
+        public async Task<IUser> UpdatePasswordAsync(
+            string email,
+            string oldPassword,
+            string newPassword)
+        {
+            var user = await GetAsync(email, oldPassword, false) as User;
+
+            user.Password = Hash(newPassword);
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("{UserEmail} | Updated Password for {EntityName}",
+                user.Email,
+                nameof(User));
 
             return user;
         }
