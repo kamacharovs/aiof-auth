@@ -4,27 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace aiof.auth.data
 {
-    public class TokenRequest<T> : ITokenRequest<T>
-        where T : class
-    {
-        [JsonPropertyName("api_key")]
-        public string ApiKey { get; set; }
-
-        [JsonPropertyName("refresh_token")]
-        public string Token { get; set; }
-
-        [JsonPropertyName("email")]
-        public string Email { get; set; }
-
-        [JsonPropertyName("password")]
-        public string Password { get; set; }
-
-        [JsonIgnore]
-        public T Entity { get; set; }
-
-        [JsonIgnore]
-        public string EntityType => typeof(T).Name;
-    }
 
     /// <summary>
     /// Request for authentication. The combinations of requests are: ApiKey or Token or Email and Password

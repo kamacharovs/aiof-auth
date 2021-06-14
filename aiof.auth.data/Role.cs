@@ -10,15 +10,11 @@ namespace aiof.auth.data
         IPublicKeyId
     {
         [JsonIgnore]
-        [Required]
         public int Id { get; set; }
 
         [JsonIgnore]
-        [Required]
         public Guid PublicKey { get; set; } = Guid.NewGuid();
 
-        [Required]
-        [MaxLength(50)]
         public string Name { get; set; }
     }
 

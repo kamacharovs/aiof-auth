@@ -24,6 +24,10 @@ namespace aiof.auth.tests
             Assert.Equal(id, client.Id);
             Assert.NotNull(client.PrimaryApiKey);
             Assert.NotNull(client.SecondaryApiKey);
+            Assert.NotNull(client.Slug);
+            Assert.NotEqual(0, client.RoleId);
+            Assert.NotNull(client.Role);
+            Assert.NotEqual(new DateTime(), client.Created);
         }
 
         [Theory]
@@ -37,6 +41,10 @@ namespace aiof.auth.tests
             Assert.NotNull(client);
             Assert.NotNull(client.PrimaryApiKey);
             Assert.NotNull(client.SecondaryApiKey);
+            Assert.NotNull(client.Slug);
+            Assert.NotEqual(0, client.RoleId);
+            Assert.NotNull(client.Role);
+            Assert.NotEqual(new DateTime(), client.Created);
         }
 
         [Theory]
@@ -60,6 +68,10 @@ namespace aiof.auth.tests
             Assert.Equal(enabled, client.Enabled);
             Assert.NotNull(client.PrimaryApiKey);
             Assert.NotNull(client.SecondaryApiKey);
+            Assert.NotNull(client.Slug);
+            Assert.NotEqual(0, client.RoleId);
+            Assert.NotNull(client.Role);
+            Assert.NotEqual(new DateTime(), client.Created);
         }
 
         [Theory]
