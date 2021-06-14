@@ -53,10 +53,10 @@ namespace aiof.auth.core
         {
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc(envConfig.OpenApiVersion, new OpenApiInfo
+                x.SwaggerDoc(Constants.ApiV1Full, new OpenApiInfo
                 {
                     Title = envConfig.OpenApiTitle,
-                    Version = envConfig.OpenApiVersion,
+                    Version = Constants.ApiV1Full,
                     Description = envConfig.OpenApiDescription,
                     Contact = new OpenApiContact
                     {

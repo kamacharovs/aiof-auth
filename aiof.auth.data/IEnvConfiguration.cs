@@ -22,7 +22,6 @@ namespace aiof.auth.data
         int HashSaltSize { get; }
         int HashKeySize { get; }
 
-        string OpenApiVersion { get; }
         string OpenApiTitle { get; }
         string OpenApiDescription { get; }
         string OpenApiContactName { get; }

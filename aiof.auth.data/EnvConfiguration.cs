@@ -37,7 +37,6 @@ namespace aiof.auth.data
         public int HashSaltSize => int.Parse(_config[Keys.HashSaltSize] ?? throw new KeyNotFoundException());
         public int HashKeySize => int.Parse(_config[Keys.HashKeySize] ?? throw new KeyNotFoundException());
 
-        public string OpenApiVersion => _config[Keys.OpenApiVersion] ?? throw new KeyNotFoundException();
         public string OpenApiTitle => _config[Keys.OpenApiTitle] ?? throw new KeyNotFoundException();
         public string OpenApiDescription => _config[Keys.OpenApiDescription] ?? throw new KeyNotFoundException();
         public string OpenApiContactName => _config[Keys.OpenApiContactName] ?? throw new KeyNotFoundException();

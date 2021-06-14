@@ -71,7 +71,6 @@ namespace aiof.auth.data
         public const string HashKeySize = Hash + ":" + KeySize;
 
         public const string OpenApi = nameof(OpenApi);
-        public const string Version = nameof(Version);
         public const string Title = nameof(Title);
         public const string Description = nameof(Description);
         public const string Contact = nameof(Contact);
@@ -79,7 +78,6 @@ namespace aiof.auth.data
         public const string Email = nameof(Email);
         public const string Url = nameof(Url);
         public const string License = nameof(License);
-        public const string OpenApiVersion = OpenApi + ":" + Version;
         public const string OpenApiTitle = OpenApi + ":" + Title;
         public const string OpenApiDescription = OpenApi + ":" + Description;
         public const string OpenApiContactName = OpenApi + ":" + Contact + ":" + Name;
