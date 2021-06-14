@@ -24,7 +24,9 @@ namespace aiof.auth.core
 {
     public static partial class AuthMiddlewareExtensions
     {
-        public static IServiceCollection AddAuthAuthentication(this IServiceCollection services, IEnvConfiguration envConfig)
+        public static IEnvConfiguration _envConfig = Startup._envConfig;
+
+        public static IServiceCollection AddAuthAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(
@@ -32,14 +34,14 @@ namespace aiof.auth.core
                 x =>
                 {
                     var rsa = RSA.Create();
-                    rsa.FromXmlString(envConfig.JwtPublicKey);
+                    rsa.FromXmlString(_envConfig.JwtPublicKey);
 
                     x.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = envConfig.JwtIssuer,
+                        ValidIssuer = _envConfig.JwtIssuer,
                         ValidateAudience = true,
-                        ValidAudience = envConfig.JwtAudience,
+                        ValidAudience = _envConfig.JwtAudience,
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
                         IssuerSigningKey = new RsaSecurityKey(rsa)
@@ -49,25 +51,25 @@ namespace aiof.auth.core
             return services;
         }
 
-        public static IServiceCollection AddAuthSwaggerGen(this IServiceCollection services, IEnvConfiguration envConfig)
+        public static IServiceCollection AddAuthSwaggerGen(this IServiceCollection services)
         {
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc(Constants.ApiV1Full, new OpenApiInfo
                 {
-                    Title = envConfig.OpenApiTitle,
+                    Title = _envConfig.OpenApiTitle,
                     Version = Constants.ApiV1Full,
-                    Description = envConfig.OpenApiDescription,
+                    Description = _envConfig.OpenApiDescription,
                     Contact = new OpenApiContact
                     {
-                        Name = envConfig.OpenApiContactName,
-                        Email = envConfig.OpenApiContactEmail,
-                        Url = new Uri(envConfig.OpenApiContactUrl)
+                        Name = _envConfig.OpenApiContactName,
+                        Email = _envConfig.OpenApiContactEmail,
+                        Url = new Uri(_envConfig.OpenApiContactUrl)
                     },
                     License = new OpenApiLicense
                     {
-                        Name = envConfig.OpenApiLicenseName,
-                        Url = new Uri(envConfig.OpenApiLicenseUrl),
+                        Name = _envConfig.OpenApiLicenseName,
+                        Url = new Uri(_envConfig.OpenApiLicenseUrl),
                     }
                 });
                 x.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));

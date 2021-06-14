@@ -14,12 +14,11 @@ namespace aiof.auth.data
         public const string ApplicationProblemJson = "application/problem+json";
 
         public const string ApiName = "aiof-auth";
-        public const string ApiRoute = "v{version:apiVersion}";
         public const string ApiV1 = "1.0";
-        public const string ApiAuthRoute = "{Constants.ApiRoute}/auth";
-        public const string ApiUserRoute = "{Constants.ApiRoute}/user";
-        public const string ApiClientRoute = "{Constants.ApiRoute}/client";
-        public const string ApiUtilRoute = "{Constants.ApiRoute}/util";
+        public const string ApiAuthRoute = "v{version:apiVersion}/auth";
+        public const string ApiUserRoute = "v{version:apiVersion}/user";
+        public const string ApiClientRoute = "v{version:apiVersion}/client";
+        public const string ApiUtilRoute = "v{version:apiVersion}/util";
         public static string ApiV1Full = $"v{ApiV1}";
         public static string[] ApiSupportedVersions
             => new string[]
