@@ -25,7 +25,7 @@ namespace aiof.auth.tests
 
             var user = await userRepo.GetAsync(id);
 
-            var token = repo.GenerateJwtToken(user);
+            var token = repo.GenerateJwt(user);
 
             Assert.NotNull(token);
             Assert.True(token.AccessToken.Length > 10);
@@ -118,7 +118,7 @@ namespace aiof.auth.tests
 
             var user = await userRepo.GetAsync(id);
 
-            var token = repo.GenerateJwtToken(user);
+            var token = repo.GenerateJwt(user);
             var tokenValidation = repo.ValidateToken(token.AccessToken);
 
             Assert.NotNull(tokenValidation);

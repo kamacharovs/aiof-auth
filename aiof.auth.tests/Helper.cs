@@ -79,10 +79,10 @@ namespace aiof.auth.tests
             services.AddScoped(x => GetMockTenant());
             services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
 
-            services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>()
-                .AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>()
-                .AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>()
-                .AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
+            services.AddSingleton<AbstractValidator<UserDto>, UserDtoValidator>()
+                .AddSingleton<AbstractValidator<ClientDto>, ClientDtoValidator>()
+                .AddSingleton<AbstractValidator<AiofClaim>, AiofClaimValidator>()
+                .AddSingleton<AbstractValidator<TokenRequest>, TokenRequestValidator>();
 
             services.AddDbContext<AuthContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
