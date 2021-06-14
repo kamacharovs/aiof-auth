@@ -12,14 +12,26 @@ namespace aiof.auth.data
 
         public const string ApplicationJson = "application/json";
         public const string ApplicationProblemJson = "application/problem+json";
+
+        public const string ApiName = "aiof-auth";
+        public const string ApiRoute = "v{version:apiVersion}";
+        public const string ApiV1 = "1.0";
+        public const string ApiAuthRoute = "{Constants.ApiRoute}/auth";
+        public const string ApiUserRoute = "{Constants.ApiRoute}/user";
+        public const string ApiClientRoute = "{Constants.ApiRoute}/client";
+        public const string ApiUtilRoute = "{Constants.ApiRoute}/util";
+        public static string ApiV1Full = $"v{ApiV1}";
+        public static string[] ApiSupportedVersions
+            => new string[]
+            {
+                ApiV1Full
+            };
+        public static string DefaultUnsupportedApiVersionMessage = $"Unsupported API version specified. The supported versions are {string.Join(", ", ApiSupportedVersions)}";
+
     }
 
     public static class Keys
     {
-        public const string MemCache = nameof(MemCache);
-        public const string Ttl = nameof(Ttl);
-        public const string MemCacheTtl = MemCache + ":" + Ttl;
-
         public const string Data = nameof(Data);
         public const string PostgreSQL = nameof(PostgreSQL);
         public const string DataPostgreSQL = Data + ":" + PostgreSQL;
@@ -55,7 +67,6 @@ namespace aiof.auth.data
         public const string HashKeySize = Hash + ":" + KeySize;
 
         public const string OpenApi = nameof(OpenApi);
-        public const string Version = nameof(Version);
         public const string Title = nameof(Title);
         public const string Description = nameof(Description);
         public const string Contact = nameof(Contact);
@@ -63,7 +74,6 @@ namespace aiof.auth.data
         public const string Email = nameof(Email);
         public const string Url = nameof(Url);
         public const string License = nameof(License);
-        public const string OpenApiVersion = OpenApi + ":" + Version;
         public const string OpenApiTitle = OpenApi + ":" + Title;
         public const string OpenApiDescription = OpenApi + ":" + Description;
         public const string OpenApiContactName = OpenApi + ":" + Contact + ":" + Name;

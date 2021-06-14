@@ -3,7 +3,6 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using System.Text.Json;
-using System.Security.Cryptography;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,9 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
-
-using AutoMapper;
-using FluentValidation;
 
 using aiof.auth.data;
 using aiof.auth.services;
@@ -45,8 +41,7 @@ namespace aiof.auth.core
                 .AddSingleton<IEnvConfiguration, EnvConfiguration>()
                 .AddScoped<ITenant, Tenant>()
                 .AddScoped<FakeDataManager>()
-                .AddAutoMapper(typeof(AutoMappingProfile).Assembly)
-                .AddAuthFluentValidators();
+                .AddAutoMapper(typeof(AutoMappingProfile).Assembly);
 
             services.AddDbContext<AuthContext>(o => o.UseNpgsql(_envConfig.DataPostgreSQL, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
@@ -55,7 +50,7 @@ namespace aiof.auth.core
             services.AddLogging()
                 .AddApplicationInsightsTelemetry()
                 .AddHttpContextAccessor()
-                .AddMemoryCache()
+                .AddAuthFluentValidators()
                 .AddAuthAuthentication(_envConfig)
                 .AddAuthSwaggerGen(_envConfig);
 

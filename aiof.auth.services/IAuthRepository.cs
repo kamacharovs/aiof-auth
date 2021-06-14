@@ -12,15 +12,15 @@ namespace aiof.auth.services
     public interface IAuthRepository
     {
         Task<ITokenResponse> GetTokenAsync(ITokenRequest request);
-        ITokenResponse GenerateJwtToken(
+        ITokenResponse GenerateJwt(
             IUser user,
             string refreshToken = null,
             int? expiresIn = null);
-        ITokenResponse GenerateJwtToken(
+        ITokenResponse GenerateJwt(
             IClient client, 
             string refreshToken = null,
             int? expiresIn = null);
-        ITokenResponse GenerateJwtToken<T>(
+        ITokenResponse GenerateJwt<T>(
             IEnumerable<Claim> claims, 
             IPublicKeyId entity = null, 
             string refreshToken = null, 

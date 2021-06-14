@@ -17,7 +17,8 @@ namespace aiof.auth.core.Controllers
     /// </summary>
     [AllowAnonymous]
     [ApiController]
-    [Route("util")]
+    [ApiVersion(Constants.ApiV1)]
+    [Route(Constants.ApiUtilRoute)]
     [Produces(Constants.ApplicationJson)]
     [Consumes(Constants.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]

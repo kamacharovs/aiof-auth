@@ -57,8 +57,8 @@ namespace aiof.auth.data
 
             modelBuilder.Entity<UserProfile>(e =>
             {
-                e.ToTable(Keys.Entity.UserProfile);
-
+                e.ToTable(Keys.Entity.UserProfile, x => x.ExcludeFromMigrations());
+                
                 e.HasKey(x => x.Id);
 
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();

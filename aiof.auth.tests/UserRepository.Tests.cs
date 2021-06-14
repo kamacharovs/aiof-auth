@@ -28,6 +28,7 @@ namespace aiof.auth.tests
             Assert.NotNull(user.Email);
             Assert.NotNull(user.Password);
             Assert.NotEqual(0, user.RoleId);
+            Assert.NotNull(user.Role);
             Assert.NotEqual(new DateTime(), user.Created);
             Assert.False(user.IsDeleted);
         }

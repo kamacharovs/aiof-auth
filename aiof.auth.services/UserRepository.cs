@@ -23,7 +23,6 @@ namespace aiof.auth.services
         private readonly IMapper _mapper;
         private readonly AuthContext _context;
         private readonly AbstractValidator<UserDto> _userDtoValidator;
-        private readonly AbstractValidator<User> _userValidator;
 
         public UserRepository(
             ILogger<UserRepository> logger,
@@ -31,8 +30,7 @@ namespace aiof.auth.services
             IUtilRepository utilRepo,
             IMapper mapper,
             AuthContext context,
-            AbstractValidator<UserDto> userDtoValidator,
-            AbstractValidator<User> userValidator)
+            AbstractValidator<UserDto> userDtoValidator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
@@ -40,7 +38,6 @@ namespace aiof.auth.services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _userDtoValidator = userDtoValidator ?? throw new ArgumentNullException(nameof(userDtoValidator));
-            _userValidator = userValidator ?? throw new ArgumentNullException(nameof(userValidator));
         }
 
         private IQueryable<User> GetQuery(bool asNoTracking = true)

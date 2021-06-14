@@ -29,7 +29,6 @@ namespace aiof.auth.services
         private readonly string _issuer;
         private readonly string _audience;
 
-
         public AuthRepository(
             ILogger<AuthRepository> logger,
             IEnvConfiguration envConfig,
@@ -58,11 +57,11 @@ namespace aiof.auth.services
                 case TokenType.User:
                     var user = await _userRepo.GetAsync(request.Email, request.Password);
                     var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
-                    return GenerateJwtToken(
+                    return GenerateJwt(
                         user,
                         refreshToken.Token);
                 case TokenType.ApiKey:
-                    return await GenerateJwtTokenAsync(request.ApiKey);
+                    return await GenerateTokenAsync(request.ApiKey);
                 case TokenType.Refresh:
                     return await RefreshTokenAsync(request.Token);
                 default:
@@ -71,20 +70,20 @@ namespace aiof.auth.services
             }
         }
 
-        public async Task<ITokenResponse> GenerateJwtTokenAsync(string apiKey)
+        public async Task<ITokenResponse> GenerateTokenAsync(string apiKey)
         {
             switch (apiKey.DecodeKey())
             {
                 case nameof(User):
                     var user = await _userRepo.GetAsync(apiKey);
                     var userRefreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
-                    return GenerateJwtToken(
+                    return GenerateJwt(
                         user,
                         userRefreshToken.Token);
                 case nameof(Client):
                     var client = await _clientRepo.GetAsync(apiKey);
                     var clientRefreshToken = await _clientRepo.GetOrAddRefreshTokenAsync(apiKey);
-                    return GenerateJwtToken(
+                    return GenerateJwt(
                         client,
                         clientRefreshToken.Token);
                 default:
@@ -99,12 +98,12 @@ namespace aiof.auth.services
             {
                 case nameof(User):
                     var user = await _userRepo.GetByRefreshTokenAsync(refreshToken);
-                    return GenerateJwtToken(
+                    return GenerateJwt(
                         user: user,
                         expiresIn: _envConfig.JwtRefreshExpires);
                 case nameof(Client):
                     var client = await _clientRepo.GetByRefreshTokenAsync(refreshToken);
-                    return GenerateJwtToken(
+                    return GenerateJwt(
                         client: client,
                         expiresIn: _envConfig.JwtRefreshExpires);
                 default:
@@ -113,12 +112,12 @@ namespace aiof.auth.services
             }
         }
 
-        public ITokenResponse GenerateJwtToken(
+        public ITokenResponse GenerateJwt(
             IUser user,
             string refreshToken = null,
             int? expiresIn = null)
         {
-            var token = GenerateJwtToken<User>(new Claim[]
+            var token = GenerateJwt<User>(new Claim[]
                 {
                     new Claim(AiofClaims.UserId, user.Id.ToString()),
                     new Claim(AiofClaims.PublicKey, user.PublicKey.ToString()),
@@ -137,12 +136,12 @@ namespace aiof.auth.services
             };
         }
 
-        public ITokenResponse GenerateJwtToken(
+        public ITokenResponse GenerateJwt(
             IClient client,
             string refreshToken = null,
             int? expiresIn = null)
         {
-            return GenerateJwtToken<Client>(new Claim[]
+            return GenerateJwt<Client>(new Claim[]
                 {
                     new Claim(AiofClaims.ClientId, client.Id.ToString()),
                     new Claim(AiofClaims.PublicKey, client.PublicKey.ToString()),
@@ -153,7 +152,7 @@ namespace aiof.auth.services
                 expiresIn: expiresIn);
         }
 
-        public ITokenResponse GenerateJwtToken<T>(
+        public ITokenResponse GenerateJwt<T>(
             IEnumerable<Claim> claims,
             IPublicKeyId entity = null,
             string refreshToken = null,
