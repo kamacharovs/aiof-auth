@@ -80,7 +80,6 @@ namespace aiof.auth.tests
             services.AddSingleton(new MapperConfiguration(x => { x.AddProfile(new AutoMappingProfile()); }).CreateMapper());
 
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>()
-                .AddScoped<AbstractValidator<User>, UserValidator>()
                 .AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>()
                 .AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>()
                 .AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();

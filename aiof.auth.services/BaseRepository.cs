@@ -5,9 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Caching.Memory;
 
 using aiof.auth.data;
 
@@ -16,18 +14,15 @@ namespace aiof.auth.services
     public abstract class BaseRepository
     {
         private readonly ILogger _logger;
-        private readonly IMemoryCache _cache;
         private readonly IEnvConfiguration _envConfig;
         private readonly AuthContext _context;
 
         public BaseRepository(
             ILogger logger,
-            IMemoryCache cache,
             IEnvConfiguration envConfig,
             AuthContext context)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _envConfig = envConfig ?? throw new ArgumentNullException(nameof(envConfig));
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -48,18 +43,9 @@ namespace aiof.auth.services
             bool asNoTracking = true)
             where T : class, IPublicKeyId, IApiKey
         {
-            var memCacheEnabled = await _envConfig.IsEnabledAsync(FeatureFlags.MemCache);
-            var entity = memCacheEnabled
-                ? await _cache.GetOrCreateAsync(Keys.Base<T>(id), async x =>
-                  {
-                      x.SlidingExpiration = TimeSpan.FromSeconds(_envConfig.MemCacheTtl);
-                      x.Priority = CacheItemPriority.High;
-                      
-                      return await GetEntityQuery<T>(asNoTracking).FirstOrDefaultAsync(x => x.Id == id);
-                  })
-                : await GetEntityQuery<T>(asNoTracking).FirstOrDefaultAsync(x => x.Id == id);
-
-            return entity ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
+            return await GetEntityQuery<T>(asNoTracking)
+                .FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new AuthNotFoundException($"{typeof(T).Name} with Id='{id}' was not found");
         }
 
         public async Task<T> SoftDeleteAsync<T>(int id)

@@ -79,7 +79,6 @@ namespace aiof.auth.core
         public static IServiceCollection AddAuthFluentValidators(this IServiceCollection services)
         {
             services.AddScoped<AbstractValidator<UserDto>, UserDtoValidator>()
-                .AddScoped<AbstractValidator<User>, UserValidator>()
                 .AddScoped<AbstractValidator<ClientDto>, ClientDtoValidator>()
                 .AddScoped<AbstractValidator<AiofClaim>, AiofClaimValidator>()
                 .AddScoped<AbstractValidator<TokenRequest>, TokenRequestValidator>();
