@@ -19,9 +19,9 @@ namespace aiof.auth.core
 {
     public class Startup
     {
-        public readonly IConfiguration _config;
-        public readonly IWebHostEnvironment _env;
-        public readonly IEnvConfiguration _envConfig;
+        public static IConfiguration _config;
+        public static IWebHostEnvironment _env;
+        public static IEnvConfiguration _envConfig;
 
         public Startup(
             IConfiguration configuration,
@@ -50,9 +50,10 @@ namespace aiof.auth.core
             services.AddLogging()
                 .AddApplicationInsightsTelemetry()
                 .AddHttpContextAccessor()
+                .AddAuthAuthentication()
+                .AddAuthSwaggerGen()
                 .AddAuthFluentValidators()
-                .AddAuthAuthentication(_envConfig)
-                .AddAuthSwaggerGen(_envConfig);
+                .AddAuthApiVersioning();
 
             services.AddControllers();
             services.AddMvcCore()
