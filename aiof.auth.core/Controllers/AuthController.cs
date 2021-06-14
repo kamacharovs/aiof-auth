@@ -19,7 +19,8 @@ namespace aiof.auth.core.Controllers
     /// Everything aiof authentication
     /// </summary>
     [ApiController]
-    [Route("auth")]
+    [ApiVersion(Constants.ApiV1)]
+    [Route(Constants.ApiAuthRoute)]
     [Produces(Constants.ApplicationJson)]
     [Consumes(Constants.ApplicationJson)]
     [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status500InternalServerError)]

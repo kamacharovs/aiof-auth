@@ -9,6 +9,9 @@ using System.Security.Cryptography;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +19,6 @@ using Microsoft.IdentityModel.Tokens;
 using FluentValidation;
 
 using aiof.auth.data;
-using aiof.auth.services;
 
 namespace aiof.auth.core
 {
@@ -85,6 +87,19 @@ namespace aiof.auth.core
             return services;
         }
 
+        public static IServiceCollection AddAuthApiVersioning(this IServiceCollection services)
+        {
+            services.AddApiVersioning(x =>
+            {
+                x.DefaultApiVersion = ApiVersion.Parse(Constants.ApiV1);
+                x.ReportApiVersions = true;
+                x.ApiVersionReader = new UrlSegmentApiVersionReader();
+                x.ErrorResponses = new ApiVersioningErrorResponseProvider();
+            });
+
+            return services;
+        }
+
         public static IApplicationBuilder UseAuthExceptionMiddleware(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<AuthExceptionMiddleware>();
@@ -93,6 +108,23 @@ namespace aiof.auth.core
         public static IApplicationBuilder UseAuthUnauthorizedMiddleware(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<AuthUnauthorizedMiddleware>();
+        }
+    }
+
+    public class ApiVersioningErrorResponseProvider : DefaultErrorResponseProvider
+    {
+        public override IActionResult CreateResponse(ErrorResponseContext context)
+        {
+            var problem = new AuthProblemDetailBase
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Message = Constants.DefaultUnsupportedApiVersionMessage
+            };
+
+            return new ObjectResult(problem)
+            {
+                StatusCode = StatusCodes.Status400BadRequest
+            };
         }
     }
 }
