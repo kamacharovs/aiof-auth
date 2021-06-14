@@ -23,7 +23,6 @@ namespace aiof.auth.data
         public string DataPostgreSQL => _config[Keys.DataPostgreSQL] ?? throw new KeyNotFoundException();
 
         public string CorsPortal => _config[Keys.CorsPortal] == null ? "http://localhost:4100" : _config[Keys.CorsPortal];
-        public int MemCacheTtl => int.Parse(_config[Keys.MemCacheTtl] ?? throw new KeyNotFoundException());
 
         public int JwtExpires => int.Parse(_config[Keys.JwtExpires] ?? throw new KeyNotFoundException());
         public int JwtRefreshExpires => int.Parse(_config[Keys.JwtRefreshExpires] ?? throw new KeyNotFoundException());

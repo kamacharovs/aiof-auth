@@ -32,10 +32,6 @@ namespace aiof.auth.data
 
     public static class Keys
     {
-        public const string MemCache = nameof(MemCache);
-        public const string Ttl = nameof(Ttl);
-        public const string MemCacheTtl = MemCache + ":" + Ttl;
-
         public const string Data = nameof(Data);
         public const string PostgreSQL = nameof(PostgreSQL);
         public const string DataPostgreSQL = Data + ":" + PostgreSQL;
