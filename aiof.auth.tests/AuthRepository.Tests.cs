@@ -87,6 +87,35 @@ namespace aiof.auth.tests
             Assert.Equal(envConfig.JwtType, token.TokenType);
         }
 
+        [Theory]
+        [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]
+        public async Task AuthClient_Disable_Enable_IsSuccessful(string apiKey)
+        {
+            var serviceHelper = new ServiceHelper();
+            var envConfig = serviceHelper.GetRequiredService<IEnvConfiguration>();
+            var repo = serviceHelper.GetRequiredService<IAuthRepository>();
+            var clientRepo = serviceHelper.GetRequiredService<IClientRepository>();
+
+            var req = new TokenRequest { ApiKey = apiKey };
+            var token = await repo.GetTokenAsync(req);
+
+            Assert.NotNull(token);
+            Assert.NotNull(token.AccessToken);
+            Assert.NotNull(token.RefreshToken);
+            Assert.Equal(envConfig.JwtExpires, token.ExpiresIn);
+            Assert.Equal(envConfig.JwtType, token.TokenType);
+
+            var client = await clientRepo.GetAsync(apiKey);
+
+            Assert.NotNull(client);
+            Assert.True(client.Enabled);
+
+            client = await clientRepo.DisableAsync(client.Id);
+
+            Assert.NotNull(client);
+            Assert.False(client.Enabled);
+        }
+
         [Fact]
         public async Task Auth_WithEmptyCredentials_ThrowsAuthValidationException()
         {
