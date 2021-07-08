@@ -118,5 +118,24 @@ namespace aiof.auth.tests
             Assert.NotNull(client);
             Assert.False(client.Enabled);
         }
+
+        [Theory]
+        [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
+        public async Task RegenerateKeysAsync_IsSuccessful(int id)
+        {
+            var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
+
+            var client = await repo.GetAsync(id);
+            var pKey = client.PrimaryApiKey;
+            var sKey = client.SecondaryApiKey;           
+
+            Assert.NotNull(client);
+
+            client = await repo.RegenerateKeysAsync(id);
+
+            Assert.NotNull(client);
+            Assert.NotEqual(pKey, client.PrimaryApiKey);
+            Assert.NotEqual(sKey, client.SecondaryApiKey);
+        }
     }
 }
