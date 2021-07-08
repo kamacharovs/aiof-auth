@@ -97,16 +97,45 @@ namespace aiof.auth.tests
 
         [Theory]
         [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
-        public async Task SoftDeleteAsync_IsSuccessful(int id)
+        public async Task EnableClientAsync_IsSuccessful(int id)
         {
             var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
 
-            var client = await repo.SoftDeleteAsync(id);
+            var client = await repo.EnableAsync(id);
+
+            Assert.NotNull(client);
+            Assert.True(client.Enabled);
+        }
+
+        [Theory]
+        [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
+        public async Task DisableClientAsync_IsSuccessful(int id)
+        {
+            var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
+
+            var client = await repo.DisableAsync(id);
 
             Assert.NotNull(client);
             Assert.False(client.Enabled);
+        }
 
-            await Assert.ThrowsAsync<AuthNotFoundException>(() => repo.GetAsync(id));
+        [Theory]
+        [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
+        public async Task RegenerateKeysAsync_IsSuccessful(int id)
+        {
+            var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
+
+            var client = await repo.GetAsync(id);
+            var pKey = client.PrimaryApiKey;
+            var sKey = client.SecondaryApiKey;           
+
+            Assert.NotNull(client);
+
+            client = await repo.RegenerateKeysAsync(id);
+
+            Assert.NotNull(client);
+            Assert.NotEqual(pKey, client.PrimaryApiKey);
+            Assert.NotEqual(sKey, client.SecondaryApiKey);
         }
     }
 }

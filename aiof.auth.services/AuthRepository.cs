@@ -82,7 +82,12 @@ namespace aiof.auth.services
                         userRefreshToken.Token);
                 case nameof(Client):
                     var client = await _clientRepo.GetAsync(apiKey);
-                    var clientRefreshToken = await _clientRepo.GetOrAddRefreshTokenAsync(apiKey);
+                    
+                    if (client.Enabled is false)
+                        throw new AuthFriendlyException(HttpStatusCode.BadRequest,
+                            $"Client is disabled");
+
+                    var clientRefreshToken = await _clientRepo.GetOrAddRefreshTokenAsync(client);
                     return GenerateJwt(
                         client,
                         clientRefreshToken.Token);

@@ -99,8 +99,9 @@ namespace aiof.auth.services
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Regenerated Keys for {EntityName} with Id='{id}' and PublicKey='{EntityPublicKey}'",
+            _logger.LogInformation("Regenerated Keys for {EntityName} with Id={id} and PublicKey={EntityPublicKey}",
                 typeof(T).Name,
+                id,
                 entity.PublicKey);
 
             return entity;

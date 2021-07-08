@@ -49,31 +49,31 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Disable Client
         /// </summary>
-        [HttpGet]
+        [HttpPost]
         [Route("{id}/disable")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
         public async Task<IActionResult> DisableClientAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.EnableDisableClientAsync(id, false));
+            return Ok(await _repo.DisableAsync(id));
         }
 
         /// <summary>
         /// Enable Client
         /// </summary>
-        [HttpGet]
+        [HttpPost]
         [Route("{id}/enable")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
         public async Task<IActionResult> EnableClientAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.EnableDisableClientAsync(id));
+            return Ok(await _repo.EnableAsync(id));
         }
 
         /// <summary>
         /// Regenerate PrimaryApiKey and SecondaryApiKey of Client
         /// </summary>
-        [HttpGet]
+        [HttpPost]
         [Route("{id}/regenerate/keys")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
