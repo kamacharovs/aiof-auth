@@ -195,17 +195,16 @@ namespace aiof.auth.services
             return clientRefreshToken;
         }
 
-        public async Task<IClient> SoftDeleteAsync(int id)
+        public async Task<IClient> EnableAsync(int id)
         {
-            return await base.SoftDeleteAsync<Client>(id);
+            return await EnableDisableClientAsync(id);
+        }
+        public async Task<IClient> DisableAsync(int id)
+        {
+            return await EnableDisableClientAsync(id, false);
         }
 
-        public async Task<IClient> RegenerateKeysAsync(int id)
-        {
-            return await base.RegenerateKeysAync<Client>(id);
-        }
-
-        public async Task<IClient> EnableDisableClientAsync(
+        private async Task<IClient> EnableDisableClientAsync(
             int id,
             bool enable = true)
         {
@@ -216,6 +215,11 @@ namespace aiof.auth.services
             await _context.SaveChangesAsync();
 
             return client;
+        }
+        
+        public async Task<IClient> RegenerateKeysAsync(int id)
+        {
+            return await base.RegenerateKeysAync<Client>(id);
         }
     }
 }
