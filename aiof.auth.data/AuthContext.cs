@@ -71,8 +71,6 @@ namespace aiof.auth.data
                 e.ToTable(Keys.Entity.Client);
 
                 e.HasKey(x => x.Id);
-
-                e.HasQueryFilter(x => x.Enabled);
                 
                 e.Property(x => x.Id).HasSnakeCaseColumnName().ValueGeneratedOnAdd().IsRequired();
                 e.Property(x => x.PublicKey).HasSnakeCaseColumnName().IsRequired();

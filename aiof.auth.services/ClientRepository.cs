@@ -115,14 +115,8 @@ namespace aiof.auth.services
                 .ToListAsync();
         }
 
-        public async Task<IClientRefreshToken> GetOrAddRefreshTokenAsync(string clientApiKey)
+        public async Task<IClientRefreshToken> GetOrAddRefreshTokenAsync(IClient client)
         {
-            var client = await GetAsync(clientApiKey);
-
-            if (!client.Enabled)
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"The current Client with ApiKey='{clientApiKey}' is DISABLED");
-
             var clientRefreshToken = await GetRefreshTokenAsync(client.Id)
                 ?? await AddRefreshTokenAsync(client.Id);
 
