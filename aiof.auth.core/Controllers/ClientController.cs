@@ -73,7 +73,7 @@ namespace aiof.auth.core.Controllers
         /// <summary>
         /// Regenerate PrimaryApiKey and SecondaryApiKey of Client
         /// </summary>
-        [HttpGet]
+        [HttpPost]
         [Route("{id}/regenerate/keys")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IClient), StatusCodes.Status200OK)]
