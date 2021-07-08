@@ -2,7 +2,7 @@
 
 All in one finance authentication API
 
-[![Build Status](https://gkamacharov.visualstudio.com/gkama-cicd/_apis/build/status/kamacharovs.aiof-auth?branchName=master)](https://gkamacharov.visualstudio.com/gkama-cicd/_build/latest?definitionId=22&branchName=master)
+[![build](https://github.com/kamacharovs/aiof-auth/actions/workflows/build.yml/badge.svg)](https://github.com/kamacharovs/aiof-auth/actions/workflows/build.yml) [![Build Status](https://gkamacharov.visualstudio.com/gkama-cicd/_apis/build/status/kamacharovs.aiof-auth?branchName=master)](https://gkamacharov.visualstudio.com/gkama-cicd/_build/latest?definitionId=22&branchName=master)
 
 ## Documentation
 
