@@ -69,7 +69,7 @@ namespace aiof.auth.services
                     return await RefreshTokenAsync(request.Token);
                 default:
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                        $"Invalid token request. Please provide the following: a email/password, api_key or refresh_token");
+                        $"Invalid token request. Please provide the following: an email and password, api_key or refresh_token");
             }
         }
 
