@@ -153,6 +153,7 @@ namespace aiof.auth.tests
         }
 
         [Theory]
+        [InlineData("notavalidemail", "pass", null)]
         [InlineData("email@aiof.com", "pass", "apikey")]
         [InlineData("email@aiof.com", null, null)]
         [InlineData(null, "pass", null)]
