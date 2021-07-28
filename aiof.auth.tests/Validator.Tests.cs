@@ -170,7 +170,7 @@ namespace aiof.auth.tests
                     Email = email,
                     Password = password,
                     ApiKey = apiKey
-                });
+                }, o => o.IncludeAllRuleSets());
 
             Assert.False(validation.IsValid);
         }

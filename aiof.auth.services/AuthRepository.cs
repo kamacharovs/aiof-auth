@@ -50,23 +50,26 @@ namespace aiof.auth.services
 
         public async Task<ITokenResponse> GetTokenAsync(ITokenRequest request)
         {
-            await _tokenRequestValidator.ValidateAndThrowAsync(request as TokenRequest);
+            var tokenRequest = request as TokenRequest;
 
             switch (request.Type)
             {
                 case TokenType.User:
+                    await _tokenRequestValidator.ValidateAndThrowAsync(tokenRequest, Constants.EmailPasswordRuleSet);
+
                     var user = await _userRepo.GetAsync(request.Email, request.Password);
                     var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
-                    return GenerateJwt(
-                        user,
-                        refreshToken.Token);
+
+                    return GenerateJwt(user, refreshToken.Token);
                 case TokenType.ApiKey:
+                    await _tokenRequestValidator.ValidateAndThrowAsync(tokenRequest, Constants.ApiKeyRuleSet);
                     return await GenerateTokenAsync(request.ApiKey);
                 case TokenType.Refresh:
+                    await _tokenRequestValidator.ValidateAndThrowAsync(tokenRequest, Constants.TokenRuleSet);
                     return await RefreshTokenAsync(request.Token);
                 default:
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                        $"Invalid token request");
+                        $"Invalid token request. Please provide the following: a email/password, api_key or refresh_token");
             }
         }
 

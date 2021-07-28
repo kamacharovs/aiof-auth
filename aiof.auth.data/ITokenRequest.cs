@@ -8,7 +8,7 @@ namespace aiof.auth.data
         string Token { get; set; }
         string Email { get; set; }
         string Password { get; set; }
-        TokenType Type { get; set; }
+        TokenType Type { get; }
     }
 
     public interface IRevokeRequest

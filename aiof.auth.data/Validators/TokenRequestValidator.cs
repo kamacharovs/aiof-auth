@@ -13,15 +13,13 @@ namespace aiof.auth.data
             RuleSet(Constants.EmailPasswordRuleSet, () => { SetEmailPasswordRuleSet(); });
             RuleSet(Constants.ApiKeyRuleSet, () => { SetApiKeyRuleSet(); });
             RuleSet(Constants.TokenRuleSet, () => { SetTokenRuleSet(); });
-
-            // Either Email, Password is provided, ApiKey (Client or User) is provided or RefreshToken
-            //.WithMessage("Invalid token request. Please provide the following: a Email/Password, ApiKey or Token");
         }
 
         public void SetEmailPasswordRuleSet()
         {
             RuleFor(x => x.Email)
                 .NotNull()
+                .EmailAddress()
                 .MaximumLength(200);
 
             RuleFor(x => x.Password)
@@ -45,7 +43,7 @@ namespace aiof.auth.data
 
             RuleFor(x => x.ApiKey)
                 .NotNull()
-                .MaximumLength(100);
+                .MaximumLength(64);
            
             RuleFor(x => x.Token)
                 .Null();
@@ -64,7 +62,7 @@ namespace aiof.auth.data
            
             RuleFor(x => x.Token)
                 .NotNull()
-                .MaximumLength(200);
+                .MaximumLength(128);
         }
     }
 }

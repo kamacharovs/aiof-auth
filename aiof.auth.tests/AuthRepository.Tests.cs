@@ -117,13 +117,13 @@ namespace aiof.auth.tests
         }
 
         [Fact]
-        public async Task Auth_WithEmptyCredentials_ThrowsAuthValidationException()
+        public async Task Auth_WithEmptyCredentials_ThrowsAuthFriendlyException()
         {
             var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
 
             var req = new TokenRequest { };
 
-            await Assert.ThrowsAsync<ValidationException>(() => repo.GetTokenAsync(req));
+            await Assert.ThrowsAsync<AuthFriendlyException>(() => repo.GetTokenAsync(req));
         }
 
         [Fact]

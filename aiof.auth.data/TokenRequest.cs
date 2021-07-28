@@ -27,7 +27,37 @@ namespace aiof.auth.data
         public string Password { get; set; }
 
         [JsonIgnore]
-        public TokenType Type { get; set; }
+        public TokenType Type
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(Email)
+                    && !string.IsNullOrWhiteSpace(Password)
+                    && string.IsNullOrWhiteSpace(Token)
+                    && string.IsNullOrWhiteSpace(ApiKey))
+                {
+                    return TokenType.User;
+                }
+                else if (!string.IsNullOrWhiteSpace(ApiKey)
+                    && string.IsNullOrWhiteSpace(Token)
+                    && string.IsNullOrWhiteSpace(Email)
+                    && string.IsNullOrWhiteSpace(Password))
+                {
+                    return TokenType.ApiKey;
+                }
+                else if (!string.IsNullOrWhiteSpace(Token)
+                    && string.IsNullOrWhiteSpace(Email)
+                    && string.IsNullOrWhiteSpace(Password)
+                    && string.IsNullOrWhiteSpace(ApiKey))
+                {
+                    return TokenType.Refresh;
+                }
+                else
+                {
+                    return TokenType.NoMatch;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -71,6 +101,7 @@ namespace aiof.auth.data
 
     public enum TokenType
     {
+        NoMatch,
         User,
         ApiKey,
         Refresh,
