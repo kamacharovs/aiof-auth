@@ -32,23 +32,15 @@ namespace aiof.auth.data
             get
             {
                 if (!string.IsNullOrWhiteSpace(Email)
-                    && !string.IsNullOrWhiteSpace(Password)
-                    && string.IsNullOrWhiteSpace(Token)
-                    && string.IsNullOrWhiteSpace(ApiKey))
+                    && !string.IsNullOrWhiteSpace(Password))
                 {
                     return TokenType.User;
                 }
-                else if (!string.IsNullOrWhiteSpace(ApiKey)
-                    && string.IsNullOrWhiteSpace(Token)
-                    && string.IsNullOrWhiteSpace(Email)
-                    && string.IsNullOrWhiteSpace(Password))
+                else if (!string.IsNullOrWhiteSpace(ApiKey))
                 {
                     return TokenType.ApiKey;
                 }
-                else if (!string.IsNullOrWhiteSpace(Token)
-                    && string.IsNullOrWhiteSpace(Email)
-                    && string.IsNullOrWhiteSpace(Password)
-                    && string.IsNullOrWhiteSpace(ApiKey))
+                else if (!string.IsNullOrWhiteSpace(Token))
                 {
                     return TokenType.Refresh;
                 }
@@ -97,13 +89,5 @@ namespace aiof.auth.data
         [JsonPropertyName("access_token")]
         [Required]
         public string AccessToken { get; set; }
-    }
-
-    public enum TokenType
-    {
-        NoMatch,
-        User,
-        ApiKey,
-        Refresh,
     }
 }

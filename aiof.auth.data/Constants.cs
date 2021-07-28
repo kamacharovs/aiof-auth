@@ -116,9 +116,17 @@ namespace aiof.auth.data
         }
     }
 
+    public enum TokenType
+    {
+        NoMatch,
+        User,
+        ApiKey,
+        Refresh
+    }
+
     public enum TokenStatus
     {
-        Valid = 1,
+        Valid,
         Invalid,
         Expired
     }
