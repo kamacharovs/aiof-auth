@@ -10,41 +10,61 @@ namespace aiof.auth.data
         {
             ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
-            RuleFor(x => x)
-                .NotNull();
+            RuleSet(Constants.EmailPasswordRuleSet, () => { SetEmailPasswordRuleSet(); });
+            RuleSet(Constants.ApiKeyRuleSet, () => { SetApiKeyRuleSet(); });
+            RuleSet(Constants.TokenRuleSet, () => { SetTokenRuleSet(); });
 
             // Either Email, Password is provided, ApiKey (Client or User) is provided or RefreshToken
-            RuleFor(x => x)
-                .Must(x => 
-                {
-                    if (!string.IsNullOrWhiteSpace(x.Email)
-                        && !string.IsNullOrWhiteSpace(x.Password)
-                        && string.IsNullOrWhiteSpace(x.Token)
-                        && string.IsNullOrWhiteSpace(x.ApiKey))
-                    {
-                        x.Type = TokenType.User;
-                        return true;
-                    }
-                    else if (!string.IsNullOrWhiteSpace(x.ApiKey)
-                        && string.IsNullOrWhiteSpace(x.Token)
-                        && string.IsNullOrWhiteSpace(x.Email)
-                        && string.IsNullOrWhiteSpace(x.Password))
-                    {
-                        x.Type = TokenType.ApiKey;
-                        return true;
-                    }
-                    else if (!string.IsNullOrWhiteSpace(x.Token)
-                        && string.IsNullOrWhiteSpace(x.Email)
-                        && string.IsNullOrWhiteSpace(x.Password)
-                        && string.IsNullOrWhiteSpace(x.ApiKey))
-                    {
-                        x.Type = TokenType.Refresh;
-                        return true;
-                    }
+            //.WithMessage("Invalid token request. Please provide the following: a Email/Password, ApiKey or Token");
+        }
 
-                    return false;
-                })
-                .WithMessage("Invalid token request. Please provide the following: a Email/Password, ApiKey or Token");
+        public void SetEmailPasswordRuleSet()
+        {
+            RuleFor(x => x.Email)
+                .NotNull()
+                .MaximumLength(200);
+
+            RuleFor(x => x.Password)
+                .NotNull()
+                .MaximumLength(100);
+
+            RuleFor(x => x.ApiKey)
+                .Null();
+                
+            RuleFor(x => x.Token)
+                .Null();
+        }
+
+        public void SetApiKeyRuleSet()
+        {
+            RuleFor(x => x.Email)
+                .Null();
+
+            RuleFor(x => x.Password)
+                .Null();
+
+            RuleFor(x => x.ApiKey)
+                .NotNull()
+                .MaximumLength(100);
+           
+            RuleFor(x => x.Token)
+                .Null();
+        }
+
+        public void SetTokenRuleSet()
+        {
+            RuleFor(x => x.Email)
+                .Null();
+
+            RuleFor(x => x.Password)
+                .Null();
+
+            RuleFor(x => x.ApiKey)
+                .Null();
+           
+            RuleFor(x => x.Token)
+                .NotNull()
+                .MaximumLength(200);
         }
     }
 }
