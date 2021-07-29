@@ -262,42 +262,14 @@ namespace aiof.auth.services
             }
         }
 
-        public async Task<IRevokeResponse> RevokeTokenAsync(
-            string token,
-            int? userId = null,
-            int? clientId = null)
+        public async Task RevokeUserAsync(int id)
         {
-            if (clientId != null)
-            {
-                var clientRefresh = await _clientRepo.RevokeTokenAsync((int)clientId, token);
+            await _userRepo.RevokeAsync(id);
+        }
 
-                _logger.LogInformation("Revoked {EntityName} token={EntityToken}",
-                    nameof(ClientRefreshToken),
-                    clientRefresh.Token);
-
-                return new RevokeResponse
-                {
-                    Token = clientRefresh.Token,
-                    Revoked = clientRefresh.Revoked
-                };
-            }
-            else if (userId != null)
-            {
-                var userRefresh = await _userRepo.RevokeTokenAsync((int)userId, token);
-
-                _logger.LogInformation("Revoked {EntityName} token={EntityToken}",
-                    nameof(UserRefreshToken),
-                    userRefresh.Token);
-
-                return new RevokeResponse
-                {
-                    Token = userRefresh.Token,
-                    Revoked = userRefresh.Revoked
-                };
-            }
-            else
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Couldn't revoke Token='{token}' for UserId='{userId}' or ClientId='{clientId}'");
+        public async Task RevokeClientAsync(int id)
+        {
+            await _clientRepo.RevokeAsync(id);
         }
 
         public IIntrospectTokenResult Introspect()

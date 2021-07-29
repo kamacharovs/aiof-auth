@@ -30,7 +30,9 @@ namespace aiof.auth.services
         Task<IUser> GetAsync(UserDto userDto);
         Task<IUser> GetByRefreshTokenAsync(string refreshToken);
         Task<IUserRefreshToken> GetRefreshTokenAsync(int userId);
-        Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId);
+        Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(
+            int userId,
+            bool asNoTracking = true);
         Task<IUserRefreshToken> GetOrAddRefreshTokenAsync(int userId);
         Task<bool> DoesEmailExistAsync(string email);
         Task<IUser> AddAsync(UserDto userDto);
@@ -42,9 +44,7 @@ namespace aiof.auth.services
             string email,
             string oldPassword,
             string newPassword);
-        Task<IUserRefreshToken> RevokeTokenAsync(
-            int userId,
-            string token);
+        Task RevokeAsync(int userId);
         string Hash(string password);
         bool Check(string hash, string password);
     }

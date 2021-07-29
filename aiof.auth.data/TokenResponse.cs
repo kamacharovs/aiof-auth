@@ -29,15 +29,4 @@ namespace aiof.auth.data
         [JsonPropertyName("user")]
         public IUser User { get; set; }
     }
-
-    /// <summary>
-    /// Response to revoke a refresh token
-    /// </summary>
-    public class RevokeResponse : IRevokeResponse
-    {
-        [JsonPropertyName("refresh_token")]
-        public string Token { get; set; }
-
-        public DateTime? Revoked { get; set; }
-    }
 }

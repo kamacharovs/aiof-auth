@@ -164,17 +164,6 @@ namespace aiof.auth.tests
             Assert.NotEqual(new DateTime(), refreshToken.Expires);
             Assert.Null(refreshToken.Revoked);
         }
-        [Theory]
-        [MemberData(nameof(Helper.UserRefreshTokensUserIdToken), MemberType = typeof(Helper))]
-        public async Task RevokeTokenAsync_IsSuccessful(int userId, string token)
-        {
-            var repo = new ServiceHelper() { UserId = userId }.GetRequiredService<IUserRepository>();
-
-            var revokedToken = await repo.RevokeTokenAsync(userId, token);
-
-            Assert.NotNull(revokedToken);
-            Assert.NotNull(revokedToken.Revoked);
-        }
 
         [Theory]
         [MemberData(nameof(Helper.RandomUserDtos), MemberType = typeof(Helper))]

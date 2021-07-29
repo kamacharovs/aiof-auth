@@ -108,10 +108,14 @@ namespace aiof.auth.services
                     && DateTime.UtcNow < x.Expires);
         }
 
-        public async Task<IEnumerable<IClientRefreshToken>> GetRefreshTokensAsync(int clientId)
+        public async Task<IEnumerable<IClientRefreshToken>> GetRefreshTokensAsync(
+            int clientId,
+            bool asNoTracking = true)
         {
-            return await GetRefreshTokensQuery()
-                .Where(x => x.ClientId == clientId)
+            return await GetRefreshTokensQuery(asNoTracking)
+                .Where(x => x.ClientId == clientId
+                    && x.Revoked == null)
+                .OrderByDescending(x => x.Expires)
                 .ToListAsync();
         }
 
@@ -170,29 +174,22 @@ namespace aiof.auth.services
                 yield return await AddClientAsync(clientDto);
         }
 
-        public async Task<IClientRefreshToken> RevokeTokenAsync(int clientId, string token)
+        public async Task RevokeAsync(int clientId)
         {
-            var clientRefreshToken = await GetRefreshTokenAsync(
-                clientId, 
-                token,
-                asNoTracking: false)
-                as ClientRefreshToken
-                ?? throw new AuthNotFoundException();
+            var now = DateTime.UtcNow;
+            var refreshTokens = (await GetRefreshTokensAsync(clientId, false))
+                as IEnumerable<ClientRefreshToken>;
 
-            clientRefreshToken.Revoked = DateTime.UtcNow;
-            clientRefreshToken.Expires = DateTime.UtcNow;
-
-            _context.ClientRefreshTokens
-                .Update(clientRefreshToken);
+            foreach (var refreshToken in refreshTokens)
+            {
+                refreshToken.Revoked = now;
+            }
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Revoked {EntityName}={ClientRefreshToken} for CliendId={ClientId}",
+            _logger.LogInformation("Revoked {EntityName}s for UserId={UserId}",
                 nameof(ClientRefreshToken),
-                token,
                 clientId);
-
-            return clientRefreshToken;
         }
 
         public async Task<IClient> EnableAsync(int id)

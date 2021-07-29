@@ -21,11 +21,13 @@ namespace aiof.auth.services
             int clientId, 
             string refreshToken, 
             bool asNoTracking = true);
-        Task<IEnumerable<IClientRefreshToken>> GetRefreshTokensAsync(int clientId);
+        Task<IEnumerable<IClientRefreshToken>> GetRefreshTokensAsync(
+            int clientId,
+            bool asNoTracking = true);
         Task<IClientRefreshToken> GetOrAddRefreshTokenAsync(IClient client);
         Task<IClient> AddClientAsync(ClientDto clientDto);
         IAsyncEnumerable<IClient> AddClientsAsync(IEnumerable<ClientDto> clientDtos);
-        Task<IClientRefreshToken> RevokeTokenAsync(int clientId, string token);
+        Task RevokeAsync(int clientId);
         Task<IClient> EnableAsync(int id);
         Task<IClient> DisableAsync(int id);
         Task<IClient> RegenerateKeysAsync(int id);
