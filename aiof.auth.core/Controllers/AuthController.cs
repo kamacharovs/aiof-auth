@@ -87,7 +87,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RevokeClientRefreshTokenAsync([FromQuery, Required] int id)
+        public async Task<IActionResult> RevokeClientRefreshTokenAsync([FromRoute, Required] int id)
         {
             await _repo.RevokeClientAsync(id);
             
@@ -105,7 +105,7 @@ namespace aiof.auth.core.Controllers
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RevokeUserRefreshTokenAsync([FromQuery, Required] int id)
+        public async Task<IActionResult> RevokeUserRefreshTokenAsync([FromRoute, Required] int id)
         {
             await _repo.RevokeUserAsync(id);
 
