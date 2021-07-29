@@ -138,7 +138,7 @@ namespace aiof.auth.services
                 .Include(x => x.Role)
                 .Include(x => x.RefreshTokens)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken))
+                .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken && x.Revoked == null))
                 ?? throw new AuthNotFoundException($"{nameof(User)} with RefreshToken={refreshToken} was not found");
         }
         public async Task<IUserRefreshToken> GetRefreshTokenAsync(int userId)
