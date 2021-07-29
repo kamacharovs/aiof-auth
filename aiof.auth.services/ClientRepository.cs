@@ -177,13 +177,16 @@ namespace aiof.auth.services
         public async Task RevokeAsync(int clientId)
         {
             var now = DateTime.UtcNow;
-            var refreshTokens = (await GetRefreshTokensAsync(clientId, false))
-                as IEnumerable<ClientRefreshToken>;
+            var refreshTokens = await GetRefreshTokensAsync(clientId, false)
+                as List<ClientRefreshToken>;
 
             foreach (var refreshToken in refreshTokens)
             {
                 refreshToken.Revoked = now;
             }
+
+            _context.ClientRefreshTokens
+                .UpdateRange(refreshTokens);
 
             await _context.SaveChangesAsync();
 

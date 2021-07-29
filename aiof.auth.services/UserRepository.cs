@@ -304,13 +304,16 @@ namespace aiof.auth.services
         {
             var now = DateTime.UtcNow;
             var refreshTokens = await GetRefreshTokensAsync(userId, false)
-                as IEnumerable<UserRefreshToken>;
+                as List<UserRefreshToken>;
 
             foreach (var refreshToken in refreshTokens)
             {
-                refreshToken.Revoked = DateTime.UtcNow;
+                refreshToken.Revoked = now;
             }
-
+            
+            _context.UserRefreshTokens
+                .UpdateRange(refreshTokens);
+        
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Revoked {EntityName}s for UserId={UserId}",
