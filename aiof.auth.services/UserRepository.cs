@@ -54,7 +54,7 @@ namespace aiof.auth.services
         private IQueryable<UserRefreshToken> GetRefreshTokensQuery(bool asNoTracking = true)
         {
             var query = _context.UserRefreshTokens
-                    .AsQueryable();
+                .AsQueryable();
 
             return asNoTracking
                 ? query.AsNoTracking()
@@ -138,7 +138,7 @@ namespace aiof.auth.services
                 .Include(x => x.Role)
                 .Include(x => x.RefreshTokens)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken))
+                .FirstOrDefaultAsync(x => x.RefreshTokens.Any(x => x.Token == refreshToken && x.Revoked == null))
                 ?? throw new AuthNotFoundException($"{nameof(User)} with RefreshToken={refreshToken} was not found");
         }
         public async Task<IUserRefreshToken> GetRefreshTokenAsync(int userId)
@@ -159,13 +159,14 @@ namespace aiof.auth.services
                 .FirstOrDefaultAsync(x => x.UserId == userId
                     && x.Token == token);
         }
-        public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(int userId)
+        public async Task<IEnumerable<IUserRefreshToken>> GetRefreshTokensAsync(
+            int userId,
+            bool asNoTracking = true)
         {
-            return await GetRefreshTokensQuery()
+            return await GetRefreshTokensQuery(asNoTracking)
                 .Where(x => x.UserId == userId 
                     && x.Revoked == null)
                 .OrderByDescending(x => x.Expires)
-                .Take(1)
                 .ToListAsync();
         }
         public async Task<IUserRefreshToken> GetOrAddRefreshTokenAsync(int userId)
@@ -299,30 +300,25 @@ namespace aiof.auth.services
                 id);
         }
 
-        public async Task<IUserRefreshToken> RevokeTokenAsync(
-            int userId, 
-            string token)
+        public async Task RevokeAsync(int userId)
         {
-            var refreshToken = await GetRefreshTokenAsync(
-                userId,
-                token,
-                asNoTracking: false)
-                as UserRefreshToken
-                ?? throw new AuthNotFoundException($"{nameof(UserRefreshToken)} with UserId={userId} and Token={token} was not found");
+            var now = DateTime.UtcNow;
+            var refreshTokens = await GetRefreshTokensAsync(userId, false)
+                as List<UserRefreshToken>;
 
-            refreshToken.Revoked = DateTime.UtcNow;
-
+            foreach (var refreshToken in refreshTokens)
+            {
+                refreshToken.Revoked = now;
+            }
+            
             _context.UserRefreshTokens
-                .Update(refreshToken);
-
+                .UpdateRange(refreshTokens);
+        
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Revoked {EntityName}={UserRefreshToken} for UserId={UserId}",
+            _logger.LogInformation("Revoked {EntityName}s for UserId={UserId}",
                 nameof(UserRefreshToken),
-                token,
                 userId);
-
-            return refreshToken;
         }
 
         public string Hash(string password)

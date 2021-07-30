@@ -27,36 +27,29 @@ namespace aiof.auth.data
         public string Password { get; set; }
 
         [JsonIgnore]
-        public TokenType Type { get; set; }
-    }
-
-    /// <summary>
-    /// Request to revoke a refresh token
-    /// </summary>
-    public class RevokeRequest : IRevokeRequest
-    {
-        [JsonPropertyName("refresh_token")]
-        [Required]
-        [MaxLength(128)]
-        public string Token { get; set; }
-    }
-
-    /// <summary>
-    /// Request to revoke a User refresh token
-    /// </summary>
-    public class RevokeUserRequest : RevokeRequest, IRevokeUserRequest
-    {
-        [Required]
-        public int UserId { get; set; }
-    }
-
-    /// <summary>
-    /// Request to revoke a Client refresh token
-    /// </summary>
-    public class RevokeClientRequest : RevokeRequest, IRevokeClientRequest
-    {
-        [Required]
-        public int ClientId { get; set; }
+        public TokenType Type
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(Email)
+                    && !string.IsNullOrWhiteSpace(Password))
+                {
+                    return TokenType.User;
+                }
+                else if (!string.IsNullOrWhiteSpace(ApiKey))
+                {
+                    return TokenType.ApiKey;
+                }
+                else if (!string.IsNullOrWhiteSpace(Token))
+                {
+                    return TokenType.Refresh;
+                }
+                else
+                {
+                    return TokenType.NoMatch;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -67,12 +60,5 @@ namespace aiof.auth.data
         [JsonPropertyName("access_token")]
         [Required]
         public string AccessToken { get; set; }
-    }
-
-    public enum TokenType
-    {
-        User,
-        ApiKey,
-        Refresh,
     }
 }

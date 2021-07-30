@@ -117,13 +117,13 @@ namespace aiof.auth.tests
         }
 
         [Fact]
-        public async Task Auth_WithEmptyCredentials_ThrowsAuthValidationException()
+        public async Task Auth_WithEmptyCredentials_ThrowsAuthFriendlyException()
         {
             var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
 
             var req = new TokenRequest { };
 
-            await Assert.ThrowsAsync<ValidationException>(() => repo.GetTokenAsync(req));
+            await Assert.ThrowsAsync<AuthFriendlyException>(() => repo.GetTokenAsync(req));
         }
 
         [Fact]
@@ -155,20 +155,22 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType = typeof(Helper))]
-        public async Task RevokeTokenAsync_IsSuccessful(
-            int clientId, 
-            string token)
+        [MemberData(nameof(Helper.UserRefreshTokensUserId), MemberType = typeof(Helper))]
+        public async Task RevokeUserAsync_IsSuccessful(int userId)
         {
             var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
 
-            var revokedTokenResp = await repo.RevokeTokenAsync(token, clientId: clientId);
-
-            Assert.NotNull(revokedTokenResp);
-            Assert.Equal(token, revokedTokenResp.Token);
-            Assert.NotNull(revokedTokenResp.Revoked);
+            await repo.RevokeUserAsync(userId);
         }
 
+        [Theory]
+        [MemberData(nameof(Helper.ClientRefreshTokensClientId), MemberType = typeof(Helper))]
+        public async Task RevokeClientAsync_IsSuccessful(int clientId)
+        {
+            var repo = new ServiceHelper().GetRequiredService<IAuthRepository>();
+
+            await repo.RevokeClientAsync(clientId);
+        }
         
         [Theory]
         [MemberData(nameof(Helper.ClientsApiKey), MemberType = typeof(Helper))]

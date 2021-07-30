@@ -75,27 +75,6 @@ namespace aiof.auth.tests
         }
 
         [Theory]
-        [MemberData(nameof(Helper.ClientRefreshClientIdToken), MemberType = typeof(Helper))]
-        public async Task RevokeTokenAsync_IsSuccessful(
-            int clientId, 
-            string token)
-        {
-            var repo = new ServiceHelper().GetRequiredService<IClientRepository>();
-
-            var clientRefreshTokenBefore = await repo.GetRefreshTokenAsync(
-                clientId,
-                token,
-                asNoTracking: true);
-
-            Assert.True(DateTime.UtcNow < clientRefreshTokenBefore.Expires);
-
-            Thread.Sleep(1);
-            var clientRefreshTokenAfter = await repo.RevokeTokenAsync(clientId, token);
-
-            Assert.False(DateTime.UtcNow < clientRefreshTokenAfter.Expires);
-        }
-
-        [Theory]
         [MemberData(nameof(Helper.ClientsId), MemberType = typeof(Helper))]
         public async Task EnableClientAsync_IsSuccessful(int id)
         {

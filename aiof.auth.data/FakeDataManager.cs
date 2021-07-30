@@ -470,6 +470,14 @@ namespace aiof.auth.data
                         clientRtToken
                     });
             }
+            else if (clientId)
+            {
+                foreach (var rtClientId in clientRefreshTokens.Select(x => x.ClientId).Distinct())
+                    toReturn.Add(new object[]
+                    {
+                        rtClientId
+                    });
+            }
             
             return toReturn;
         }

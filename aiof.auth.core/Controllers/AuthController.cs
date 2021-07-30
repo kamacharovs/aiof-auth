@@ -81,15 +81,17 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpPut]
-        [Route("token/client/revoke")]
+        [Route("token/client/{id}/revoke")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RevokeClientRefreshTokenAsync([FromBody, Required] RevokeClientRequest request)
+        public async Task<IActionResult> RevokeClientRefreshTokenAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.RevokeTokenAsync(request.Token, clientId: request.ClientId));
+            await _repo.RevokeClientAsync(id);
+            
+            return Ok();
         }
 
         /// <summary>
@@ -97,15 +99,17 @@ namespace aiof.auth.core.Controllers
         /// </summary>
         [Authorize(Roles = Roles.Admin)]
         [HttpPut]
-        [Route("token/user/revoke")]
+        [Route("token/user/{id}/revoke")]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IAuthProblemDetail), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IAuthProblemDetailBase), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(IRevokeResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RevokeUserRefreshTokenAsync([FromBody, Required] RevokeUserRequest request)
+        public async Task<IActionResult> RevokeUserRefreshTokenAsync([FromRoute, Required] int id)
         {
-            return Ok(await _repo.RevokeTokenAsync(request.Token, userId: request.UserId));
+            await _repo.RevokeUserAsync(id);
+
+            return Ok();
         }
 
         /// <summary>

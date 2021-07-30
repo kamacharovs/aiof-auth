@@ -50,23 +50,26 @@ namespace aiof.auth.services
 
         public async Task<ITokenResponse> GetTokenAsync(ITokenRequest request)
         {
-            await _tokenRequestValidator.ValidateAndThrowAsync(request as TokenRequest);
+            var tokenRequest = request as TokenRequest;
 
             switch (request.Type)
             {
                 case TokenType.User:
+                    await _tokenRequestValidator.ValidateAndThrowAsync(tokenRequest, Constants.EmailPasswordRuleSet);
+
                     var user = await _userRepo.GetAsync(request.Email, request.Password);
                     var refreshToken = await _userRepo.GetOrAddRefreshTokenAsync(user.Id);
-                    return GenerateJwt(
-                        user,
-                        refreshToken.Token);
+
+                    return GenerateJwt(user, refreshToken.Token);
                 case TokenType.ApiKey:
+                    await _tokenRequestValidator.ValidateAndThrowAsync(tokenRequest, Constants.ApiKeyRuleSet);
                     return await GenerateTokenAsync(request.ApiKey);
                 case TokenType.Refresh:
+                    await _tokenRequestValidator.ValidateAndThrowAsync(tokenRequest, Constants.TokenRuleSet);
                     return await RefreshTokenAsync(request.Token);
                 default:
                     throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                        $"Invalid token request");
+                        $"Invalid token request. Please provide the following: an email and password, api_key or refresh_token");
             }
         }
 
@@ -259,42 +262,14 @@ namespace aiof.auth.services
             }
         }
 
-        public async Task<IRevokeResponse> RevokeTokenAsync(
-            string token,
-            int? userId = null,
-            int? clientId = null)
+        public async Task RevokeUserAsync(int id)
         {
-            if (clientId != null)
-            {
-                var clientRefresh = await _clientRepo.RevokeTokenAsync((int)clientId, token);
+            await _userRepo.RevokeAsync(id);
+        }
 
-                _logger.LogInformation("Revoked {EntityName} token={EntityToken}",
-                    nameof(ClientRefreshToken),
-                    clientRefresh.Token);
-
-                return new RevokeResponse
-                {
-                    Token = clientRefresh.Token,
-                    Revoked = clientRefresh.Revoked
-                };
-            }
-            else if (userId != null)
-            {
-                var userRefresh = await _userRepo.RevokeTokenAsync((int)userId, token);
-
-                _logger.LogInformation("Revoked {EntityName} token={EntityToken}",
-                    nameof(UserRefreshToken),
-                    userRefresh.Token);
-
-                return new RevokeResponse
-                {
-                    Token = userRefresh.Token,
-                    Revoked = userRefresh.Revoked
-                };
-            }
-            else
-                throw new AuthFriendlyException(HttpStatusCode.BadRequest,
-                    $"Couldn't revoke Token='{token}' for UserId='{userId}' or ClientId='{clientId}'");
+        public async Task RevokeClientAsync(int id)
+        {
+            await _clientRepo.RevokeAsync(id);
         }
 
         public IIntrospectTokenResult Introspect()

@@ -27,6 +27,9 @@ namespace aiof.auth.data
             };
         public static string DefaultUnsupportedApiVersionMessage = $"Unsupported API version specified. The supported versions are {string.Join(", ", ApiSupportedVersions)}";
 
+        public static string EmailPasswordRuleSet = nameof(EmailPasswordRuleSet);
+        public static string ApiKeyRuleSet = nameof(ApiKeyRuleSet);
+        public static string TokenRuleSet = nameof(TokenRuleSet);
     }
 
     public static class Keys
@@ -113,9 +116,17 @@ namespace aiof.auth.data
         }
     }
 
+    public enum TokenType
+    {
+        NoMatch,
+        User,
+        ApiKey,
+        Refresh
+    }
+
     public enum TokenStatus
     {
-        Valid = 1,
+        Valid,
         Invalid,
         Expired
     }
